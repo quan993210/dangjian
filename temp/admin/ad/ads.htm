@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$page_title}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="{$admin_temp_path}/css/general.css" rel="stylesheet" type="text/css" />
+<link href="{$admin_temp_path}/css/main.css" rel="stylesheet" type="text/css" />
+<script src="{$url_path}/js/jquery.js"></script>
+<script src="{$url_path}/js/DatePicker/WdatePicker.js" type="text/javascript"></script>
+<script src="{$url_path}/js/editor/kindeditor.js" charset="utf-8"></script>
+<script src="{$url_path}/js/editor/lang/zh_CN.js" charset="utf-8"></script>
+{literal}
+<script language="javascript">
+function add_img()
+{
+	var img_count = parseInt($("#img_count").val());
+	var next_img = img_count + 1;
+	var img_div = '<div id="img' + next_img + '"><input type="file" name="image' + next_img + '" value=""> <a href="javascript:void(0);" onclick="del_img(' + next_img + ');">[-]</a></div>';
+	$("#imgs").append(img_div);
+	$("#img_count").val(next_img);
+}
+
+function del_img(num)
+{
+	$("#img" + num).remove();
+}
+
+function select_time()
+{
+	WdatePicker({dateFmt:'yyyy-MM-dd'})
+}
+</script>
+{/literal}
+</head>
+<body>
+<h1>
+<span class="action-span"><a href="javascript:history.back();">返回</a></span>
+<span class="action-span1"><a href="">{$sys_name} 管理中心</a>  - {$page_title} </span>
+<div style="clear:both"></div>
+</h1>
+<div id="tabbody-div">
+<form name="frm" action="ads.php" method="post" enctype="multipart/form-data">
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
+    <tr>
+      <td class="label">广告分类：</td>
+	  <td>
+        <select name="cid" id="cid">
+            <option value="0">选择广告分类</option>
+            {section name=loop loop=$ads_category}
+            <option value="{$ads_category[loop].id}" {if $ads.cid eq $ads_category[loop].id}selected{/if}>{$ads_category[loop].name}</option>
+            {/section}
+        </select>       
+      </td>
+    </tr>
+	
+    <tr>
+      <td class="label">广告标题：</td>
+	  <td><input type="text" name="title" value="{$ads.title}" size="48" /></td>
+    </tr>
+    <tr>
+      <td class="label">广告链接：</td>
+	  <td><input type="text" name="url" value="{$ads.url}" size="48" /></td>
+    </tr>
+    <tr>
+      <td class="label">广告图片：</td>
+	  <td><input type="file" name="pic" value=""></td>
+    </tr>
+
+    <tr>
+      <td class="label">排序：</td>
+	  <td><input type="text" name="order_num" value="{if $ads.order_num eq ''}0{else}{$ads.order_num}{/if}" size="15" /></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+      	<input type="hidden" value="{$action}" name="action" />
+      	<input type="hidden" value="{$now_page}" name="now_page" />
+      	<input type="hidden" value="{$ads.id}" name="id" />
+        <input type="hidden" value="{$ads.pic}" name="pic_name" />
+      	<input type="submit" value="确定">
+      </td>
+    </tr>
+</table>
+</form>
+</div>
+</body>
+</html>

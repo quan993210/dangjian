@@ -1,0 +1,8 @@
+项目配置访问路径：http://localhost/chenjin/
+后台地址：http://localhost/chenjin/admin/index.php
+账号：admin  密码：admin888
+开发环境配置文件：inc/conf/dev.php
+生产环境配置文件：inc/conf/pro.php
+运行php版本：php7
+
+公众号：86ncmmyy@sina.com    86ncmmyy
