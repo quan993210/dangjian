@@ -58,23 +58,23 @@ function menu()
 	$menu[] = array('name' => '网站管理', 				'sub' => $sub);
 	
 	unset($sub);
-	$sub[]  = array('url' => 'article_category.php', 	'name' => '文章分类');
-	$sub[]  = array('url' => 'article.php', 			'name' => '文章列表');
-	$menu[] = array('name' => '文章管理', 				'sub' => $sub);
+	$sub[]  = array('url' => 'news_category.php', 	'name' => '内容分类');
+	$sub[]  = array('url' => 'news.php', 			'name' => '内容列表');
+	$menu[] = array('name' => '内容管理', 				'sub' => $sub);
 	
-	unset($sub);
+	//unset($sub);
 	//$sub[]  = array('url' => 'product_category.php', 	'name' => '产品分类');
-	$sub[]  = array('url' => 'product.php', 			'name' => '案例列表');
-	$menu[] = array('name' => '案例管理', 				'sub' => $sub);
+	//$sub[]  = array('url' => 'product.php', 			'name' => '案例列表');
+	//$menu[] = array('name' => '案例管理', 				'sub' => $sub);
 	
 	unset($sub);
 	$sub[]  = array('url' => 'ads_category.php', 		'name' => '广告分类');
 	$sub[]  = array('url' => 'ads.php', 				'name' => '广告列表');
 	$menu[] = array('name' => '广告管理', 				'sub' => $sub);
 
-	unset($sub);
-	$sub[]  = array('url' => 'merchant.php', 				'name' => '商户列表');
-	$menu[] = array('name' => '商户管理', 				'sub' => $sub);
+	//unset($sub);
+	//$sub[]  = array('url' => 'merchant.php', 				'name' => '商户列表');
+	//$menu[] = array('name' => '商户管理', 				'sub' => $sub);
 	
 	$smarty->assign('menu', $menu);
 	$smarty->display('common/menu.htm');

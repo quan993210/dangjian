@@ -3,7 +3,7 @@ define('IN_APP', true);
 
 //数据库信息配置
 define("DB_HOST", 'localhost');
-define("DB_NAME", 'sql_chenjin');
+define("DB_NAME", 'dangjian');
 define("DB_USER", 'root');
 define("DB_PASS", 'root');
 define("PREFIX",  '');

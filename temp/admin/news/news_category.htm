@@ -30,30 +30,30 @@ function del_one(id)
 <div style="clear:both"></div>
 </h1>
 <div id="tabbody-div">
-<form name="frm" action="article_category.php" method="post">
+<form name="frm" action="news_category.php" method="post">
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
 	<tr>
-      <td class="label">选择文章分类：</td>
+      <td class="label">选择内容分类：</td>
 	  <td>
-      	<select name="parent_id">
-        	<option value="">请选择文章分类</option>
-            {section name=loop loop=$top_article_category}
-            <option value="{$top_article_category[loop].id}" {if $cat.parent_id eq $top_article_category[loop].id}selected{/if}>{$top_article_category[loop].name}</option>	
+      	<select name="pid">
+        	<option value="">请内容选择分类</option>
+            {section name=loop loop=$top_news_category}
+            <option value="{$top_news_category[loop].catid}" {if $cat.pid eq $top_news_category[loop].catid}selected{/if}>{$top_news_category[loop].catname}</option>
             {/section}
         </select>
       </td>
     </tr>
     <tr>
-      <td class="label">文章分类名称：</td>
-	  <td><input type="text" name="name" value="{$cat.name}"></td>
+      <td class="label">内容分类名称：</td>
+	  <td><input type="text" name="catname" value="{$cat.catname}"></td>
     </tr>
     <tr>
       <td class="label">排序：</td>
-	  <td><input type="text" name="order_num" value="{if $cat.order_num}{$cat.order_num}{else}0{/if}"></td>
+	  <td><input type="text" name="listorder" value="{if $cat.listorder}{$cat.listorder}{else}0{/if}"></td>
     </tr>
     <tr>
       <td colspan="2" align="center">
-        <input type="hidden" value="{$cat.id}" name="id" />
+        <input type="hidden" value="{$catid}" name="catid" />
       	<input type="hidden" value="{$action}" name="action" />
       	<input type="hidden" value="{$now_page}" name="now_page" />
       	<input type="submit" value="添加">

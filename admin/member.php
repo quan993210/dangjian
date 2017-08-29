@@ -70,15 +70,16 @@ function member_list()
 	switch ($search_cat)
 	{
 		case 1:
-			$con = "WHERE nickname LIKE '%{$keyword}%'";
+			$con = "WHERE nickname LIKE '%{$keyword}%' and is_delete=0";
 			break;
 		case 2:
-			$con = "WHERE name LIKE '%{$keyword}%'";
+			$con = "WHERE name LIKE '%{$keyword}%' and is_delete=0";
 			break;
 		case 3:
-			$con = "WHERE mobile LIKE '%{$keyword}%'";
+			$con = "WHERE mobile LIKE '%{$keyword}%' and is_delete=0";
 			break;
 		default:
+			$con = "WHERE is_delete=0";
 			$search_cat = 0;
 			$keyword = '';
 			break;
@@ -87,14 +88,14 @@ function member_list()
 	$smarty->assign('search_cat' ,   $search_cat);
 	$smarty->assign('keyword'    ,   $keyword);
 
-	$order 	 	= 'ORDER BY userid DESC status DESC';
+	$order 	 	= 'ORDER BY userid DESC';
 
 	//列表信息
 	$now_page 	= irequest('page');
 	$now_page 	= $now_page == 0 ? 1 : $now_page;
 	$page_size 	= 30;
 	$start    	= ($now_page - 1) * $page_size;
-	$sql 		= "SELECT * FROM " . PREFIX . "member {$con} {$order} LIMIT {$start}, {$page_size}";
+	$sql 		= "SELECT * FROM member {$con} {$order} LIMIT {$start},{$page_size}";
 	$arr 		= $db->get_all($sql);
 
 	$sql 		= "SELECT COUNT(userid) FROM ".PREFIX."member {$con}";
@@ -129,7 +130,7 @@ function do_add_member()
 	global $db, $smarty;
 
 	$name    	= crequest('name');
-	$mobile   = irequest('mobile');
+	$mobile   = crequest('mobile');
 	$add_time	= time();
 	$add_time_format	= now_time();
 
@@ -139,6 +140,9 @@ function do_add_member()
 
 	$sql = "INSERT INTO member (name, mobile, add_time, add_time_format) VALUES ('{$name}', '{$mobile}', '{$add_time}', '{$add_time_format}')";
 	$db->query($sql);
+	$aid  = $_SESSION['admin_id'];
+	$text = '添加用户，添加用户ID：' . $db->link_id->insert_id;
+	operate_log($aid, 'member', 1, $text);
 
 	$url_to = "member.php?action=list";
 	url_locate($url_to, '添加成功');
@@ -152,14 +156,14 @@ function mod_member()
 	global $db, $smarty;
 
 	$userid = irequest('userid');
-	$sql = "SELECT * FROM " . PREFIX . "member WHERE userid = '{$userid}'";
+	$sql = "SELECT * FROM member WHERE userid = '{$userid}'";
 	$member = $db->get_row($sql);
 	$smarty->assign('member', $member);
 	$smarty->assign('url_path', URL_PATH);
 
 	$smarty->assign('now_page', irequest('now_page'));
 	$smarty->assign('action', 'do_mod_member');
-	$smarty->assign('page_title', '修改案例');
+	$smarty->assign('page_title', '修改用户');
 	$smarty->display('member/member.htm');
 }
 
@@ -172,7 +176,7 @@ function do_mod_member()
 
 	$userid 	  	= irequest('userid');
 	$name    	= crequest('name');
-	$mobile   = irequest('mobile');
+	$mobile   = crequest('mobile');
 
 	check_null($name  	,   '用户名');
 	check_null($mobile  	,   '手机号');
@@ -180,12 +184,12 @@ function do_mod_member()
 
 	$sql = "UPDATE member SET "
 			. "name = '{$name}', "
-			. "mobile = '{$mobile}', "
+			. "mobile = '{$mobile}' "
 			. "WHERE userid = '{$userid}'";
-	$db->query($sql);
+	$a=$db->query($sql);
 
 	$aid  = $_SESSION['admin_id'];
-	$text = '修改会员，修改会员ID：' . $userid;
+	$text = '修改用户，修改用户ID：' . $userid;
 	operate_log($aid, 'member', 2, $text);
 
 	$now_page = irequest('now_page');
@@ -205,7 +209,7 @@ function del_member()
 	$db->query($sql);
 
 	$aid  = $_SESSION['admin_id'];
-	$text = '删除会员，删除会员ID：' . $userid;
+	$text = '删除用户，删除用户ID：' . $userid;
 	operate_log($aid, 'member', 3, $text);
 
 	$now_page = irequest('now_page');
@@ -221,7 +225,7 @@ function del_sel_member()
 	global $db;
 
 	$userid = crequest('checkboxes');
-	if (empty($id))alert_back('请选中需要删除的选项');
+	if (empty($userid))alert_back('请选中需要删除的选项');
 
 	$sql = "DELETE FROM member WHERE userid IN ({$userid})";
 	$db->query($sql);
