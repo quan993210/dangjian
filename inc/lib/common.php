@@ -959,3 +959,41 @@ function operate_log($aid, $type, $status, $text = '')
 	
 	return;
 }
+
+/**
+ * 产生随机字符串
+ *
+ * @param    int        $length  输出长度
+ * @param    string     $chars   可选的 ，默认为 0123456789
+ * @return   string     字符串
+ */
+function random($length, $chars = '0123456789') {
+    $hash = '';
+    $max = strlen($chars) - 1;
+    for($i = 0; $i < $length; $i++) {
+        $hash .= $chars[mt_rand(0, $max)];
+    }
+    return $hash;
+}
+
+function httpGet($url) {
+    $curl = curl_init();
+    //设置抓取的url
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+    $res = curl_exec($curl);
+    curl_close($curl);
+    return $res;
+
+
+
+
+
+
+
+}
+

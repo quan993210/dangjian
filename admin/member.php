@@ -186,7 +186,7 @@ function do_mod_member()
 			. "name = '{$name}', "
 			. "mobile = '{$mobile}' "
 			. "WHERE userid = '{$userid}'";
-	$a=$db->query($sql);
+	$db->query($sql);
 
 	$aid  = $_SESSION['admin_id'];
 	$text = '修改用户，修改用户ID：' . $userid;
