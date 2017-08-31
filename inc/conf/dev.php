@@ -2,10 +2,10 @@
 define('IN_APP', true);
 
 //数据库信息配置
-define("DB_HOST", 'localhost');
+define("DB_HOST", 'rm-uf67c488j8l36xkjmo.mysql.rds.aliyuncs.com');
 define("DB_NAME", 'dangjian');
-define("DB_USER", 'root');
-define("DB_PASS", 'root');
+define("DB_USER", 'dangjian');
+define("DB_PASS", 'j0QluaLhcIlVSeDS');
 define("PREFIX",  '');
 
 //编码配置

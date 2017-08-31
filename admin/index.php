@@ -67,10 +67,10 @@ function menu()
 	//$sub[]  = array('url' => 'product.php', 			'name' => '案例列表');
 	//$menu[] = array('name' => '案例管理', 				'sub' => $sub);
 	
-	unset($sub);
+	/*unset($sub);
 	$sub[]  = array('url' => 'ads_category.php', 		'name' => '广告分类');
 	$sub[]  = array('url' => 'ads.php', 				'name' => '广告列表');
-	$menu[] = array('name' => '广告管理', 				'sub' => $sub);
+	$menu[] = array('name' => '广告管理', 				'sub' => $sub);*/
 
 	//unset($sub);
 	//$sub[]  = array('url' => 'merchant.php', 				'name' => '商户列表');
