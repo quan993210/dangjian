@@ -5,8 +5,8 @@ define('IN_APP', true);
 define("DB_HOST", 'rm-uf67c488j8l36xkjmo.mysql.rds.aliyuncs.com');
 define("DB_NAME", 'dangjian');
 define("DB_USER", 'dangjian');
-define("DB_PASS", 'root');
-define("PREFIX",  'j0QluaLhcIlVSeDS');
+define("DB_PASS", 'j0QluaLhcIlVSeDS');
+define("PREFIX",  '');
 
 //编码配置
 define('CHAR_SET', 'utf-8');
