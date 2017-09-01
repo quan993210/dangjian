@@ -14,13 +14,13 @@ if(isset($_GET['mobile']) && !empty($_GET['mobile'])) {
     $mobile = $_GET['mobile'];
 } else {
    // exit('参数不对');
-    exit(array('status'=>0,'msg'=>'参数不对'));
+    exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
 }
 
 $sql = "SELECT * FROM member WHERE mobile=$mobile";
 $member = $db->get_row($sql);
 if(!$member){
-    exit(array('status'=>0,'msg'=>'改手机号不存在系统之中'));
+    exit(json_encode(array('status'=>0,'msg'=>'改手机号不存在系统之中')));
 }
 
 /*$posttime = strtotime(date('Y-m-d 00:00:00'));
