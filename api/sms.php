@@ -40,13 +40,13 @@ if($member['code_time'] > $posttime) {
 /*}*/
 $msg = urlencode("验证码为$code,30分钟内有效。");
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=$mobile&msg=$msg";
-$res=httpGet($url); //发送短信
+//$res=httpGet($url); //发送短信
 $res = explode(',',$res);
-print_r(json_encode($res));
+print_r($res);
 exit;
 $add_time	= time();
 $add_time_format	= now_time();
-if(!empty($res)){//如果发送成功,添加到数据库
+if($res[0]== 0 && $res[1] > 0){//如果发送成功,添加到数据库
     $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 1, '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
     $sql = "UPDATE member SET code = '{$code}',code_time = '{$add_time}' WHERE mobile = '{$mobile}'";
@@ -55,11 +55,6 @@ if(!empty($res)){//如果发送成功,添加到数据库
     $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 0, '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
 }
- //$data = array('status'=>0,'msg'=>'短信发送成功');
-//echo $res ? array('status'=>0,'msg'=>'短信发送成功') : array('status'=>0,'msg'=>'短信发送成功');
-echo $res;
+echo $res ? json_encode(array('status'=>0,'msg'=>'短信发送成功')) : json_encode(array('status'=>0,'msg'=>'短信发送成功'));
 exit;
 
-
-//$a = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=【锦路智慧党建】，验证码为826727,30分钟内有效。";
-//$b = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=hello";
