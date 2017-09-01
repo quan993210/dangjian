@@ -4,54 +4,89 @@
  * User: xkq
  * Date: 2017/9/1 0001
  * Time: 21:21
- * 小程序微信登录
+ * 绑定微信用户接口
  */
 
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
 
-if(isset($_GET['code']) && !empty($_GET['code']) && isset($_GET['mobile']) && !empty($_GET['mobile'])) {
-    $mobile = addslashes(trim($_POST['mobile']));
-    $sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
-    $member = $db->get_row($sql);
-    if($member){
-        $code = $_GET['code'];
-        $access_token = getOpenId($code);
-        $userInfo = getUserInfo($access_token);
-        if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
-            $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
-            $member = $db->get_row($sql);
-            if($member && !empty($member) && isset($member['openid']) && !empty($member['openid'])){
-                $nickname    	= $userInfo['nickname'];
-                $avatar    	= $userInfo['headimgurl'];
-                $sql = "UPDATE member SET nickname = '{$nickname}',avatar = '{$headimgurl}',unionid = '{$unionid}' WHERE openid = '{$member['openid']}'";
-                $db->query($sql);
-                $sql = "SELECT * FROM member WHERE mobile=$mobile";
-                $member = $db->get_row($sql);
-                exit(json_encode(array('status'=>1,'member'=>$member)));
-            }else{
-                $nickname    	= $userInfo['nickname'];
-                $openid    	= $userInfo['openid'];
-                $avatar    	= $userInfo['headimgurl'];
-                $unionid    	= $userInfo['unionid'];
-                $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$headimgurl}' WHERE openid = '{$member['openid']}'";
-                $db->query($sql);
-                $sql = "SELECT * FROM member WHERE mobile=$mobile";
-                $member = $db->get_row($sql);
-                exit(json_encode(array('status'=>1,'member'=>$member)));
-            }
-            href_locate('#');
-        }else{
-            exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
-        }
-    }else{
-        exit(json_encode(array('status'=>0,'msg'=>'该用户不存在')));
-    }
+$action = crequest("action");
+$action = $action == '' ? 'bind_user' : $action;
 
-} else {
-    exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+switch ($action)
+{
+    case "bind_user":
+        bind_user();
+        break;
+    case "login_openid":
+        login_openid();
+        break;
 }
+
+function bind_user(){
+    global $db;
+    if(isset($_GET['code']) && !empty($_GET['code']) && isset($_GET['mobile']) && !empty($_GET['mobile'])) {
+        $mobile = addslashes(trim($_POST['mobile']));
+        $sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
+        $member = $db->get_row($sql);
+        if($member){
+            $code = $_GET['code'];
+            $access_token = getOpenId($code);
+            $userInfo = getUserInfo($access_token);
+            if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
+                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
+                $member = $db->get_row($sql);
+                if($member && !empty($member) && isset($member['openid']) && !empty($member['openid'])){
+                    $nickname    	= $userInfo['nickname'];
+                    $avatar    	= $userInfo['headimgurl'];
+                    $unionid    	= $userInfo['unionid'];
+                    $sql = "UPDATE member SET nickname = '{$nickname}',avatar = '{$avatar}',unionid = '{$unionid}' WHERE openid = '{$member['openid']}'";
+                    $db->query($sql);
+                    $sql = "SELECT * FROM member WHERE mobile=$mobile";
+                    $member = $db->get_row($sql);
+                    exit(json_encode(array('status'=>1,'member'=>$member)));
+                }else{
+                    $nickname    	= $userInfo['nickname'];
+                    $openid    	= $userInfo['openid'];
+                    $avatar    	= $userInfo['headimgurl'];
+                    $unionid    	= $userInfo['unionid'];
+                    $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE openid = '{$member['openid']}'";
+                    $db->query($sql);
+                    $sql = "SELECT * FROM member WHERE mobile=$mobile";
+                    $member = $db->get_row($sql);
+                    exit(json_encode(array('status'=>1,'member'=>$member)));
+                }
+                href_locate('#');
+            }else{
+                exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
+            }
+        }else{
+            exit(json_encode(array('status'=>0,'msg'=>'该用户不存在')));
+        }
+
+    } else {
+        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+    }
+}
+
+function login_openid(){
+    global $db;
+    if(isset($_GET['openid']) && !empty($_GET['openid'])) {
+        $openid = $_GET['openid'];
+        $sql = "SELECT * FROM member WHERE openid = '{$openid}'";
+        $member = $db->get_row($sql);
+        if($member){
+            exit(json_encode(array('status'=>1,'member'=>$member)));
+        }else{
+            exit(json_encode(array('status'=>0,'msg'=>'用户不存在')));
+        }
+
+    }else{
+        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+    }
+}
+
 
 
 /**
