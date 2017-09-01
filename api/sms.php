@@ -40,10 +40,10 @@ if($member['code_time'] > $posttime) {
 /*}*/
 $msg = "锦路智慧党建，验证码为$code,30分钟内有效。";
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=$mobile&msg=$msg";
-print_r($url);
-print_r(111);
-$url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=hello";
-print_r($url);
+//print_r($url);
+//print_r(111);
+//$url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=hello";
+//print_r($url);
 $res=httpGet($url); //发送短信
 print_r(json_encode($res));
 exit;
