@@ -31,13 +31,13 @@ if($total > 10) {
     exit('当日发送短信数量超过限制 10 条');//当日发送短信数量超过限制 5 条
 }*/
 
-$posttime = time()-600;
+$posttime = time()-1800;
 if($member['code_time'] > $posttime) {
     $code = $member['code'];
 } else {
     $code = random(6);//唯一吗，用于扩展验证
 }
-$msg = "验证码为".$code."，10分钟内有效，请在页面中输入以完成验证。";
+$msg = "江西锦路科技智慧党建：本次验证码为$code,30分钟内有效，工作人员绝不会向您索取此验证码，切勿告诉他人";
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=".$mobile."&msg=".$msg;
 
 $res=httpGet($url); //发送短信

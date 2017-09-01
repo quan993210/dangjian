@@ -17,7 +17,7 @@ if(isset($_POST['mobile']) && !empty($_POST['mobile']) && isset($_POST['code']) 
     exit('参数错误');
 }
 
-$posttime = time()-600;
+$posttime = time()-1800;
 $sql = "SELECT * FROM member WHERE mobile=$mobile AND code =$code AND code_time > $posttime";
 $member = $db->get_row($sql);
 if($member){
