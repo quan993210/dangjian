@@ -13,13 +13,14 @@ if (!session_id()) session_start();
 if(isset($_GET['mobile']) && !empty($_GET['mobile'])) {
     $mobile = $_GET['mobile'];
 } else {
-    exit('参数不对');
+   // exit('参数不对');
+    exit(array('status'=>0,'msg'=>'参数不对'));
 }
 
 $sql = "SELECT * FROM member WHERE mobile=$mobile";
 $member = $db->get_row($sql);
 if(!$member){
-    exit('改手机号不存在系统之中');
+    exit(array('status'=>0,'msg'=>'改手机号不存在系统之中'));
 }
 
 /*$posttime = strtotime(date('Y-m-d 00:00:00'));
@@ -31,12 +32,12 @@ if($total > 10) {
     exit('当日发送短信数量超过限制 10 条');//当日发送短信数量超过限制 5 条
 }*/
 
-$posttime = time()-1800;
+/*$posttime = time()-1800;
 if($member['code_time'] > $posttime) {
     $code = $member['code'];
-} else {
+} else {*/
     $code = random(6);//唯一吗，用于扩展验证
-}
+/*}*/
 $msg = "江西锦路科技智慧党建：本次验证码为$code,30分钟内有效。";
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=".$mobile."&msg=".$msg;
 
@@ -52,6 +53,7 @@ if($res){//如果发送成功,添加到数据库
     $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 0, '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
 }
-//echo $res ? '短信发送成功' : "短信发送失败";
+ //$data = array('status'=>0,'msg'=>'短信发送成功');
+//echo $res ? array('status'=>0,'msg'=>'短信发送成功') : array('status'=>0,'msg'=>'短信发送成功');
 echo $res;
 exit;
