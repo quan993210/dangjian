@@ -38,8 +38,8 @@ if($member['code_time'] > $posttime) {
 } else {*/
     $code = random(6);//唯一吗，用于扩展验证
 /*}*/
-$msg = "锦路智慧党建，验证码为$code,30分钟内有效。";
-$url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=$mobile&msg=$code";
+$msg = urlencode("验证码为$code,30分钟内有效。");
+$url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=$mobile&msg=$msg";
 //print_r($url);
 //print_r(111);
 //$url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=hello";
