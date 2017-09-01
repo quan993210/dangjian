@@ -41,7 +41,7 @@ if($member['code_time'] > $posttime) {
 $msg = "验证码为$code,30分钟内有效。";
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=$mobile&msg=".urlencode($msg);
 $res=httpGet($url); //发送短信
-
+$res = explode(',',$res);
 $add_time	= time();
 $add_time_format	= now_time();
 if($res[0]== 0 && $res[1] > 0){//如果发送成功,添加到数据库
