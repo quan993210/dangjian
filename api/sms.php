@@ -52,5 +52,6 @@ if($res){//如果发送成功,添加到数据库
     $sql = "INSERT INTO log_sms (mobile,code, type, content, status, posttime, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 0, '{$posttime}','{$add_time}', '{$add_time_format}')";
     $db->query($sql);
 }
-echo $res ? '短信发送成功' : "短信发送失败";
+//echo $res ? '短信发送成功' : "短信发送失败";
+echo $res;
 exit;
