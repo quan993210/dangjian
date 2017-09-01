@@ -53,6 +53,6 @@ if($res[0]== 0 && $res[1] > 0){//如果发送成功,添加到数据库
     $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 0, '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
 }
-echo $res ? json_encode(array('status'=>0,'msg'=>'短信发送成功')) : json_encode(array('status'=>0,'msg'=>'短信发送成功'));
+echo $res ? json_encode(array('status'=>1,'msg'=>'短信发送成功')) : json_encode(array('status'=>0,'msg'=>'短信发送成功'));
 exit;
 

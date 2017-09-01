@@ -14,7 +14,8 @@ if(isset($_POST['mobile']) && !empty($_POST['mobile']) && isset($_POST['code']) 
     $mobile = addslashes(trim($_POST['mobile']));
     $code = addslashes(trim($_POST['code']));
 } else {
-    exit('参数错误');
+    //exit('参数错误')
+    exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
 }
 
 //$posttime = time()-1800;
@@ -22,10 +23,8 @@ $sql = "SELECT * FROM member WHERE mobile=$mobile AND code =$code";
 $member = $db->get_row($sql);
 if($member){
    // setcookie("mobile",$mobile);
-    echo $member;
-    exit;
+    exit(json_encode(array('status'=>1,'member'=>$member)));
 }else{
-    echo "短信验证码错误！";
-    exit;
+    exit(json_encode(array('status'=>0,'msg'=>'短信验证码错误')));
 }
 
