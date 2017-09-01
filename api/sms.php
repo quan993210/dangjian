@@ -38,13 +38,13 @@ if($member['code_time'] > $posttime) {
 } else {*/
     $code = random(6);//唯一吗，用于扩展验证
 /*}*/
-$msg = "【锦路智慧党建】，验证码为$code,30分钟内有效。";
+$msg = "锦路智慧党建，验证码为$code,30分钟内有效。";
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=$mobile&msg=$msg";
 print_r($url);
 print_r(111);
 $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=hello";
 print_r($url);
-//$res=httpGet($url); //发送短信
+$res=httpGet($url); //发送短信
 print_r(json_encode($res));
 exit;
 $add_time	= time();
@@ -62,3 +62,7 @@ if(!empty($res)){//如果发送成功,添加到数据库
 //echo $res ? array('status'=>0,'msg'=>'短信发送成功') : array('status'=>0,'msg'=>'短信发送成功');
 echo $res;
 exit;
+
+
+//$a = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=【锦路智慧党建】，验证码为826727,30分钟内有效。";
+//$b = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=18210582606&msg=hello";
