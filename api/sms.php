@@ -44,7 +44,7 @@ $url = "http://oa.jxglkf.com.cn:88/sms/sendsms.php?mobs=".$mobile."&msg=".$msg;
 $res=httpGet($url); //发送短信
 $add_time	= time();
 $add_time_format	= now_time();
-if($res){//如果发送成功,添加到数据库
+if(!empty($res)){//如果发送成功,添加到数据库
     $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 1, '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
     $sql = "UPDATE member SET code = '{$code}',code_time = '{$add_time}' WHERE mobile = '{$mobile}'";
