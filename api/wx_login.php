@@ -26,12 +26,12 @@ switch ($action)
 
 function bind_user(){
     global $db;
-    if(isset($_GET['code']) && !empty($_GET['code']) && isset($_GET['mobile']) && !empty($_GET['mobile'])) {
+    if(isset($_POST['code']) && !empty($_POST['code']) && isset($_POST['mobile']) && !empty($_POST['mobile'])) {
         $mobile = addslashes(trim($_POST['mobile']));
         $sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
         $member = $db->get_row($sql);
         if($member){
-            $code = $_GET['code'];
+            $code = $_POST['code'];
             $access_token = getOpenId($code);
             $userInfo = getUserInfo($access_token);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
@@ -72,8 +72,8 @@ function bind_user(){
 
 function login_openid(){
     global $db;
-    if(isset($_GET['openid']) && !empty($_GET['openid'])) {
-        $openid = $_GET['openid'];
+    if(isset($_POST['openid']) && !empty($_POST['openid'])) {
+        $openid = $_POST['openid'];
         $sql = "SELECT * FROM member WHERE openid = '{$openid}'";
         $member = $db->get_row($sql);
         if($member){

@@ -42,30 +42,23 @@ function mod_user_info(){
     global $db;
     if(is_array($_POST) && !empty($_POST['userid'])) {
         $userid   = $_POST['userid'];
-        $mobile   = $_POST['mobile'];
-        $name   = $_POST['name'];
-        $nickname   = $_POST['nickname'];
-        $sql = "UPDATE member SET  name = '{$name}',mobile = '{$mobile}',  nickname = '{$nickname}'WHERE userid = '{$userid}'";
-        $db->query($sql);
-        $sql = "SELECT * FROM member WHERE mobile=$mobile";
-        $member = $db->get_row($sql);
-        exit(json_encode(array('status'=>1,'member'=>$member)));
-    } else {
-        //exit('参数错误')
-        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
-    }
-}
+        $set = "";
+        if($_POST['mobile']){
+            $mobile   = $_POST['mobile'];
+            $set.= "mobile = '{$mobile}'";
+        }
+       if($_POST['name']){
+           $name   = $_POST['name'];
+           $set.= ", name = '{$name}'";
+       }
 
-function upload_avatar(){
-    global $db;
-    if(is_array($_POST) && !empty($_POST['userid'])) {
-        $userid   = $_POST['userid'];
-        $mobile   = $_POST['mobile'];
-        $name   = $_POST['name'];
-        $nickname   = $_POST['nickname'];
-        $sql = "UPDATE member SET  name = '{$name}',mobile = '{$mobile}',  nickname = '{$nickname}'WHERE userid = '{$userid}'";
+        if($_POST['nickname']){
+            $nickname   = $_POST['nickname'];
+            $set.= ", nickname = '{$nickname}'";
+        }
+        $sql = "UPDATE member SET  $set WHERE userid = '{$userid}'";
         $db->query($sql);
-        $sql = "SELECT * FROM member WHERE mobile=$mobile";
+        $sql = "SELECT * FROM member WHERE userid=$userid";
         $member = $db->get_row($sql);
         exit(json_encode(array('status'=>1,'member'=>$member)));
     } else {
