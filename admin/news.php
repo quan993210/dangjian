@@ -34,7 +34,11 @@ switch ($action)
 					  break;
 		case "upload_batch_photo":
                       upload_batch_photo();
-					  break;			  
+					  break;
+		case "checkChild":
+			checkChild();
+			break;
+
 }
 
 function get_con()
@@ -309,3 +313,19 @@ function get_news_category()
 	return $res;
 }
 
+/*------------------------------------------------------ */
+//-- 检查分类是否存在子分类
+/*------------------------------------------------------ */
+function checkChild()
+{
+	global $db;
+	$catid  = irequest('catid');
+	$sql = "SELECT catid, catname FROM news_category WHERE pid = {$catid} ORDER BY listorder";
+	$res = $db->get_all($sql);
+	if(is_array($res) && $res){
+		echo json_encode(1);
+	}else{
+		echo json_encode(0);
+	}
+	exit;
+}

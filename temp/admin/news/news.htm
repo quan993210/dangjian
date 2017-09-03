@@ -128,6 +128,19 @@ function show_pic(type)
 {literal}
 <script type="text/javascript">
 // Custom example logic
+$(document).ready(function(){
+	$('#catid').change(function(){
+		var catid = $('#catid option:selected').val();
+		$.getJSON("news.php?action=checkChild",{ catid: catid}, function(data){
+			if(data == 1){
+				alert("请选择子分类！");
+				$("#catid").val("0");
+				return;
+			}
+		});
+
+	})
+})
 
 var uploader = new plupload.Uploader({
 	runtimes : 'html5,flash,silverlight,html4',
