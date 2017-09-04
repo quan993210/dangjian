@@ -14,18 +14,10 @@ if(isset($_POST['pid']) && !empty($_POST['pid']) ) {
     $pid = intval(trim($_POST['pid']));
     $sql = "SELECT * FROM news_category WHERE pid =$pid";
     $category = $db->get_all($sql);
-    if(is_array($category) && $category){
-        exit(json_encode(array('status'=>1,'category'=>$category)));
-    }else{
-        exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
-    }
+    showapisuccess($category );
 }else{
     $pid = intval(trim($_POST['pid']));
     $sql = "SELECT * FROM news_category WHERE pid =0";
     $category = $db->get_all($sql);
-    if(is_array($category) && $category){
-        exit(json_encode(array('status'=>1,'category'=>$category)));
-    }else{
-        exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
-    }
+    showapisuccess($category );
 }

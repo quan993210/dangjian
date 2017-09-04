@@ -15,14 +15,10 @@ if(isset($_POST['mobile']) && !empty($_POST['mobile']) && isset($_POST['code']) 
     $code = addslashes(trim($_POST['code']));
     $sql = "SELECT * FROM member WHERE mobile=$mobile AND code =$code";
     $member = $db->get_row($sql);
-    if(is_array($member) && $member){
-        exit(json_encode(array('status'=>1,'member'=>$member)));
-    }else{
-        exit(json_encode(array('status'=>0,'msg'=>'短信验证码错误')));
-    }
+    showapisuccess($member);
 }else{
     //exit('参数错误')
-    exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+    showapierror('参数错误！');
 }
 
 

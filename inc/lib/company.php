@@ -393,5 +393,41 @@ $smarty->assign('link', $link);
 //$smarty->assign('member', $_SESSION['member']);
 
 
+/**
+ * 输出成功
+ * @param $data
+ * @param $msg
+ */
+function showapisuccess($data = array(),$msg = 'success') {
+
+	if (!is_array($data)){
+		$data = array();
+	}
+	$error = array(
+			'errcode' => '0',
+			'errmsg' => $msg,
+			'data' => $data
+	);
+	$json = json_encode($error);
+	echo $json;
+	exit;
+}
+
+/**
+ * 输出错误
+ * @param string $msg 提示信息
+ * @param string $errcode
+ */
+function showapierror($msg = 'error',$errcode = -1) {
+	$error = array(
+			'errcode' => $errcode,
+			'errmsg' => $msg
+	);
+	$json = json_encode($error);
+	echo $json;
+	exit;
+}
+
+
 
 

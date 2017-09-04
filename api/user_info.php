@@ -31,10 +31,9 @@ function get_user_info(){
         $mobile = addslashes(trim($_POST['mobile']));
         $sql = "SELECT * FROM member WHERE mobile=$mobile";
         $member = $db->get_row($sql);
-        exit(json_encode(array('status'=>1,'member'=>$member)));
+        showapisuccess($member);
     } else {
-        //exit('参数错误')
-        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+        showapierror('参数错误！');
     }
 }
 
@@ -60,10 +59,10 @@ function mod_user_info(){
         $db->query($sql);
         $sql = "SELECT * FROM member WHERE userid=$userid";
         $member = $db->get_row($sql);
-        exit(json_encode(array('status'=>1,'member'=>$member)));
+        showapisuccess($member);
     } else {
         //exit('参数错误')
-        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+        showapierror('参数错误！');
     }
 }
 

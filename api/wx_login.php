@@ -45,7 +45,7 @@ function bind_user(){
                     $db->query($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
                     $member = $db->get_row($sql);
-                    exit(json_encode(array('status'=>1,'member'=>$member)));
+                    showapisuccess($member);
                 }else{
                     $nickname    	= $userInfo['nickname'];
                     $openid    	= $userInfo['openid'];
@@ -55,18 +55,18 @@ function bind_user(){
                     $db->query($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
                     $member = $db->get_row($sql);
-                    exit(json_encode(array('status'=>1,'member'=>$member)));
+                    showapisuccess($member);
                 }
                 href_locate('#');
             }else{
-                exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
+                showapierror('参数错误！');
             }
         }else{
-            exit(json_encode(array('status'=>0,'msg'=>'该用户不存在')));
+            showapierror('用户不存在！');
         }
 
     } else {
-        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+        showapierror('参数错误！');
     }
 }
 
@@ -76,14 +76,10 @@ function login_openid(){
         $openid = $_POST['openid'];
         $sql = "SELECT * FROM member WHERE openid = '{$openid}'";
         $member = $db->get_row($sql);
-        if($member){
-            exit(json_encode(array('status'=>1,'member'=>$member)));
-        }else{
-            exit(json_encode(array('status'=>0,'msg'=>'用户不存在')));
-        }
+        showapisuccess($member);
 
     }else{
-        exit(json_encode(array('status'=>0,'msg'=>'参数不对')));
+        showapierror('参数错误！');
     }
 }
 

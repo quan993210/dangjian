@@ -29,13 +29,9 @@ function news_list(){
         $catid = intval(trim($_POST['catid']));
         $sql = "SELECT * FROM news WHERE catid =$catid";
         $news = $db->get_all($sql);
-        if(is_array($news) && $news){
-            exit(json_encode(array('status'=>1,'news'=>$news)));
-        }else{
-            exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
-        }
+        showapisuccess($news);
     }else{
-        exit(json_encode(array('status'=>0,'msg'=>'参数为空')));
+        showapierror('参数错误！');
     }
 }
 
@@ -45,13 +41,9 @@ function news_detail(){
         $id = intval(trim($_POST['id']));
         $sql = "SELECT * FROM news WHERE id =$id";
         $news = $db->get_row($sql);
-        if(is_array($news) && $news){
-            exit(json_encode(array('status'=>1,'news'=>$news)));
-        }else{
-            exit(json_encode(array('status'=>0,'msg'=>'参数错误')));
-        }
+        showapisuccess($news);
     }else{
-        exit(json_encode(array('status'=>0,'msg'=>'参数为空')));
+        showapierror('参数错误！');
     }
 }
 
