@@ -12,12 +12,14 @@ if (!session_id()) session_start();
 
 if(isset($_POST['pid']) && !empty($_POST['pid']) ) {
     $pid = intval(trim($_POST['pid']));
-    $sql = "SELECT * FROM news_category WHERE pid =$pid";
+    $order 	 	 = 'ORDER BY c.listorder ASC, c.catid DESC';
+    $sql = "SELECT * FROM news_category WHERE pid =$pid ORDER BY listorder ASC, catid DESC";
     $category = $db->get_all($sql);
     showapisuccess($category );
 }else{
     $pid = intval(trim($_POST['pid']));
-    $sql = "SELECT * FROM news_category WHERE pid =0";
+    $order 	 	 = 'ORDER BY c.listorder ASC, c.catid DESC';
+    $sql = "SELECT * FROM news_category WHERE pid =0 ORDER BY listorder ASC, catid DESC";
     $category = $db->get_all($sql);
     showapisuccess($category );
 }

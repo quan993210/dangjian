@@ -6,6 +6,10 @@
  * Time: 21:21
  * 绑定微信用户接口
  */
+define('APPID','wx6ce6752b26628e64');
+define('APPSECRET','4ca37043b96c71c8224e0299e92d969e');
+//AppID: wx6ce6752b26628e64
+//appSecret: 4ca37043b96c71c8224e0299e92d969e
 
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
@@ -32,8 +36,10 @@ function bind_user(){
         $member = $db->get_row($sql);
         if($member){
             $code = $_POST['code'];
-            $access_token = getOpenId($code);
-            $userInfo = getUserInfo($access_token);
+            $encryptedData = $_POST['encryptedData'];
+            $iv = $_POST['iv'];
+            $session_key = wxCode($code);
+            $userInfo = decryptData($session_key,$encryptedData,$iv);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
                 $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
                 $member = $db->get_row($sql);
@@ -57,7 +63,6 @@ function bind_user(){
                     $member = $db->get_row($sql);
                     showapisuccess($member);
                 }
-                href_locate('#');
             }else{
                 showapierror('参数错误！');
             }
@@ -84,38 +89,67 @@ function login_openid(){
 }
 
 
-
 /**
- * @explain
- * 用于获取用户openid
- **/
-function getOpenId($code){
-    $APPID = APPID;
-    $APPSECRET = APPSECRET;
-    $access_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" . $APPID . "&secret=" . $APPSECRET . "&code=" . $code . "&grant_type=authorization_code";
-    $access_token_json = https_request($access_token_url);
-    $access_token_array = json_decode($access_token_json, TRUE);
-    return $access_token_array;
+ * 微信登录对接接口
+ */
+function wxCode($code){
+
+    if (empty($code)){
+        showapierror(-1,'code缺失');
+        die;
+    }
+
+    //拼装url
+    $url = "https://api.weixin.qq.com/sns/jscode2session?appid=".APPID."&secret=".APPSECRET."&js_code=".$code."&grant_type=authorization_code ";
+
+
+    $data = https_request($url);
+
+    $result = json_decode($data,true);
+
+    if (!array_key_exists('errcode',$result)){
+        $session_key = $result['session_key'];
+
+        return $session_key;
+    }else{
+        //error log
+        return false;
+    }
+
 }
 
-
 /**
- * @explain
- * 通过code获取用户openid以及用户的微信号信息
- * @return
- * @remark
- * 获取到用户的openid之后可以判断用户是否有数据，可以直接跳过获取access_token,也可以继续获取access_token
- * access_token每日获取次数是有限制的，access_token有时间限制，可以存储到数据库7200s. 7200s后access_token失效
- **/
-function getUserInfo($access_token){
-    $APPID = APPID;
-    $APPSECRET = APPSECRET;
-    $userinfo_url = "https://api.weixin.qq.com/sns/userinfo?access_token=".$access_token['access_token'] ."&openid=" . $access_token['openid']."&lang=zh_CN";
-    $userinfo_json = https_request($userinfo_url);
-    $userinfo_array = json_decode($userinfo_json, TRUE);
-    return $userinfo_array;
-}
+ * 解密encryptedData
+ * @param $sessionKey
+ * @param $encryptedData
+ * @param $iv
+ */
+function decryptData($sessionKey,$encryptedData,$iv){
+    if (empty($sessionKey)){
+        showapierror('sessionKey缺失');
+        die;
+    }
+    if (empty($encryptedData)){
+        showapierror('encryptedData缺失');
+        die;
+    }
+    if (empty($iv)){
+        showapierror('iv缺失');
+        die;
+    }
 
+    $pc = new WXBizDataCrypt(APPID, $sessionKey);
+    $errCode = $pc->decryptData($encryptedData, $iv, $data );
+
+    if ($errCode == 0) {
+//        var_dump($data);
+        //成功
+        return json_decode($data,true);
+    } else {
+//        print($errCode . "\n");
+        return false;
+    }
+}
 
 /**
  * @explain

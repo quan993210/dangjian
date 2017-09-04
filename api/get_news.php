@@ -27,7 +27,7 @@ function news_list(){
     global $db;
     if(isset($_POST['catid']) && !empty($_POST['catid']) ) {
         $catid = intval(trim($_POST['catid']));
-        $sql = "SELECT * FROM news WHERE catid =$catid";
+        $sql = "SELECT * FROM news WHERE catid =$catid ORDER BY listorder ASC, id DESC";
         $news = $db->get_all($sql);
         showapisuccess($news);
     }else{
