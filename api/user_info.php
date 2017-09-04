@@ -22,7 +22,7 @@ switch ($action)
         mod_user_info();
         break;
     case "upload_avatar":
-        upload_batch_photo();
+        upload_avatar();
         break;
 }
 function get_user_info(){
@@ -69,9 +69,11 @@ function mod_user_info(){
 /*------------------------------------------------------ */
 //-- 批量上传相册图片
 /*------------------------------------------------------ */
-function upload_batch_photo()
+function upload_avatar()
 {
-    $upload_name = crequest('upload_name');
+    global $db;
+    $userid = irequest('userid');
+    $upload_name = crequest('avatar');
     $dir_type    = "member";
     $targetDir   = $_SERVER['DOCUMENT_ROOT'] . '/upload/' . $dir_type . '/' . date('ym') . '/';
 
@@ -156,11 +158,14 @@ function upload_batch_photo()
 
     // Return Success JSON-RPC response
     //die('{"jsonrpc" : "2.0", "result" : null, "pic_path" : "' . '/upload/photo/' . date('ym') . '/' . $fileName . '"}');
-    $session_name = $dir_type . '_' . $upload_name . '_img';
-    $_SESSION[$session_name] = $pic_path;
-    $res = array("jsonrpc" => "2.0", "result" => "", "pic_path" => $pic_path);
-    echo json_encode($res);
-    die;
+   // $session_name = $dir_type . '_' . $upload_name . '_img';
+   // $_SESSION[$session_name] = $pic_path;
+  //  $res = array("jsonrpc" => "2.0", "result" => "", "pic_path" => $pic_path);
+    $sql = "UPDATE member SET avatar = '{$pic_path}' WHERE userid = '{$userid}'";
+    $db->query($sql);
+    $sql = "SELECT * FROM member WHERE userid=$userid";
+    $member = $db->get_row($sql);
+    showapisuccess($member);
 }
 
 
