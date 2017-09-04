@@ -73,7 +73,7 @@ function upload_avatar()
 {
     global $db;
     $userid = irequest('userid');
-    $upload_name = crequest('avatar');
+    $upload_name = crequest('upload_name');
     $dir_type    = "member";
     $targetDir   = $_SERVER['DOCUMENT_ROOT'] . '/upload/' . $dir_type . '/' . date('ym') . '/';
 
