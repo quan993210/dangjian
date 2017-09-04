@@ -174,9 +174,9 @@ function do_mod_news_category()
 	$listorder = irequest('listorder');
 	check_null($catname, '内容分类名称');
 	
-	$id = irequest('id');
+	$catid = irequest('catid');
 	$update_col = "catname = '{$catname}', pid = '{$pid}', listorder = '{$listorder}'";
-	$sql = "UPDATE news_category SET {$update_col} WHERE id='{$id}'";
+	$sql = "UPDATE news_category SET {$update_col} WHERE catid='{$catid}'";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
