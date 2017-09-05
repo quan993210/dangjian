@@ -7,11 +7,11 @@
 <link href="{$admin_temp_path}/css/menu.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div class="tit">
+<!--<div class="tit">
 	<div>
     	<img src="{$admin_temp_path}/images/set.png" style="" /> 内容管理
 	</div>
-</div>
+</div>-->
 <div class="wrap">
 	{section name=loop loop=$menu}
 	<div class="{if $smarty.section.loop.index eq 0}curmenu{else}menu{/if}" onclick="show_children_menu(this);"><span>{$menu[loop].name}</span></div>

@@ -21,6 +21,9 @@ switch ($action)
     case "news_detail":
         news_detail();
         break;
+    case "view_news":
+        view_news();
+        break;
 }
 
 function news_list(){
@@ -45,6 +48,24 @@ function news_detail(){
     }else{
         showapierror('参数错误！');
     }
+}
+
+function view_news(){
+    global $db;
+    $userid = $_POST['userid'];
+    $newsid = $_POST['newsid'];
+    $last_update_timet = time();
+    $sql = "SELECT * FROM view_news WHERE userid = '{$userid}' and newsid = '{$newsid}'";
+    $view_news = $db->get_row($sql);
+    if(is_array($view_news) && $view_news){
+        $viewcunt = $view_news['viewcunt'] + 1;
+        $sql = "UPDATE view_news SET viewcunt = '{$viewcunt}',last_update_timet = '{$last_update_timet}' WHERE userid = '{$userid}' and newsid = '{$newsid}'";
+        $db->query($sql);
+    }else{
+        $sql = "INSERT INTO view_news (userid, newsid, viewcunt, last_update_timet) VALUES ('{$userid}', '{$newsid}', 1, '{$last_update_timet}')";
+        $db->query($sql);
+    }
+    showapisuccess();
 }
 
 
