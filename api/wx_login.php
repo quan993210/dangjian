@@ -102,10 +102,12 @@ function wxCode($code){
     //拼装url
     $url = "https://api.weixin.qq.com/sns/jscode2session?appid=".APPID."&secret=".APPSECRET."&js_code=".$code."&grant_type=authorization_code ";
 
-
+    print_r($url);
     $data = https_request($url);
+    print_r(1111);
 
     $result = json_decode($data,true);
+    print_r($result);
 
     if (!array_key_exists('errcode',$result)){
         $session_key = $result['session_key'];
