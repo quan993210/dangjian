@@ -29,7 +29,10 @@ switch ($action)
 					  break;
 	   	case "del_sel_news_category":
                       del_sel_news_category();
-					  break;				  					  	
+					  break;
+	case "upload_batch_photo":
+		upload_batch_photo();
+		break;
 }
 
 function get_con()
@@ -106,7 +109,7 @@ function add_news_category()
 	
 	//顶级内容分类
 	$smarty->assign('top_news_category', get_top_news_category());
-	
+
 	$page_title = '添加内容分类';
     $smarty->assign('page_title', $page_title);
 	
@@ -123,12 +126,13 @@ function do_add_news_category()
 	
 	$pid = irequest('pid');
 	$catname      = crequest('catname');
+	$logo      = crequest('logo_path');
 	$listorder = irequest('listorder');
 	$add_time	= time();
 	$add_time_format	= now_time();
 	check_null($catname, '内容分类名称');
 	
-	$sql = "INSERT INTO news_category (pid, catname, listorder, add_time, add_time_format) VALUES ('{$pid}', '{$catname}', '{$listorder}', '{$add_time}', '{$add_time_format}')";
+	$sql = "INSERT INTO news_category (pid, catname, logo,listorder, add_time, add_time_format) VALUES ('{$pid}', '{$catname}', '{$logo}', '{$listorder}', '{$add_time}', '{$add_time_format}')";
 	$db->query($sql);
 	$aid  = $_SESSION['admin_id'];
 	$text = '添加内容分类，添加内容分类ID：'.$db->link_id->insert_id;
@@ -171,16 +175,17 @@ function do_mod_news_category()
 	
     $pid = irequest('pid');
 	$catname      = crequest('catname');
+	$logo      = crequest('logo_path');
 	$listorder = irequest('listorder');
 	check_null($catname, '内容分类名称');
 	
 	$catid = irequest('catid');
-	$update_col = "catname = '{$catname}', pid = '{$pid}', listorder = '{$listorder}'";
+	$update_col = "catname = '{$catname}', pid = '{$pid}',logo = '{$logo}', listorder = '{$listorder}'";
 	$sql = "UPDATE news_category SET {$update_col} WHERE catid='{$catid}'";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '修改内容分类，修改内容分类ID：' . $id;
+	$text = '修改内容分类，修改内容分类ID：' . $catid;
 	operate_log($aid, 'news_category', 2, $text);
 
 	$now_page = irequest('now_page');
