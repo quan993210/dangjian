@@ -166,11 +166,11 @@ function add_dangfei_data($data,$dangfei){
             url_locate('dangfei.php?action=list', '第'.$key.'行信息不存在用户表中');
         }
         $userid = $member['userid'];
-        $sql = "SELECT * FROM dangfei_data WHERE name = '{$name}' and mobile = '{$mobile}' and cost = '{$cost}' and add_time = '{$add_time}'";
+        $sql = "SELECT * FROM dangfei_data WHERE name = '{$name}' and mobile = '{$mobile}' and dangfeiid = '{$dangfeiid}' and add_time = '{$add_time}'";
         $row = $db->get_row($sql);
         if(!$row){
             $sql = "INSERT INTO dangfei_data (dangfeiid, userid, name,mobile,cost,status,add_time, add_time_format) VALUES
-                      ('{$dangfeiid}','{$userid}', '{$name}','{$mobile}', '{$cost}','0', '{$add_time}', '{$add_time_format}')";
+                      ('{$dangfeiid}','{$userid}', '{$name}','{$mobile}', '{$cost}','1', '{$add_time}', '{$add_time_format}')";
             if(!$db->query($sql)){
                 url_locate('dangfei.php?action=list', '第'.$key.'行导入错误');
             }
@@ -403,7 +403,7 @@ function do_mod_dangfei_data()
     operate_log($aid, 'dangfei', 2, $text);
 
     $now_page = irequest('now_page');
-    $url_to = "dangfei.php?action=dangfei&page={$now_page}";
+    $url_to = "dangfei.php";
     url_locate($url_to, '党费详情修改成功');
 }
 

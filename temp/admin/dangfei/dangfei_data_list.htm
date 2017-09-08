@@ -75,7 +75,7 @@
 			<td>{$dangfei_data_list[loop].name}</td>
 			<td>{$dangfei_data_list[loop].cost}</td>
 			<td>{$dangfei_data_list[loop].add_time_format}</td>
-          <td>{if $dangfei_data_list[loop].status == 0}<span style="color: red">未缴纳</span>{else}已缴纳{/if}</td>
+          <td>{if $dangfei_data_list[loop].status == 1}<span style="color: red">未缴纳</span>{else}已缴纳{/if}</td>
 			<td>{$dangfei_data_list[loop].mobile}</td>
           <td>
 			  <a href="dangfei.php?action=mod_dangfei_data&id={$dangfei_data_list[loop].id}&now_page={$now_page}">修改党费</a>
