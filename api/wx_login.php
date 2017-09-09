@@ -57,7 +57,7 @@ function bind_user(){
                     $openid    	= $userInfo['openId'];
                     $avatar    	= $userInfo['avatarUrl'];
                     $unionid    	= $userInfo['unionid'];
-                    $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE openid = '{$member['openid']}'";
+                    $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE mobile = '{$mobile}'";
                     $db->query($sql);
                     print_r($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
