@@ -43,14 +43,14 @@ function bind_user(){
             if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
                 $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
                 $member = $db->get_row($sql);
-                if($member && !empty($member) && isset($member['openid']) && !empty($member['openid'])){
-                    $nickname    	= $userInfo['nickname'];
+                if($member['mobile'] = $mobile &&  $member && isset($member['openid']) && !empty($member['openid'])){
+                   /* $nickname    	= $userInfo['nickname'];
                     $avatar    	= $userInfo['headimgurl'];
                     $unionid    	= $userInfo['unionid'];
                     $sql = "UPDATE member SET nickname = '{$nickname}',avatar = '{$avatar}',unionid = '{$unionid}' WHERE openid = '{$member['openid']}'";
                     $db->query($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
-                    $member = $db->get_row($sql);
+                    $member = $db->get_row($sql);*/
                     showapisuccess($member);
                 }else{
                     $nickname    	= $userInfo['nickname'];
