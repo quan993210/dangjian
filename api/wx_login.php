@@ -40,6 +40,7 @@ function bind_user(){
             $iv = $_POST['iv'];
             $session_key = wxCode($code);
             $userInfo = decryptData($session_key,$encryptedData,$iv);
+            print_r($userInfo);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openId']) && !empty($userInfo['openId'])) {
                 $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}'";
                 $member = $db->get_row($sql);
@@ -54,7 +55,7 @@ function bind_user(){
                     showapisuccess($member);
                 }else{
                     $nickname    	= $userInfo['nickname'];
-                    $openid    	= $userInfo['openid'];
+                    $openid    	= $userInfo['openId'];
                     $avatar    	= $userInfo['headimgurl'];
                     $unionid    	= $userInfo['unionid'];
                     $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE openid = '{$member['openid']}'";
