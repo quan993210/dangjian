@@ -101,17 +101,17 @@ function wxCode($code){
     }
 
     //拼装url
-   // $url = "https://api.weixin.qq.com/sns/jscode2session?appid=".APPID."&secret=".APPSECRET."&js_code=".$code."&grant_type=authorization_code ";
+    $url = "https://api.weixin.qq.com/sns/jscode2session?appid=".APPID."&secret=".APPSECRET."&js_code=".$code."&grant_type=authorization_code ";
 
 
-    //$data = https_request($url);
+    $data = https_request($url);
 
-    //$result = json_decode($data,true);
-   $result =array(
+    $result = json_decode($data,true);
+  /* $result =array(
        'session_key' => 'eblUleSejEVvBaIVT9iKHA==',
        'expires_in' => '7200',
        'openid' => 'ooSUB0TD6ulAqWndUiiSaBV_JHw8'
-   );
+   );*/
 
 
     if (!array_key_exists('errcode',$result)){
