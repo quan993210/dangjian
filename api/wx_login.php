@@ -143,12 +143,12 @@ function decryptData($sessionKey,$encryptedData,$iv){
         showapierror('iv缺失');
         die;
     }
-    print_r(11111);
-    print_r(APPID);
+    require(ROOT_PATH . 'inc/weixin/wxBizDataCrypt.php');
+    require(ROOT_PATH . 'inc/weixin/pkcs7Encoder.php');
+    require(ROOT_PATH . 'inc/weixin/errorCode.php');
     $pc = new WXBizDataCrypt(APPID, $sessionKey);
-    print_r(11111);
     $errCode = $pc->decryptData($encryptedData, $iv, $data );
-    print_r(2222);
+ ;
 
     if ($errCode == 0) {
         var_dump($data);
