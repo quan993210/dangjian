@@ -39,6 +39,7 @@ function bind_user(){
             $encryptedData = $_POST['encryptedData'];
             $iv = $_POST['iv'];
             $session_key = wxCode($code);
+            print_r($session_key);
             $userInfo = decryptData($session_key,$encryptedData,$iv);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
                 $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
