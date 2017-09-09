@@ -39,7 +39,6 @@ function bind_user(){
             $encryptedData = $_POST['encryptedData'];
             $iv = $_POST['iv'];
             $session_key = wxCode($code);
-            print_r($session_key);
             $userInfo = decryptData($session_key,$encryptedData,$iv);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
                 $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
@@ -146,7 +145,9 @@ function decryptData($sessionKey,$encryptedData,$iv){
     }
 
     $pc = new WXBizDataCrypt(APPID, $sessionKey);
+    print_r(11111);
     $errCode = $pc->decryptData($encryptedData, $iv, $data );
+    print_r(2222);
 
     if ($errCode == 0) {
         var_dump($data);
