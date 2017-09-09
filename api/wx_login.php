@@ -54,9 +54,9 @@ function bind_user(){
                     $member = $db->get_row($sql);*/
                     showapisuccess($member);
                 }else{
-                    $nickname    	= $userInfo['nickname'];
+                    $nickname    	= $userInfo['nickName'];
                     $openid    	= $userInfo['openId'];
-                    $avatar    	= $userInfo['headimgurl'];
+                    $avatar    	= $userInfo['avatarUrl'];
                     $unionid    	= $userInfo['unionid'];
                     $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE openid = '{$member['openid']}'";
                     print_r($sql);
