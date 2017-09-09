@@ -41,8 +41,8 @@ function bind_user(){
             $session_key = wxCode($code);
             $userInfo = decryptData($session_key,$encryptedData,$iv);
             print_r( $userInfo);
-            if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
-                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
+            if ($userInfo && !empty($userInfo) && isset($userInfo['openId']) && !empty($userInfo['openId'])) {
+                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}'";
                 $member = $db->get_row($sql);
                 if($member['mobile'] = $mobile &&  $member && isset($member['openid']) && !empty($member['openid'])){
                    /* $nickname    	= $userInfo['nickname'];
