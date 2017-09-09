@@ -106,6 +106,7 @@ function wxCode($code){
     $data = https_request($url);
 
     $result = json_decode($data,true);
+    print_r($result);
 
     if (!array_key_exists('errcode',$result)){
         $session_key = $result['session_key'];
