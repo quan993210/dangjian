@@ -15,7 +15,12 @@ if(isset($_POST['mobile']) && !empty($_POST['mobile']) && isset($_POST['code']) 
     $code = addslashes(trim($_POST['code']));
     $sql = "SELECT * FROM member WHERE mobile=$mobile AND code =$code";
     $member = $db->get_row($sql);
-    showapisuccess($member);
+    if($member){
+        showapisuccess($member);
+    }else{
+        showapierror('用户不存在！');
+    }
+
 }else{
     //exit('参数错误')
     showapierror('参数错误！');
