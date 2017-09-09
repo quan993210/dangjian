@@ -23,7 +23,6 @@ class WXBizDataCrypt
 	 */
 	public function WXBizDataCrypt( $appid, $sessionKey)
 	{
-		print_r(1111);
 		$this->sessionKey = $sessionKey;
 		$this->appid = $appid;
 	}

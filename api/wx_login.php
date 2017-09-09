@@ -40,6 +40,7 @@ function bind_user(){
             $iv = $_POST['iv'];
             $session_key = wxCode($code);
             $userInfo = decryptData($session_key,$encryptedData,$iv);
+            print_r( $userInfo);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openid']) && !empty($userInfo['openid'])) {
                 $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openid']}'";
                 $member = $db->get_row($sql);
@@ -149,7 +150,7 @@ function decryptData($sessionKey,$encryptedData,$iv){
  ;
 
     if ($errCode == 0) {
-        var_dump($data);
+       // var_dump($data);
         //成功
         return json_decode($data,true);
     } else {
