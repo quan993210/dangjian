@@ -148,7 +148,7 @@ function decryptData($sessionKey,$encryptedData,$iv){
     $errCode = $pc->decryptData($encryptedData, $iv, $data );
 
     if ($errCode == 0) {
-//        var_dump($data);
+        var_dump($data);
         //成功
         return json_decode($data,true);
     } else {
