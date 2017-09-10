@@ -1,0 +1,140 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: xkq
+ * Date: 2017/9/10 0010
+ * Time: 22:27
+ * 微信支付回调
+ */
+/* 微信支付完成，回调地址url方法  xiao_notify_url() */
+define('APPID','wx6ce6752b26628e64');
+set_include_path(dirname(dirname(__FILE__)));
+include_once("inc/init.php");
+if (!session_id()) session_start();
+global $db;
+$post = post_data();    //接受POST数据XML个数
+$post_data = xml_to_array($post);   //微信支付成功，返回回调地址url的数据：XML转数组Array
+$postSign = $post_data['sign'];
+unset($post_data['sign']);
+
+/* 微信官方提醒：
+ *  商户系统对于支付结果通知的内容一定要做【签名验证】,
+ *  并校验返回的【订单金额是否与商户侧的订单金额】一致，
+ *  防止数据泄漏导致出现“假通知”，造成资金损失。
+ */
+ksort($post_data);// 对数据进行排序
+$str = ToUrlParams($post_data);//对数组数据拼接成key=value字符串
+$user_sign = strtoupper(md5($post_data));   //再次生成签名，与$postSign比较
+
+
+$sql = "SELECT * FROM  `order` WHERE ordersn='{$post_data['out_trade_no']}'";
+$orderinfo = $db->get_row($sql);
+//查询订单是否存在
+if (!$orderinfo){
+    $error['errcode'] = '100001';
+    $error['errmsg'] = '订单不存在';
+    wx_error_log($error);
+    exit();
+}
+
+if($post_data['return_code']=='SUCCESS'&&$postSign){
+    /*
+    * 首先判断，订单是否已经更新为ok，因为微信会总共发送8次回调确认
+    * 其次，订单已经为ok的，直接返回SUCCESS
+    * 最后，订单没有为ok的，更新状态为ok，返回SUCCESS
+    */
+
+    //判断交易金额是否正确
+    if (intval($post_data['cost']) != $orderinfo['cost']){
+        $error['errcode'] = '100002';
+        $error['errmsg'] = '订单金额不匹配';
+        wx_error_log($error);
+        exit();
+    }
+    //判读appid是否正确
+    if ($post_data['appid'] != APPID){
+        $error['errcode'] = '100003';
+        $error['errmsg'] = 'appid错误';
+        wx_error_log($error);
+        exit();
+    }
+
+    if($orderinfo['status']=='2'){
+        return_success();
+    }else{
+        $channel = "微信小程序支付";
+        $status = 2;
+        $ordersn = $post_data['out_trade_no'];
+        $pay_time	= time();
+        $pay_time_format	= now_time();
+        $sql = "UPDATE `order` SET channel = '{$channel}',pay_time = '{$pay_time}',pay_time_fromat = '{$pay_time_fromat}',status = '{$status}' WHERE  ordersn=$ordersn";
+        $db->query($sql);
+        return_success();
+
+    }
+}else{
+    $error['errcode'] = '100004';
+    $error['errmsg'] = $postSign['return_msg'];
+    wx_error_log($error);
+    exit();
+}
+
+
+function post_data(){
+    $receipt = $_REQUEST;
+    if($receipt==null){
+        $receipt = file_get_contents("php://input");
+        if($receipt == null){
+            $receipt = $GLOBALS['HTTP_RAW_POST_DATA'];
+        }
+    }
+    return $receipt;
+}
+
+
+/**
+ * 将xml转为array
+ * @param string $xml
+ * return array
+ */
+function xml_to_array($xml){
+    if(!$xml){
+        return false;
+    }
+    //将XML转为array
+    //禁止引用外部xml实体
+    libxml_disable_entity_loader(true);
+    $data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+    return $data;
+}
+
+/**
+ * 将参数拼接为url: key=value&key=value
+ * @param $params
+ * @return string
+ */
+function ToUrlParams( $params ){
+    $string = '';
+    if( !empty($params) ){
+        $array = array();
+        foreach( $params as $key => $value ){
+            $array[] = $key.'='.$value;
+        }
+        $string = implode("&",$array);
+    }
+    return $string;
+}
+
+/*
+ * 给微信发送确认订单金额和签名正确，SUCCESS信息 -xzz0521
+ */
+function return_success(){
+    $return['return_code'] = 'SUCCESS';
+    $return['return_msg'] = 'OK';
+    $xml_post = '<xml>
+                    <return_code>'.$return['return_code'].'</return_code>
+                    <return_msg>'.$return['return_msg'].'</return_msg>
+                    </xml>';
+    echo $xml_post;exit;
+}
+

@@ -948,15 +948,15 @@ if (!function_exists('file_put_contents'))
 function operate_log($aid, $type, $status, $text = '')
 {
 	global $db;
-	
+
 	//$aid	  = $_SESSION['admin_id'];
 	$ip 	  = real_ip();
 	$today    = date('Ymd');
 	$now_time = now_time();
-	
+
 	$sql = "INSERT INTO operate_log(aid, type, status, content, ip, today, add_time) VALUES ('{$aid}', '{$type}', '{$status}', '{$text}', '{$ip}', '{$today}', '{$now_time}')";
 	$db->query($sql);
-	
+
 	return;
 }
 
@@ -988,12 +988,30 @@ function httpGet($url) {
     $res = curl_exec($curl);
     curl_close($curl);
     return $res;
+}
 
 
+/*
+ *$type 代表栏目，分别对应左边的菜单栏，如category代表分类管理
+ *$status代表某个具体操作，对应到函数中
+ *
+*/
+function wx_error_log($error)
+{
+    global $db;
+    if(!is_array($error)){
+        $error['errcode'] = '000000';
+        $error['errmsg'] = '位置参数';
+    }
+    $errcode =  $error['errcode'];
+    $errmsg =  $error['errmsg'];
+    $ip 	  = real_ip();
+    $today    = date('Ymd');
+    $now_time = now_time();
 
+    $sql = "INSERT INTO wx_error_log(errcode, errmsg,ip, today, add_time) VALUES ('{$errcode}', '{$errmsg}', '{$ip}', '{$today}', '{$now_time}')";
+    $db->query($sql);
 
-
-
-
+    return;
 }
 
