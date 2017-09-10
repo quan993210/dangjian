@@ -59,7 +59,7 @@ function bind_user(){
                     $unionid    	= $userInfo['unionid'];
                     $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE mobile = '{$mobile}'";
                     $db->query($sql);
-                    print_r($sql);
+                    //print_r($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
                     $member = $db->get_row($sql);
                     showapisuccess($member);

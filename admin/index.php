@@ -59,6 +59,7 @@ function menu()
 	$sub[]  = array('url' => 'news_category.php', 	'name' => '内容分类');
 	$sub[]  = array('url' => 'news.php', 			'name' => '内容列表');
 	$sub[]  = array('url' => 'dangfei.php', 			'name' => '党费列表');
+	$sub[]  = array('url' => 'metting.php', 			'name' => '会议列表');
 
 	$menu[] = array('name' => '网站管理', 				'sub' => $sub);
 	
