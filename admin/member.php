@@ -136,7 +136,11 @@ function do_add_member()
 
 	check_null($name  	,   '用户名');
 	check_null($mobile  	,   '手机号');
-
+	$sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
+	$member = $db->get_row($sql);
+	if($member){
+		alert_back('系统已存在该手机号，请勿重复添加！');
+	}
 
 	$sql = "INSERT INTO member (name, mobile, add_time, add_time_format) VALUES ('{$name}', '{$mobile}', '{$add_time}', '{$add_time_format}')";
 	$db->query($sql);
