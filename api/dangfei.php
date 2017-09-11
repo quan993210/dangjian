@@ -126,7 +126,7 @@ function wx_pay($info){
     $post['spbill_create_ip'] = $spbill_create_ip;//服务器终端的ip
     $post['total_fee'] = intval($info['cost']);        //总金额 最低为一分钱 必须是整数
     $post['trade_type'] = $trade_type;
-    $sign = getSign($post);              //签名
+    $sign = MakeSign($post,$KEY);              //签名
     $post_xml = '<xml>
                <appid>'.$appid.'</appid>
                <body>'.$body.'</body>
@@ -191,6 +191,7 @@ function getSign($params) {
     print_r($stringSignTemp);
     return $sign;
 }
+//"appid=wx6ce6752b26628e64&body=党费&mch_id=1487989782&nonce_str=cd98f00b204e9800998ecf8427e&notify_url=https://dangjian.famishare.me/api/pay_notify.php&openid=ooSUB0TD6ulAqWndUiiSaBV_JHw8&out_trade_no=201709116998981&spbill_create_ip=106.6.167.52&total_fee=1&trade_type=JSAPI&key=jiangxijinlukejikaifa5803015gonga0d557c5fa9da0135684cf27e9ba5853"
 
 
 /**
