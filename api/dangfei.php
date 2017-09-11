@@ -126,17 +126,7 @@ function wx_pay($info){
     $post['spbill_create_ip'] = $spbill_create_ip;//服务器终端的ip
     $post['total_fee'] = intval($info['cost']);        //总金额 最低为一分钱 必须是整数
     $post['trade_type'] = $trade_type;
-    //$sign = MakeSign($post,$KEY);
-
-
-
-    $data['appid'] = $appid;
-    $data['mch_id'] = $mch_id;
-    $data['nonce_str'] = $nonce_str;
-    $data['notify_url'] = $notify_url;
-    $data['trade_type'] = $trade_type;
-    $sign = getSign($data);              //签名
-
+    $sign = MakeSign($post,$KEY);              //签名
     $post_xml = '<xml>
                <appid>'.$appid.'</appid>
                <body>'.$body.'</body>
@@ -155,11 +145,8 @@ function wx_pay($info){
     //统一下单接口prepay_id
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
-
-   // $array = xml2array($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
-    $postObj =xmlToObject($xml);
-    var_dump( $postObj);
-    exit;
+    print_r($xml);
+    $array = xml2array($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
 
     if($array['RETURN_CODE'] == 'SUCCESS' && $array['RESULT_CODE'] == 'SUCCESS'){
         $time = time();
@@ -184,36 +171,10 @@ function wx_pay($info){
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
         $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        print_r($array['RETURN_MSG']);
         showapierror('订单生产失败');
     }
 
 }
-
-function xmlToObject($xmlStr) {
-    if (!is_string($xmlStr) || empty($xmlStr)) {
-        return false;
-    }
-    $postObj = simplexml_load_string($xmlStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-    $postObj = json_decode(json_encode($postObj));
-    return $postObj;
-}
-
-function getSign($params) {
-    ksort($params);
-    foreach ($params as $key => $item) {
-        if (!empty($item)) {
-            $newArr[] = $key.'='.$item;
-        }
-    }
-    $stringA = implode("&", $newArr);
-    $stringSignTemp = $stringA."&key=".WX_KEY;
-
-    $stringSignTemp = MD5($stringSignTemp);
-    $sign = strtoupper($stringSignTemp);
-    return $sign;
-}
-
 
 /**
  * 生成签名, $KEY就是支付key
@@ -231,7 +192,6 @@ function MakeSign( $params,$KEY){
     $result = strtoupper($string);
     return $result;
 }
-
 /**
  * 将参数拼接为url: key=value&key=value
  * @param $params
@@ -274,6 +234,7 @@ function http_request($url,$data = null,$headers=array())
 }
 //获取xml里面数据，转换成array
 function xml2array($xml){
+    print_r(1111);
     $p = xml_parser_create();
     xml_parse_into_struct($p, $xml, $vals, $index);
     xml_parser_free($p);
@@ -284,7 +245,7 @@ function xml2array($xml){
         $value = $vals[$value[0]]['value'];
         $data[$tag] = $value;
     }
-    print_r($data);
+    var_dump($data);
     return $data;
 }
 
