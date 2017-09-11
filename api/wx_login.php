@@ -51,6 +51,7 @@ function bind_user(){
                     $db->query($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
                     $member = $db->get_row($sql);*/
+                    print_r(1111);
                     print_r($member);
                     showapisuccess($member);
                 }else{
@@ -106,15 +107,15 @@ function wxCode($code){
     $url = "https://api.weixin.qq.com/sns/jscode2session?appid=".APPID."&secret=".APPSECRET."&js_code=".$code."&grant_type=authorization_code ";
 
 
-    $data = https_request($url);
+  //  $data = https_request($url);
 
-    $result = json_decode($data,true);
+  //  $result = json_decode($data,true);
    // print_r($result);
-  /* $result =array(
+   $result =array(
        'session_key' => '8+3ilMDOpip8YBnU8kbDng==',
        'expires_in' => '7200',
        'openid' => 'ooSUB0TD6ulAqWndUiiSaBV_JHw8'
-   );*/
+   );
 
 
     if (!array_key_exists('errcode',$result)){
