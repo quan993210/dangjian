@@ -107,6 +107,7 @@ function wxCode($code){
     $data = https_request($url);
 
     $result = json_decode($data,true);
+    print_r($result);
   /* $result =array(
        'session_key' => 'eblUleSejEVvBaIVT9iKHA==',
        'expires_in' => '7200',
