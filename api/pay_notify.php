@@ -12,11 +12,11 @@ set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
 global $db;
+
 $post = post_data();    //接受POST数据XML个数
-$post_data = xml_to_array($post);   //微信支付成功，返回回调地址url的数据：XML转数组Array
+$post_data = xmlToObject($post);   //微信支付成功，返回回调地址url的数据：XML转数组Array
 $postSign = $post_data['sign'];
 unset($post_data['sign']);
-
 /* 微信官方提醒：
  *  商户系统对于支付结果通知的内容一定要做【签名验证】,
  *  并校验返回的【订单金额是否与商户侧的订单金额】一致，
@@ -25,6 +25,13 @@ unset($post_data['sign']);
 ksort($post_data);// 对数据进行排序
 $str = ToUrlParams($post_data);//对数组数据拼接成key=value字符串
 $user_sign = strtoupper(md5($post_data));   //再次生成签名，与$postSign比较
+
+if($postSign !=$user_sign){
+    $error['errcode'] = '100005';
+    $error['errmsg'] = '签名错误！';
+    wx_error_log($error);
+    exit();
+}
 
 
 $sql = "SELECT * FROM  `order` WHERE ordersn='{$post_data['out_trade_no']}'";
@@ -69,6 +76,8 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
         $pay_time_format	= now_time();
         $sql = "UPDATE `order` SET channel = '{$channel}',pay_time = '{$pay_time}',pay_time_fromat = '{$pay_time_fromat}',status = '{$status}' WHERE  ordersn=$ordersn";
         $db->query($sql);
+        $sql = "UPDATE dangfei_data SET status = '{$status}' WHERE id='{$orderinfo['dangfei_data_id']}'";
+        $db->query($sql);
         return_success();
 
     }
@@ -92,20 +101,27 @@ function post_data(){
 }
 
 
-/**
- * 将xml转为array
- * @param string $xml
- * return array
- */
-function xml_to_array($xml){
-    if(!$xml){
+//获取xml里面数据，转换成array
+function xmlToObject($xmlStr) {
+    if (!is_string($xmlStr) || empty($xmlStr)) {
         return false;
     }
-    //将XML转为array
-    //禁止引用外部xml实体
-    libxml_disable_entity_loader(true);
-    $data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
-    return $data;
+    $postObj = simplexml_load_string($xmlStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+    $postObj = json_decode(json_encode($postObj));
+    return object_to_array($postObj);
+}
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
+        }
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
+        }
+    }
+
+    return $obj;
 }
 
 /**
