@@ -140,20 +140,19 @@ function wx_pay($info){
                <trade_type>'.$trade_type.'</trade_type>
                <sign>'.$sign.'</sign>
             </xml> ';
-    print_r($post_xml);
 
     //统一下单接口prepay_id
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
-    print_r($xml);
+
     $array = xmlToObject($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
-    print_r($array);
-    if($array['RETURN_CODE'] == 'SUCCESS' && $array['RESULT_CODE'] == 'SUCCESS'){
+
+    if($array['return_code'] == 'SUCCESS'){
         $time = time();
         $tmp='';                            //临时数组用于签名
         $tmp['appId'] = $appid;
         $tmp['nonceStr'] = $nonce_str;
-        $tmp['package'] = 'prepay_id='.$array['PREPAY_ID'];
+        $tmp['package'] = 'prepay_id='.$array['prepay_id'];
         $tmp['signType'] = 'MD5';
         $tmp['timeStamp'] = "$time";
 
@@ -161,17 +160,13 @@ function wx_pay($info){
         $data['timeStamp'] = "$time";           //时间戳
         $data['nonceStr'] = $nonce_str;         //随机字符串
         $data['signType'] = 'MD5';              //签名算法，暂支持 MD5
-        $data['package'] = 'prepay_id='.$array['PREPAY_ID'];   //统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=*
+        $data['package'] = 'prepay_id='.$array['prepay_id'];   //统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=*
         $data['paySign'] = MakeSign($tmp,$KEY);       //签名,具体签名方案参见微信公众号支付帮助文档;
         $data['out_trade_no'] = $out_trade_no;
         showapisuccess($data);
 
     }else{
-        $data['state'] = 0;
-        $data['text'] = "错误";
-        $data['RETURN_CODE'] = $array['RETURN_CODE'];
-        $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        showapierror('订单生产失败');
+        showapierror($array['return_msg']);
     }
 
 }
@@ -187,7 +182,6 @@ function MakeSign( $params,$KEY){
     //签名步骤二：在string后加入KEY
     $string = $string . "&key=".$KEY;
     //签名步骤三：MD5加密
-    print_r($string);
     $string = md5($string);
     //签名步骤四：所有字符转为大写
     $result = strtoupper($string);
@@ -255,21 +249,7 @@ function object_to_array($obj) {
 
     return $obj;
 }
-/*function xml2array($xml){
-    print_r(1111);
-    $p = xml_parser_create();
-    xml_parse_into_struct($p, $xml, $vals, $index);
-    xml_parser_free($p);
-    $data = "";
-    foreach ($index as $key=>$value) {
-        if($key == 'xml' || $key == 'XML') continue;
-        $tag = $vals[$value[0]]['tag'];
-        $value = $vals[$value[0]]['value'];
-        $data[$tag] = $value;
-    }
-    var_dump($data);
-    return $data;
-}*/
+
 
 
 function getNonceStr() {
