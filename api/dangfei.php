@@ -147,10 +147,10 @@ function wx_pay($info){
     //统一下单接口prepay_id
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
+    print_r($xml);
     $array = xml2array($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
     print_r($array);
     if($array['RETURN_CODE'] == 'SUCCESS' && $array['RESULT_CODE'] == 'SUCCESS'){
-        print_r(5555);
         $time = time();
         $tmp='';                            //临时数组用于签名
         $tmp['appId'] = $appid;
@@ -174,7 +174,7 @@ function wx_pay($info){
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
         $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        showapierror('订单生产失败！',$data);
+        showapierror('订单生产失败！');
     }
 
 }
