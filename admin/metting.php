@@ -18,7 +18,10 @@ switch ($action)
     case "list":
         metting_list();
         break;
-   /* case "add_metting":
+    case "get_qrcode":
+        get_qrcode();
+        break;
+    case "add_metting":
         add_metting();
         break;
     case "do_add_metting":
@@ -39,14 +42,6 @@ switch ($action)
     case "metting_data":
         metting_data();
         break;
-    case "do_mod_metting_data":
-        do_mod_metting_data();
-        break;
-    case "mod_metting_data":
-        mod_metting_data();
-        break;*/
-
-
 }
 
 function get_con()
@@ -85,6 +80,17 @@ function metting_list()
     $sql 		= "SELECT * FROM metting {$con} {$order} LIMIT {$start}, {$page_size}";
     $arr 		= $db->get_all($sql);
 
+    include "inc/plugin/phpqrcode.php";
+    foreach($arr as $key=>$val){
+        // 没有二维码图片的时候
+        if(!is_file($_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg")){
+            $value="https://".$_SERVER['HTTP_HOST']."/api/metting.php?mettingid=".$val['id'];
+            $errorCorrectionLevel = 'L';
+            $matrixPointSize = 12;
+            QRcode::png($value,$_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg", $errorCorrectionLevel, $matrixPointSize);
+        }
+    }
+
     $sql 		= "SELECT COUNT(id) FROM metting {$con}";
     $total 		= $db->get_one($sql);
 
@@ -99,6 +105,18 @@ function metting_list()
     $smarty->assign('page_title', '会议列表');
     $smarty->display('metting/metting_list.htm');
 }
+
+
+function get_qrcode()
+{
+    global $db, $smarty;
+    $id = irequest('id');
+    $sql = "SELECT * FROM metting WHERE id = '{$id}'";
+    $metting = $db->get_row($sql);
+    $smarty->assign('metting', $metting);
+    $smarty->display('metting/image.htm');
+}
+
 
 /*------------------------------------------------------ */
 //-- 添加会议
@@ -118,91 +136,26 @@ function do_add_metting()
 {
     global $db;
     $title    = crequest('title');
-    $add_time_format	  = crequest('add_time');
-    $add_time = strtotime($add_time_format);
-    $year = date('Y',$add_time );
+    $start_time	  = crequest('start_time');
+    $sum	  = irequest('sum');
+    $add_time = time();
+    $add_time_format = now_time();
     check_null($title, 			'会议标题');
+    check_null($sum, 			'参加人数');
+    check_null($start_time, 			'开始时间');
 
-    $sql = "INSERT INTO metting (title, year, add_time, add_time_format) VALUES('{$title}','{$year}', '{$add_time}', '{$add_time_format}')";
+    $sql = "INSERT INTO metting (title,start_time, sum, add_time, add_time_format) VALUES('{$title}','{$start_time}','{$sum}', '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
     $mettingid = $db->link_id->insert_id;
     $aid  = $_SESSION['admin_id'];
     $text = '添加会议，添加会议ID：' . $mettingid;
     operate_log($aid, 'metting', 1, $text);
 
-    $sql = "SELECT * FROM metting WHERE id = '{$mettingid}'";
-    $metting = $db->get_row($sql);
-
-    //接收前台文件，
-    $filename = $_FILES['metting']['name'];
-    $tmp_name = $_FILES['metting']['tmp_name'];
-    $data = uploadFile($filename, $tmp_name);
-    add_metting_data($data,$metting);
-
     $url_to = "metting.php?action=list";
     url_locate($url_to, '添加成功');
 
 }
 
-function add_metting_data($data,$metting){
-    global $db;
-    $one = $data[0];
-    unset($data[0]);
-    $mettingid = $metting['id'];
-    $add_time = $metting['add_time'];
-    $add_time_format = $metting['add_time_format'];
-    foreach($data as $key=>$val){
-        $name = $val[0];
-        $mobile = $val[1];
-        $cost = $val[2];
-        $sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
-        $member = $db->get_row($sql);
-        if(!$member){
-            url_locate('metting.php?action=list', '第'.$key.'行信息不存在用户表中');
-        }
-        $userid = $member['userid'];
-        $sql = "SELECT * FROM metting_data WHERE name = '{$name}' and mobile = '{$mobile}' and mettingid = '{$mettingid}' and add_time = '{$add_time}'";
-        $row = $db->get_row($sql);
-        if(!$row){
-            $sql = "INSERT INTO metting_data (mettingid, userid, name,mobile,cost,status,add_time, add_time_format) VALUES
-                      ('{$mettingid}','{$userid}', '{$name}','{$mobile}', '{$cost}','1', '{$add_time}', '{$add_time_format}')";
-            if(!$db->query($sql)){
-                url_locate('metting.php?action=list', '第'.$key.'行导入错误');
-            }
-        }
-    }
-    return true;
-
-}
-
-//导入Excel文件
-function uploadFile($file,$filetempname){
-    //自己设置的上传文件存放路径
-    $filePath = ROOT_PATH.'/upload/excel/';
-    //下面的路径按照你PHPExcel的路径来修改
-
-    //注意设置时区
-    $time=date("y-m-d-H-i-s");//去当前上传的时间
-    //获取上传文件的扩展名
-    $extend=strrchr ($file,'.');
-    //上传后的文件名
-    $name=$time.$extend;
-    $uploadfile=$filePath.$name;//上传后的文件名地址
-    //move_uploaded_file() 函数将上传的文件移动到新位置。若成功，则返回 true，否则返回 false。
-    $result=move_uploaded_file($filetempname,$uploadfile);//假如上传到当前目录下
-    if($result) //如果上传文件成功，就执行导入excel操作
-    {
-        $type = 'Excel2007';//设置为Excel5代表支持2003或以下版本，Excel2007代表2007版
-        $xlsReader = PHPExcel_IOFactory::createReader($type);
-        $xlsReader->setReadDataOnly(true);
-        $xlsReader->setLoadSheetsOnly(true);
-        $Sheets = $xlsReader->load($uploadfile);
-        //开始读取上传到服务器中的Excel文件，返回一个二维数组
-        $dataArray = $Sheets->getSheet(0)->toArray();
-        return $dataArray;
-    }
-
-}
 
 /*------------------------------------------------------ */
 //-- 修改会议
@@ -220,7 +173,7 @@ function mod_metting()
     $smarty->assign('now_page', $now_page);
 
     $smarty->assign('action', 'do_mod_metting');
-    $smarty->assign('page_title', '会议导入');
+    $smarty->assign('page_title', '会议修改');
     $smarty->display('metting/metting.htm');
 }
 
@@ -231,31 +184,25 @@ function do_mod_metting()
 {
     global $db;
     $title    = crequest('title');
-    $add_time_format	  = crequest('add_time');
-    $add_time = strtotime($add_time_format);
-    $year = date('Y',$add_time );
+    $start_time	  = crequest('start_time');
+    $sum	  = irequest('sum');
+    $add_time = time();
+    $add_time_format = now_time();
     check_null($title, 			'会议标题');
+    check_null($sum, 			'参加人数');
+    check_null($start_time, 			'开始时间');
 
     $id = irequest('id');
-    $update_col = "title = '{$title}', year = '{$year}', add_time = '{$add_time}', add_time_format = '{$add_time_format}'";
+    $update_col = "title = '{$title}', sum = '{$sum}', start_time = '{$start_time}',add_time = '{$add_time}', add_time_format = '{$add_time_format}'";
     $sql = "UPDATE metting SET {$update_col} WHERE id='{$id}'";
     $db->query($sql);
     $aid  = $_SESSION['admin_id'];
     $text = '修改会议，修改会议ID：' . $id;
     operate_log($aid, 'metting', 2, $text);
 
-    $sql = "SELECT * FROM metting WHERE id = '{$id}'";
-    $metting = $db->get_row($sql);
-
-    //接收前台文件，
-    $filename = $_FILES['metting']['name'];
-    $tmp_name = $_FILES['metting']['tmp_name'];
-    $data = uploadFile($filename, $tmp_name);
-    add_metting_data($data,$metting);
-
     $now_page = irequest('now_page');
     $url_to = "metting.php?action=list&page={$now_page}";
-    url_locate($url_to, '导入成功');
+    url_locate($url_to, '修改成功');
 }
 
 /*------------------------------------------------------ */
@@ -266,9 +213,6 @@ function del_metting()
     global $db;
 
     $id  = irequest('id');
-    $sql = "SELECT cover FROM metting WHERE id = '{$id}'";
-    $row = $db->get_row($sql);
-    del_img($row['cover']);
 
     $sql = "DELETE FROM metting WHERE id = '{$id}'";
     $db->query($sql);
@@ -306,25 +250,7 @@ function del_sel_metting()
     href_locate($url_to);
 }
 
-/*------------------------------------------------------ */
-//-- 删除会议图片
-/*------------------------------------------------------ */
-function del_one_img()
-{
-    $img_name = crequest('img_name');
-    //del_img($img_name);
 
-    $id = irequest('id');
-    $now_page = irequest('now_page');
-
-    global $db;
-    $replace_img = $img_name . '|';
-    $sql = "UPDATE metting SET imgs = replace(imgs, '{$replace_img}', '') WHERE id = '{$id}'";
-    $db->query($sql);
-
-    $url_to = "metting.php?action=mod_metting&id={$id}&now_page=$now_page";
-    href_locate($url_to, '删除成功');
-}
 
 function metting_data(){
     global $db, $smarty;
@@ -360,46 +286,6 @@ function metting_data(){
     $smarty->display('metting/metting_data_list.htm');
 }
 
-/*------------------------------------------------------ */
-//-- 修改会议
-/*------------------------------------------------------ */
-function mod_metting_data()
-{
-    global $db, $smarty;
 
-    $id  = irequest('id');
-    $sql = "SELECT * FROM metting_data WHERE id = '{$id}'";
-    $row = $db->get_row($sql);
-    $smarty->assign('metting_data', $row);
-
-    $now_page = irequest('now_page');
-    $smarty->assign('now_page', $now_page);
-
-    $smarty->assign('action', 'do_mod_metting_data');
-    $smarty->assign('page_title', '会议修改');
-    $smarty->display('metting/metting_data.htm');
-}
-
-/*------------------------------------------------------ */
-//-- 修改会议
-/*------------------------------------------------------ */
-function do_mod_metting_data()
-{
-    global $db;
-    $cost    = crequest('cost');
-    check_null($cost, 			'会议');
-
-    $id = irequest('id');
-    $update_col = "cost = '{$cost}'";
-    $sql = "UPDATE metting_data SET {$update_col} WHERE id='{$id}'";
-    $db->query($sql);
-    $aid  = $_SESSION['admin_id'];
-    $text = '修改会议详情，修改会议详情ID：' . $id;
-    operate_log($aid, 'metting', 2, $text);
-
-    $now_page = irequest('now_page');
-    $url_to = "metting.php";
-    url_locate($url_to, '会议详情修改成功');
-}
 
 

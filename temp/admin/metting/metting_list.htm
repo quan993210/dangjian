@@ -72,19 +72,19 @@
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
     <tr align="center">
 	  <th width="5%"><input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" name="checkbox[]">编号</th>
-      <th width="35%">标题</td>
-      <th width="20%">会议分类</td>
-      <th width="5%">浏览次数</td>
-      <th width="15%">添加时间</td>
+		<th width="15%">二维码</td>
+      <th width="20%">标题</td>
+      <th width="20%">开始时间</td>
+      <th width="10%">参加人数</td>
       <th width="15%">操作</td>
     </tr>
 	{section name=loop loop=$metting_list}
 		<tr align="center">
 		  <td><span><input name="checkboxes[]" type="checkbox" value="{$metting_list[loop].id}" />{$metting_list[loop].id}</span></td>
-          <td class="first-cell"><span>{$metting_list[loop].title}</span></td>
-          <td>{$metting_list[loop].catname}</td>
-          <td>{$metting_list[loop].viewcout}</td>
-          <td>{$metting_list[loop].add_time_format}</td>
+			<td><a href="metting.php?action=get_qrcode&id={$metting_list[loop].id}"><img src="/upload/metting/metting-{$metting_list[loop].id}.jpg" style="width: 50px;height: 50px" /></a></td>
+			<td class="first-cell"><span>{$metting_list[loop].title}</span></td>
+          <td>{$metting_list[loop].start_time}</td>
+			<td>{$metting_list[loop].sum}</td>
 		  <td>
           	<a href="metting.php?action=mod_metting&id={$metting_list[loop].id}&now_page={$now_page}">修改</a> |
             <a href="javascript:void(0);" onclick="check_del('metting.php?action=del_metting&id={$metting_list[loop].id}&nowpage={$nowpage}');">删除</a>
