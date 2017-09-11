@@ -8,6 +8,8 @@
  */
 define('WE_NOTIFY_URL','https://dangjian.famishare.me/api/pay_notify.php');
 define('APPID','wx6ce6752b26628e64');
+define('MCH_ID','1487989782');
+define('WX_KEY','jiangxijinlukejikaifa5803015gong');
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
@@ -109,8 +111,8 @@ function wx_pay($info){
     }
     $appid =        APPID;//如果是公众号 就是公众号的appid;小程序就是小程序的appid
     $body =         $info['add_time_format'].'党费';
-    $mch_id =       '商户账号';
-    $KEY = '微信支付key';
+    $mch_id =       MCH_ID; //商户号
+    $KEY =         WX_KEY;    //微信支付key
     $nonce_str =    getNonceStr();//随机字符串
     $notify_url =   WE_NOTIFY_URL;  //支付完成回调地址url,不能带参数
     $out_trade_no =  $info['ordersn'];//商户订单号
