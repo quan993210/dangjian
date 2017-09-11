@@ -136,7 +136,7 @@ function wx_pay($info){
                <openid>'.$info['openid'].'</openid>
                <out_trade_no>'.$out_trade_no.'</out_trade_no>
                <spbill_create_ip>'.$spbill_create_ip.'</spbill_create_ip>
-               <total_fee>'.$info['cost'].'</total_fee>
+               <total_fee>'.intval($info['cost']).'</total_fee>
                <trade_type>'.$trade_type.'</trade_type>
                <sign>'.$sign.'</sign>
             </xml> ';
@@ -175,22 +175,6 @@ function wx_pay($info){
     }
 
 }
-
-function getSign($params) {
-    ksort($params);
-    foreach ($params as $key => $item) {
-        if (!empty($item)) {
-            $newArr[] = $key.'='.$item;
-        }
-    }
-    $stringA = implode("&", $newArr);
-    $stringSignTemp = $stringA."&key=".WX_KEY;
-    $stringSignTemp = MD5($stringSignTemp);
-    $sign = strtoupper($stringSignTemp);
-    return $sign;
-}
-//"appid=wx6ce6752b26628e64&body=党费&mch_id=1487989782&nonce_str=cd98f00b204e9800998ecf8427e&notify_url=https://dangjian.famishare.me/api/pay_notify.php&openid=ooSUB0TD6ulAqWndUiiSaBV_JHw8&out_trade_no=201709116998981&spbill_create_ip=106.6.167.52&total_fee=1&trade_type=JSAPI&key=jiangxijinlukejikaifa5803015gonga0d557c5fa9da0135684cf27e9ba5853"
-
 
 /**
  * 生成签名, $KEY就是支付key
