@@ -122,11 +122,24 @@ function add_dangfei()
 function do_add_dangfei()
 {
     global $db;
+    $exten = explode('.', $_FILES['dangfei']['name']);
+    if($exten[1] !='xls' && $exten[1] !='xlsx'){
+        alert_back('请按模板导入EXCEL文件');
+    }
+
     $title    = crequest('title');
     $add_time_format	  = crequest('add_time');
     $add_time = strtotime($add_time_format);
     $year = date('Y',$add_time );
     check_null($title, 			'党费标题');
+
+    $sql = "SELECT * FROM dangfei WHERE title = '{$title}' and add_time_format='{$add_time_format}'";
+    $dangfei = $db->get_row($sql);
+    if($dangfei){
+        alert_back('党费标题已存在');
+    }
+
+
 
     $sql = "INSERT INTO dangfei (title, year, add_time, add_time_format) VALUES('{$title}','{$year}', '{$add_time}', '{$add_time_format}')";
     $db->query($sql);
@@ -148,6 +161,8 @@ function do_add_dangfei()
     url_locate($url_to, '添加成功');
 
 }
+
+
 
 function add_dangfei_data($data,$dangfei){
     global $db;
@@ -235,6 +250,11 @@ function mod_dangfei()
 function do_mod_dangfei()
 {
     global $db;
+
+    $exten = explode('.', $_FILES['dangfei']['name']);
+    if($exten !='xls' || $exten !='xlsx'){
+        alert_back('请按模板导入EXCEL文件');
+    }
     $title    = crequest('title');
     $add_time_format	  = crequest('add_time');
     $add_time = strtotime($add_time_format);
