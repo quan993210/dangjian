@@ -136,7 +136,7 @@ function do_add_dangfei()
     $sql = "SELECT * FROM dangfei WHERE title = '{$title}' and add_time_format='{$add_time_format}'";
     $dangfei = $db->get_row($sql);
     if($dangfei){
-        alert_back('党费标题已存在');
+        alert_back('同时间同标题的党费已存在');
     }
 
 
