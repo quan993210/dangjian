@@ -45,7 +45,15 @@ function mod_user_info(){
         if($_POST['mobile']){
             $mobile   = $_POST['mobile'];
             $set.= "mobile = '{$mobile}'";
+
+            $sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
+            $member = $db->get_row($sql);
+            if($member['userid'] != $userid){
+                showapierror('系统已存在该手机号，请勿重复添加！');
+            }
         }
+
+
        if($_POST['name']){
            $name   = $_POST['name'];
            $set.= ", name = '{$name}'";
