@@ -185,10 +185,8 @@ function getSign($params) {
     }
     $stringA = implode("&", $newArr);
     $stringSignTemp = $stringA."&key=".WX_KEY;
-    print_r($stringSignTemp);
     $stringSignTemp = MD5($stringSignTemp);
     $sign = strtoupper($stringSignTemp);
-    print_r($stringSignTemp);
     return $sign;
 }
 //"appid=wx6ce6752b26628e64&body=党费&mch_id=1487989782&nonce_str=cd98f00b204e9800998ecf8427e&notify_url=https://dangjian.famishare.me/api/pay_notify.php&openid=ooSUB0TD6ulAqWndUiiSaBV_JHw8&out_trade_no=201709116998981&spbill_create_ip=106.6.167.52&total_fee=1&trade_type=JSAPI&key=jiangxijinlukejikaifa5803015gonga0d557c5fa9da0135684cf27e9ba5853"
@@ -205,6 +203,7 @@ function MakeSign( $params,$KEY){
     //签名步骤二：在string后加入KEY
     $string = $string . "&key=".$KEY;
     //签名步骤三：MD5加密
+    print_r($string);
     $string = md5($string);
     //签名步骤四：所有字符转为大写
     $result = strtoupper($string);
