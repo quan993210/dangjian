@@ -6,7 +6,7 @@
  * Time: 22:27
  * 微信支付回调
  */
-/* 微信支付完成，回调地址url方法  xiao_notify_url() */
+/* 微信支付完成，回调地址url方法 */
 define('APPID','wx6ce6752b26628e64');
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");

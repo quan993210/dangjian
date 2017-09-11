@@ -25,9 +25,6 @@ switch ($action)
     case "create_order":
         create_order();
         break;
-    case "pay_notify":
-        pay_notify();
-        break;
 }
 
 function my_dangfei(){
@@ -65,10 +62,13 @@ function create_order(){
         $dangfei_data_id = $_POST['dangfei_data_id'];
         $userid = $_POST['userid'];
 
-        $sql = "SELECT * FROM `order` WHERE dangfeiid='{$dangfeiid}' and dangfei_data_id='{$dangfei_data_id}' and userid='{$userid}'";
-        $info = $db->get_row($sql);
-        if(is_array($info) && $info){
-            wx_pay($info);
+        $sql = "SELECT * FROM `dangfei_data` WHERE dangfeiid='{$dangfeiid}' and id='{$dangfei_data_id}' and userid='{$userid}'";
+        $dangfei_data = $db->get_row($sql);
+        if(!$dangfei_data){
+            showapierror('支付党费信息不存在！');
+        }
+        if($dangfei_data['status'] == 2){
+            showapierror('已支付订单请勿重复=发起请求！');
         }else{
             $name = $_POST['name'];
             $cost = $_POST['cost'];
@@ -83,11 +83,8 @@ function create_order(){
             if (!$orderinfo){
                 showapierror('order_error');
             }
-
-            $sql = "SELECT * FROM `order` WHERE ordersn='{$ordersn}'";
-            $info = $db->get_row($sql);
-            $info['openid'] = $openid;
-            wx_pay($info);
+            $orderinfo['openid'] = $openid;
+            wx_pay($orderinfo);
         }
 
     }else{
