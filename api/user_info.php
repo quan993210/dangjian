@@ -162,6 +162,7 @@ function upload_avatar()
     // $session_name = $dir_type . '_' . $upload_name . '_img';
     // $_SESSION[$session_name] = $pic_path;
     //  $res = array("jsonrpc" => "2.0", "result" => "", "pic_path" => $pic_path);
+    $pic_path = "https://dangjian.famishare.me".$pic_path;
     $sql = "UPDATE member SET avatar = '{$pic_path}' WHERE userid = '{$userid}'";
     $db->query($sql);
     $sql = "SELECT * FROM member WHERE userid=$userid";

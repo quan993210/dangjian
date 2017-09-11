@@ -109,7 +109,7 @@ function wxCode($code){
     $result = json_decode($data,true);
     print_r($result);
   /* $result =array(
-       'session_key' => 'eblUleSejEVvBaIVT9iKHA==',
+       'session_key' => '8+3ilMDOpip8YBnU8kbDng==',
        'expires_in' => '7200',
        'openid' => 'ooSUB0TD6ulAqWndUiiSaBV_JHw8'
    );*/
