@@ -107,7 +107,7 @@ function wx_pay($info){
         showapierror('订单生产失败！');
     }
     $appid =        APPID;//如果是公众号 就是公众号的appid;小程序就是小程序的appid
-    $body =         $info['add_time_format'].'党费';
+    $body =         '党费';
     $mch_id =       MCH_ID; //商户号
     $KEY =         WX_KEY;    //微信支付key
     $nonce_str =    getNonceStr();//随机字符串
@@ -171,7 +171,7 @@ function wx_pay($info){
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
         $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        showapierror('订单生产失败！', $array['RETURN_MSG']);
+        showapierror('订单生产失败！');
     }
 
 }
