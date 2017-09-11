@@ -106,7 +106,6 @@ function wx_pay($info){
     if(empty($info['ordersn'])){
         showapierror('订单生产失败！');
     }
-    print_r(1111);
     $appid =        APPID;//如果是公众号 就是公众号的appid;小程序就是小程序的appid
     $body =         $info['add_time_format'].'党费';
     $mch_id =       MCH_ID; //商户号
@@ -116,7 +115,6 @@ function wx_pay($info){
     $out_trade_no =  $info['ordersn'];//商户订单号
     $spbill_create_ip =  real_ip();
     $trade_type = 'JSAPI';//交易类型 默认JSAPI
-    print_r(2222);
     //这里是按照顺序的 因为下面的签名是按照(字典序)顺序 排序错误 肯定出错
     $post['appid'] = $appid;
     $post['body'] = $body;
@@ -129,7 +127,6 @@ function wx_pay($info){
     $post['total_fee'] = intval($info['cost']);        //总金额 最低为一分钱 必须是整数
     $post['trade_type'] = $trade_type;
     $sign = MakeSign($post,$KEY);              //签名
-    print_r(3333);
     $post_xml = '<xml>
                <appid>'.$appid.'</appid>
                <body>'.$body.'</body>
@@ -143,13 +140,14 @@ function wx_pay($info){
                <trade_type>'.$trade_type.'</trade_type>
                <sign>'.$sign.'</sign>
             </xml> ';
+    print_r($post_xml);
 
     //统一下单接口prepay_id
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
-    print_r($xml);
+
     $array = xml2array($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
-    print_r($array);
+
     if($array['RETURN_CODE'] == 'SUCCESS' && $array['RESULT_CODE'] == 'SUCCESS'){
         $time = time();
         $tmp='';                            //临时数组用于签名
@@ -169,12 +167,11 @@ function wx_pay($info){
         showapisuccess($data);
 
     }else{
-        print_r(6666);
         $data['state'] = 0;
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
         $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        showapierror('订单生产失败！');
+        showapierror('订单生产失败！', $array['RETURN_MSG']);
     }
 
 }
