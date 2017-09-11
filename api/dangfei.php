@@ -185,9 +185,10 @@ function getSign($params) {
     }
     $stringA = implode("&", $newArr);
     $stringSignTemp = $stringA."&key=".WX_KEY;
-
+    print_r($stringSignTemp);
     $stringSignTemp = MD5($stringSignTemp);
     $sign = strtoupper($stringSignTemp);
+    print_r($stringSignTemp);
     return $sign;
 }
 
