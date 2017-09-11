@@ -78,6 +78,10 @@ function upload_avatar()
     $dir_type    = "member";
     $targetDir   = $_SERVER['DOCUMENT_ROOT'] . '/upload/' . $dir_type . '/' . date('ym') . '/';
 
+
+    print_r($upload_name);
+    echo "</pre>";
+    print_r($_FILES);
     $cleanupTargetDir = true; // Remove old files
     $maxFileAge = 5 * 3600; // Temp file age in seconds
 
