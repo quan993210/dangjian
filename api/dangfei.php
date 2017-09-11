@@ -146,8 +146,8 @@ function wx_pay($info){
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
     print_r($xml);
-    $array = xml2array($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
-
+    $array = xmlToObject($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
+    print_r($array);
     if($array['RETURN_CODE'] == 'SUCCESS' && $array['RESULT_CODE'] == 'SUCCESS'){
         $time = time();
         $tmp='';                            //临时数组用于签名
@@ -233,7 +233,28 @@ function http_request($url,$data = null,$headers=array())
     return $output;
 }
 //获取xml里面数据，转换成array
-function xml2array($xml){
+function xmlToObject($xmlStr) {
+    if (!is_string($xmlStr) || empty($xmlStr)) {
+        return false;
+    }
+    $postObj = simplexml_load_string($xmlStr, 'SimpleXMLElement', LIBXML_NOCDATA);
+    $postObj = json_decode(json_encode($postObj));
+    return object_to_array($postObj);
+}
+function object_to_array($obj) {
+    $obj = (array)$obj;
+    foreach ($obj as $k => $v) {
+        if (gettype($v) == 'resource') {
+            return;
+        }
+        if (gettype($v) == 'object' || gettype($v) == 'array') {
+            $obj[$k] = (array)object_to_array($v);
+        }
+    }
+
+    return $obj;
+}
+/*function xml2array($xml){
     print_r(1111);
     $p = xml_parser_create();
     xml_parse_into_struct($p, $xml, $vals, $index);
@@ -247,7 +268,7 @@ function xml2array($xml){
     }
     var_dump($data);
     return $data;
-}
+}*/
 
 
 function getNonceStr() {
