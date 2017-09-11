@@ -171,7 +171,7 @@ function wx_pay($info){
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
         $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        showapierror('订单生产失败！');
+        showapierror($array['RETURN_MSG']);
     }
 
 }
