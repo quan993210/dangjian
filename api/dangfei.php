@@ -148,8 +148,9 @@ function wx_pay($info){
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
     $array = xml2array($xml);               //将【统一下单】api返回xml数据转换成数组，全要大写
-    print_r(44444);
+    print_r($array);
     if($array['RETURN_CODE'] == 'SUCCESS' && $array['RESULT_CODE'] == 'SUCCESS'){
+        print_r(5555);
         $time = time();
         $tmp='';                            //临时数组用于签名
         $tmp['appId'] = $appid;
@@ -168,6 +169,7 @@ function wx_pay($info){
         showapisuccess($data);
 
     }else{
+        print_r(6666);
         $data['state'] = 0;
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
