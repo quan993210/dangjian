@@ -51,6 +51,7 @@ function bind_user(){
                     $db->query($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
                     $member = $db->get_row($sql);*/
+                    print_r($member);
                     showapisuccess($member);
                 }else{
                     $nickname    	= $userInfo['nickName'];
@@ -62,6 +63,7 @@ function bind_user(){
                     //print_r($sql);
                     $sql = "SELECT * FROM member WHERE mobile=$mobile";
                     $member = $db->get_row($sql);
+                    print_r($member);
                     showapisuccess($member);
                 }
             }else{
