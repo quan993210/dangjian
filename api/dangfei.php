@@ -171,7 +171,8 @@ function wx_pay($info){
         $data['text'] = "错误";
         $data['RETURN_CODE'] = $array['RETURN_CODE'];
         $data['RETURN_MSG'] = $array['RETURN_MSG'];
-        showapierror($array['RETURN_MSG']);
+        print_r($array['RETURN_MSG']);
+        showapierror('订单生产失败');
     }
 
 }
@@ -244,6 +245,7 @@ function xml2array($xml){
         $value = $vals[$value[0]]['value'];
         $data[$tag] = $value;
     }
+    print_r($data);
     return $data;
 }
 
