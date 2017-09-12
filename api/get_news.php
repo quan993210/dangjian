@@ -58,13 +58,20 @@ function view_news(){
     $sql = "SELECT * FROM view_news WHERE userid = '{$userid}' and newsid = '{$newsid}'";
     $view_news = $db->get_row($sql);
     if(is_array($view_news) && $view_news){
-        $viewcunt = $view_news['viewcunt'] + 1;
-        $sql = "UPDATE view_news SET viewcunt = '{$viewcunt}',last_update_timet = '{$last_update_timet}' WHERE userid = '{$userid}' and newsid = '{$newsid}'";
+        $viewcout = $view_news['viewcout'] + 1;
+        $sql = "UPDATE view_news SET viewcout = '{$viewcout}',last_update_timet = '{$last_update_timet}' WHERE userid = '{$userid}' and newsid = '{$newsid}'";
         $db->query($sql);
     }else{
-        $sql = "INSERT INTO view_news (userid, newsid, viewcunt, last_update_timet) VALUES ('{$userid}', '{$newsid}', 1, '{$last_update_timet}')";
+        $sql = "INSERT INTO view_news (userid, newsid, viewcout, last_update_timet) VALUES ('{$userid}', '{$newsid}', 1, '{$last_update_timet}')";
         $db->query($sql);
     }
+
+    $sql = "SELECT * FROM news WHERE id = '{$newsid}'";
+    $news = $db->get_row($sql);
+    $news_viewcout = $news['viewcout'] + 1;
+    $sql = "UPDATE news SET viewcout = '{$news_viewcout}' WHERE id = '{$newsid}'";
+    $db->query($sql);
+
     showapisuccess();
 }
 
