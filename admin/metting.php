@@ -42,6 +42,9 @@ switch ($action)
     case "metting_data":
         metting_data();
         break;
+    case "sign":
+        sign();
+        break;
 }
 
 function get_con()
@@ -89,6 +92,10 @@ function metting_list()
             $matrixPointSize = 12;
             QRcode::png($value,$_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg", $errorCorrectionLevel, $matrixPointSize);
         }
+
+        $sql 		= "SELECT COUNT(id) FROM metting_sign WHERE mettingid='{$val['id']}'";
+        $sign_sum 		= $db->get_one($sql);
+        $arr[$key]['sign_sum'] = $sign_sum;
     }
 
     $sql 		= "SELECT COUNT(id) FROM metting {$con}";
@@ -286,6 +293,49 @@ function metting_data(){
     $smarty->display('metting/metting_data_list.htm');
 }
 
+
+/*------------------------------------------------------ */
+//-- 会议列表
+/*------------------------------------------------------ */
+function sign()
+{
+    global $db, $smarty;
+    $order 	 	 = 'ORDER BY id DESC';
+    $mettingid = irequest('id');
+    $sql 		= "SELECT * FROM metting WHERE id = '{$mettingid}'";
+    $metting 		= $db->get_row($sql);
+    $start_time = strtotime($metting['start_time']);
+    //列表信息
+    $now_page 	= irequest('page');
+    $now_page 	= $now_page == 0 ? 1 : $now_page;
+    $page_size 	= 20;
+    $start    	= ($now_page - 1) * $page_size;
+    $sql 		= "SELECT * FROM metting_sign WHERE mettingid = '{$mettingid}'{$order} LIMIT {$start}, {$page_size}";
+    $arr 		= $db->get_all($sql);
+    foreach($arr as $key=>$val){
+        $sign_time = strtotime($val['sign_time']);
+        if($sign_time < $start_time){
+            $arr[$key]['status'] = "已迟到";
+        }else{
+            $arr[$key]['status'] = "未迟到";
+        }
+    }
+
+    $sql 		= "SELECT COUNT(id) FROM metting_sign WHERE mettingid = '{$mettingid}'";
+    $total 		= $db->get_one($sql);
+
+
+
+    $page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
+    $smarty->assign('metting'  ,   $metting);
+    $smarty->assign('metting_sign'  ,   $arr);
+    $smarty->assign('pageshow'  ,   $page->show(6));
+    $smarty->assign('now_page'  ,   $page->now_page);
+
+
+    $smarty->assign('page_title', '会议详情列表');
+    $smarty->display('metting/metting_sign.htm');
+}
 
 
 

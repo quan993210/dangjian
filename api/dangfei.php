@@ -100,6 +100,7 @@ function wx_pay($info){
     if(empty($info['cost'])){
         showapierror('金额有误！');
     }
+    $cost = intval($info['cost'])*100;   //微信金额以分为单位
     if(empty($info['openid'])){
         showapierror('登录失效，请重新登录(openid参数有误)！');
     }
@@ -124,7 +125,7 @@ function wx_pay($info){
     $post['openid'] = $info['openid'];
     $post['out_trade_no'] = $out_trade_no;
     $post['spbill_create_ip'] = $spbill_create_ip;//服务器终端的ip
-    $post['total_fee'] = intval($info['cost']);        //总金额 最低为一分钱 必须是整数
+    $post['total_fee'] = $cost ;        //总金额 最低为一分钱 必须是整数
     $post['trade_type'] = $trade_type;
     $sign = MakeSign($post,$KEY);              //签名
     $post_xml = '<xml>
@@ -136,7 +137,7 @@ function wx_pay($info){
                <openid>'.$info['openid'].'</openid>
                <out_trade_no>'.$out_trade_no.'</out_trade_no>
                <spbill_create_ip>'.$spbill_create_ip.'</spbill_create_ip>
-               <total_fee>'.intval($info['cost']).'</total_fee>
+               <total_fee>'.$cost .'</total_fee>
                <trade_type>'.$trade_type.'</trade_type>
                <sign>'.$sign.'</sign>
             </xml> ';

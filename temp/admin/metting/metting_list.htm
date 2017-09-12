@@ -82,9 +82,9 @@
 		<tr align="center">
 		  <td><span><input name="checkboxes[]" type="checkbox" value="{$metting_list[loop].id}" />{$metting_list[loop].id}</span></td>
 			<td><a href="metting.php?action=get_qrcode&id={$metting_list[loop].id}"><img src="/upload/metting/metting-{$metting_list[loop].id}.jpg" style="width: 50px;height: 50px" /></a></td>
-			<td class="first-cell"><span>{$metting_list[loop].title}</span></td>
+			<td class="first-cell"><a href="metting.php?action=sign&id={$metting_list[loop].id}"><span>{$metting_list[loop].title}</span></a></td>
           <td>{$metting_list[loop].start_time}</td>
-			<td>{$metting_list[loop].sum}</td>
+			<td><a href="metting.php?action=sign&id={$metting_list[loop].id}">{$metting_list[loop].sign_sum}/{$metting_list[loop].sum}</a></td>
 		  <td>
           	<a href="metting.php?action=mod_metting&id={$metting_list[loop].id}&now_page={$now_page}">修改</a> |
             <a href="javascript:void(0);" onclick="check_del('metting.php?action=del_metting&id={$metting_list[loop].id}&nowpage={$nowpage}');">删除</a>
