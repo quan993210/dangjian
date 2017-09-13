@@ -87,7 +87,7 @@ function metting_list()
     foreach($arr as $key=>$val){
         // 没有二维码图片的时候
         if(!is_file($_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg")){
-            $value="mettingid=".$val['id'];
+            $value=$val['id'];
             $errorCorrectionLevel = 'L';
             $matrixPointSize = 12;
             QRcode::png($value,$_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg", $errorCorrectionLevel, $matrixPointSize);
