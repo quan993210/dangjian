@@ -52,7 +52,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     */
 
     //判断交易金额是否正确
-    if (intval($post_data['cost']) != $orderinfo['cost']){
+    if (intval($post_data['total_fee']) != $orderinfo['cost']*100){
         $error['errcode'] = '100002';
         $error['errmsg'] = '订单金额不匹配';
         wx_error_log($error);
