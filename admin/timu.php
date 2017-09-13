@@ -1,4 +1,11 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: xkq
+ * Date: 2017/9/13 0013
+ * Time: 21:36
+ * 题目
+ */
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 require("inc/lib_common.php");
@@ -9,25 +16,25 @@ $action = $action == '' ? 'list' : $action;
 switch ($action) 
 {
 		case "list":
-                      ads_list();
+                      timu_list();
 					  break;			  
-	   	case "add_ads":
-                      add_ads();
+	   	case "add_timu":
+                      add_timu();
 					  break;
-		case "do_add_ads":
-                      do_add_ads();
+		case "do_add_timu":
+                      do_add_timu();
 					  break;
-	   	case "mod_ads":
-                      mod_ads();
+	   	case "mod_timu":
+                      mod_timu();
 					  break;
-		case "do_mod_ads":
-                      do_mod_ads();
+		case "do_mod_timu":
+                      do_mod_timu();
 					  break;
-		case "del_ads":
-                      del_ads();
+		case "del_timu":
+                      del_timu();
 					  break;
-	   	case "del_sel_ads":
-                      del_sel_ads();
+	   	case "del_sel_timu":
+                      del_sel_timu();
 					  break;				  					  	
 	   	case "del_one_img":
                       del_one_img();
@@ -61,7 +68,7 @@ function get_con()
 /*------------------------------------------------------ */
 //-- 广告列表
 /*------------------------------------------------------ */	
-function ads_list()
+function timu_list()
 {
 	global $db, $smarty;
 	
@@ -78,48 +85,48 @@ function ads_list()
 	$now_page 	= $now_page == 0 ? 1 : $now_page;	
 	$page_size 	= 20;
 	$start    	= ($now_page - 1) * $page_size;	
-	$sql 		= "SELECT f.*, c.name AS cat FROM ads AS f LEFT JOIN ads_category AS c ON f.cid = c.id {$con} {$order} LIMIT {$start}, {$page_size}";
+	$sql 		= "SELECT f.*, c.name AS cat FROM timu AS f LEFT JOIN timu_category AS c ON f.cid = c.id {$con} {$order} LIMIT {$start}, {$page_size}";
 	$arr 		= $db->get_all($sql);
 	
-	$sql 		= "SELECT COUNT(f.id) FROM ads AS f {$con}";
+	$sql 		= "SELECT COUNT(f.id) FROM timu AS f {$con}";
 	$total 		= $db->get_one($sql);
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 	
-	$smarty->assign('ads_list'  ,   $arr);
+	$smarty->assign('timu_list'  ,   $arr);
 	$smarty->assign('pageshow'  ,   $page->show(6));
 	$smarty->assign('now_page'  ,   $page->now_page);
 	
 	//表信息
-	$tbl = array('tbl' => 'ads', 'col1' => 'title', 'col2' => 'is_top');			
+	$tbl = array('tbl' => 'timu', 'col1' => 'title', 'col2' => 'is_top');			
 	$smarty->assign('tbl', $tbl);
 	
 	//广告分类
-	$smarty->assign('ads_category', get_ads_category());
+	$smarty->assign('timu_category', get_timu_category());
 	
     $smarty->assign('page_title', '广告列表');
-	$smarty->display('ad/ads_list.htm');	
+	$smarty->display('ad/timu_list.htm');	
 }
 
 /*------------------------------------------------------ */
 //-- 添加广告
 /*------------------------------------------------------ */	
-function add_ads()
+function add_timu()
 {
 	global $smarty;
 	
 	//广告分类
-	$smarty->assign('ads_category',  get_ads_category());
+	$smarty->assign('timu_category',  get_timu_category());
 	
 	$smarty->assign('type', $type);
-	$smarty->assign('action', 'do_add_ads');
+	$smarty->assign('action', 'do_add_timu');
 	$smarty->assign('page_title', '添加广告');
-	$smarty->display('ad/ads.htm');
+	$smarty->display('ad/timu.htm');
 }
 
 /*------------------------------------------------------ */
 //-- 添加广告
 /*------------------------------------------------------ */	
-function do_add_ads()
+function do_add_timu()
 {
 	global $db;
 	
@@ -134,50 +141,50 @@ function do_add_ads()
 	
 	if (!empty($pic['name']))
 	{
-		$upload_path = '/upload/ads/' . date('ym') . '/'; 
+		$upload_path = '/upload/timu/' . date('ym') . '/'; 
 		$pic_name = @upload($pic, $upload_path);
 		$pic_path = $upload_path . $pic_name;
 	}
 	
 	$now_time = now_time();
-	$sql = "INSERT INTO ads (title, cid, url, add_time, pic, order_num) VALUES ('{$title}', '{$cid}', '{$url}', '{$now_time}', '{$pic_path}', '{$order_num}')";
+	$sql = "INSERT INTO timu (title, cid, url, add_time, pic, order_num) VALUES ('{$title}', '{$cid}', '{$url}', '{$now_time}', '{$pic_path}', '{$order_num}')";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '添加广告，添加广告ID：' . $db->insert_id();
-	operate_log($aid, 'ads', 1, $text);
+	operate_log($aid, 'timu', 1, $text);
 	
-	$url_to = "ads.php?action=list&type={$parent_id}";
+	$url_to = "timu.php?action=list&type={$parent_id}";
 	url_locate($url_to, '添加成功');	
 }
 
 /*------------------------------------------------------ */
 //-- 修改广告
 /*------------------------------------------------------ */	
-function mod_ads()
+function mod_timu()
 {
 	global $db, $smarty;
 	
 	$id  = irequest('id');
-	$sql = "SELECT * FROM ads WHERE id = '{$id}'";
+	$sql = "SELECT * FROM timu WHERE id = '{$id}'";
 	$row = $db->get_row($sql);
-	$smarty->assign('ads', $row);
+	$smarty->assign('timu', $row);
 	
 	$now_page = irequest('now_page');
 	$smarty->assign('now_page', $now_page);
     
 	//广告分类
-	$smarty->assign('ads_category',  get_ads_category());
+	$smarty->assign('timu_category',  get_timu_category());
 	
-	$smarty->assign('action', 'do_mod_ads');
+	$smarty->assign('action', 'do_mod_timu');
 	$smarty->assign('page_title', '修改广告');
-	$smarty->display('ad/ads.htm');
+	$smarty->display('ad/timu.htm');
 }
 
 /*------------------------------------------------------ */
 //-- 修改广告
 /*------------------------------------------------------ */	
-function do_mod_ads()
+function do_mod_timu()
 {
 	global $db;
 	
@@ -195,7 +202,7 @@ function do_mod_ads()
 	{
 		del_img(crequest('pic_name'));
 		
-		$upload_path = '/upload/ads/' . date('ym') . '/'; 
+		$upload_path = '/upload/timu/' . date('ym') . '/'; 
 		$pic_name = @upload($pic, $upload_path);
 		$pic_path = $upload_path . $pic_name;
 	}
@@ -204,46 +211,46 @@ function do_mod_ads()
 	
 	$id = irequest('id');
 	$update_col = "title = '{$title}', cid = '{$cid}', pic = '{$pic_path}', url = '{$url}', order_num = '{$order_num}'";
-	$sql = "UPDATE ads SET {$update_col} WHERE id = '{$id}'";
+	$sql = "UPDATE timu SET {$update_col} WHERE id = '{$id}'";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '修改广告，修改广告ID：' . $id;
-	operate_log($aid, 'ads', 2, $text);
+	operate_log($aid, 'timu', 2, $text);
 	
 	$now_page = irequest('now_page');
-	$url_to = "ads.php?action=list&page={$now_page}";
+	$url_to = "timu.php?action=list&page={$now_page}";
 	url_locate($url_to, '修改成功');	
 }
 
 /*------------------------------------------------------ */
 //-- 删除广告
 /*------------------------------------------------------ */	
-function del_ads()
+function del_timu()
 {
 	global $db;
 	
 	$id  = irequest('id');
-	$sql = "SELECT pic FROM ads WHERE id = '{$id}'";
+	$sql = "SELECT pic FROM timu WHERE id = '{$id}'";
 	$row = $db->get_row($sql);
 	del_img($row['pic']);
 	
-	$sql = "DELETE FROM ads WHERE id = '{$id}'";
+	$sql = "DELETE FROM timu WHERE id = '{$id}'";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '删除广告，删除广告ID：' . $id;
-	operate_log($aid, 'ads', 3, $text);
+	operate_log($aid, 'timu', 3, $text);
 	
 	$now_page = irequest('now_page');
-	$url_to = "ads.php?action=list&page={$now_page}";
+	$url_to = "timu.php?action=list&page={$now_page}";
 	href_locate($url_to);	
 }
 
 /*------------------------------------------------------ */
 //-- 批量删除广告
 /*------------------------------------------------------ */	
-function del_sel_ads()
+function del_sel_timu()
 {
 	global $db;
 	$id = crequest('checkboxes');
@@ -251,7 +258,7 @@ function del_sel_ads()
 	if ($id == '')
 		alert_back('请选中需要删除的选项');
 		
-	$sql = "SELECT pic FROM ads WHERE id IN ({$id})";
+	$sql = "SELECT pic FROM timu WHERE id IN ({$id})";
 	$imgs_all = $db->get_all($sql);
 	for ($i = 0; $i < count($imgs_all); $i++)
 	{
@@ -259,15 +266,15 @@ function del_sel_ads()
 		del_img($pic);
 	}	
 	
-	$sql = "DELETE FROM ads WHERE id IN ({$id})";
+	$sql = "DELETE FROM timu WHERE id IN ({$id})";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '批量删除广告，批量删除广告ID：' . $id;
-	operate_log($aid, 'ads', 4, $text);
+	operate_log($aid, 'timu', 4, $text);
 	
 	$now_page = irequest('now_page');
-	$url_to = "ads.php?action=list&page={$now_page}";
+	$url_to = "timu.php?action=list&page={$now_page}";
 	href_locate($url_to);	
 }
 
@@ -284,21 +291,21 @@ function del_one_img()
 	
 	global $db;
 	$replace_img = $img_name . '|';
-	$sql = "UPDATE ads SET imgs = replace(imgs, '{$replace_img}', '') WHERE id = '{$id}'";
+	$sql = "UPDATE timu SET imgs = replace(imgs, '{$replace_img}', '') WHERE id = '{$id}'";
 	$db->query($sql);
 	
-	$url_to = "ads.php?action=mod_ads&id={$id}&now_page=$now_page";
+	$url_to = "timu.php?action=mod_timu&id={$id}&now_page=$now_page";
 	href_locate($url_to, '删除成功');	
 }
 
 /*------------------------------------------------------ */
 //-- 广告分类
 /*------------------------------------------------------ */
-function get_ads_category()
+function get_timu_category()
 {
 	global $db;
 	
-	$sql = "SELECT id, name FROM ads_category ORDER BY order_num";
+	$sql = "SELECT id, name FROM timu_category ORDER BY order_num";
 	$res = $db->get_all($sql);
 	
 	return $res;

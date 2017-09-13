@@ -61,6 +61,7 @@ function menu()
 	$sub[]  = array('url' => 'dangfei.php', 			'name' => '党费列表');
 	$sub[]  = array('url' => 'metting.php', 			'name' => '会议列表');
 
+
 	$menu[] = array('name' => '网站管理', 				'sub' => $sub);
 	
 	//unset($sub);
@@ -72,10 +73,10 @@ function menu()
 	//$sub[]  = array('url' => 'product.php', 			'name' => '案例列表');
 	//$menu[] = array('name' => '案例管理', 				'sub' => $sub);
 	
-	/*unset($sub);
-	$sub[]  = array('url' => 'ads_category.php', 		'name' => '广告分类');
-	$sub[]  = array('url' => 'ads.php', 				'name' => '广告列表');
-	$menu[] = array('name' => '广告管理', 				'sub' => $sub);*/
+	unset($sub);
+	$sub[]  = array('url' => 'timu_category.php', 		'name' => '题目分类');
+	$sub[]  = array('url' => 'timu.php', 				'name' => '题目列表');
+	$menu[] = array('name' => '题目管理', 				'sub' => $sub);
 
 	//unset($sub);
 	//$sub[]  = array('url' => 'merchant.php', 				'name' => '商户列表');
