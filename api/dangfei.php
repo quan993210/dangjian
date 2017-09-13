@@ -100,7 +100,7 @@ function wx_pay($info){
     if(empty($info['cost'])){
         showapierror('金额有误！');
     }
-    $cost = intval($info['cost'])*100;   //微信金额以分为单位
+    $cost = intval($info['cost']*100);   //微信金额以分为单位
     if(empty($info['openid'])){
         showapierror('登录失效，请重新登录(openid参数有误)！');
     }
