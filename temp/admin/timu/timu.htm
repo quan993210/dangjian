@@ -11,24 +11,18 @@
 <script src="{$url_path}/js/editor/lang/zh_CN.js" charset="utf-8"></script>
 {literal}
 <script language="javascript">
-function add_img()
-{
-	var img_count = parseInt($("#img_count").val());
-	var next_img = img_count + 1;
-	var img_div = '<div id="img' + next_img + '"><input type="file" name="image' + next_img + '" value=""> <a href="javascript:void(0);" onclick="del_img(' + next_img + ');">[-]</a></div>';
-	$("#imgs").append(img_div);
-	$("#img_count").val(next_img);
-}
-
-function del_img(num)
-{
-	$("#img" + num).remove();
-}
-
-function select_time()
-{
-	WdatePicker({dateFmt:'yyyy-MM-dd'})
-}
+    $(document).ready(function(){
+        $('#type').change(function(){
+            var vs = $('#type option:selected').val();
+            if(vs == 1){
+                $("#judge").css('display',"none");
+                $("#choice").css('display',"");
+            }else{
+                $("#judge").css('display',"");
+                $("#choice").css('display',"none");
+            }
+        })
+    })
 </script>
 {/literal}
 </head>
@@ -39,48 +33,97 @@ function select_time()
 <div style="clear:both"></div>
 </h1>
 <div id="tabbody-div">
-<form name="frm" action="ads.php" method="post" enctype="multipart/form-data">
+<form name="frm" action="timu.php" method="post" enctype="multipart/form-data">
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
     <tr>
-      <td class="label">广告分类：</td>
+      <td class="label">题目分类：</td>
 	  <td>
-        <select name="cid" id="cid">
-            <option value="0">选择广告分类</option>
-            {section name=loop loop=$ads_category}
-            <option value="{$ads_category[loop].id}" {if $ads.cid eq $ads_category[loop].id}selected{/if}>{$ads_category[loop].name}</option>
+        <select name="catid" id="catid">
+            <option value="0">选择题目分类</option>
+            {section name=loop loop=$timu_category}
+            <option value="{$timu_category[loop].id}" {if $timu.catid eq $timu_category[loop].id}selected{/if}>{$timu_category[loop].name}</option>
             {/section}
         </select>       
       </td>
     </tr>
 	
     <tr>
-      <td class="label">广告标题：</td>
-	  <td><input type="text" name="title" value="{$ads.title}" size="48" /></td>
+      <td class="label">题目标题：</td>
+	  <td>
+          <textarea rows="3" cols="3" name="title" placeholder="题目标题" style="width: 400px">{$timu.title}</textarea>
+      </td>
     </tr>
     <tr>
-      <td class="label">广告链接：</td>
-	  <td><input type="text" name="url" value="{$ads.url}" size="48" /></td>
-    </tr>
-    <tr>
-      <td class="label">广告图片：</td>
-	  <td><input type="file" name="pic" value=""></td>
+      <td class="label">题目类型：</td>
+	  <td>
+          <select name="type" id="type">
+              <option value="1" {if $timu.type eq 1}selected{/if}>选择题</option>
+              <option value="2" {if $timu.type eq 2}selected{/if}>判断题</option>
+          </select>
+      </td>
     </tr>
 
-    <tr>
-      <td class="label">排序：</td>
-	  <td><input type="text" name="order_num" value="{if $ads.order_num eq ''}0{else}{$ads.order_num}{/if}" size="15" /></td>
-    </tr>
+
+    <div id="choice">
+        <tr>
+            <td class="label">选项：</td>
+            <td>
+                <input type="text" name="choice[A]" value="" size="55" />
+                <input name="choice[correct]" type="radio" value="A" />
+            </td>
+        </tr>
+        <tr>
+            <td class="label">选项：</td>
+            <td>
+                <input type="text" name="choice[B]" value="" size="55" />
+                <input name="choice[correct]" type="radio" value="B" />
+            </td>
+        </tr>
+        <tr>
+            <td class="label">选项：</td>
+            <td>
+                <input type="text" name="choice[C]" value="" size="55" />
+                <input name="choice[correct]" type="radio" value="C" />
+            </td>
+        </tr>
+        <tr>
+            <td class="label">选项：</td>
+            <td>
+                <input type="text" name="choice[D]" value="" size="55" />
+                <input name="choice[correct]" type="radio" value="D" />
+            </td>
+        </tr>
+    </div>
+
+    <div id="judge" style="display: none">
+        <tr>
+            <td class="label">选项：</td>
+            <td>
+                <input type="text" name="judge[A]" value="" size="55" />
+                <input name="judge[correct]" type="radio" value="A" />
+            </td>
+        </tr>
+        <tr>
+            <td class="label">选项：</td>
+            <td>
+                <input type="text" name="judge[B]" value="" size="55" />
+                <input name="judge[correct]" type="radio" value="B" />
+            </td>
+        </tr>
+    </div>
+
     <tr>
       <td colspan="2" align="center">
       	<input type="hidden" value="{$action}" name="action" />
       	<input type="hidden" value="{$now_page}" name="now_page" />
-      	<input type="hidden" value="{$ads.id}" name="id" />
-        <input type="hidden" value="{$ads.pic}" name="pic_name" />
+      	<input type="hidden" value="{$timu.id}" name="id" />
+        <input type="hidden" value="{$timu.pic}" name="pic_name" />
       	<input type="submit" value="确定">
       </td>
     </tr>
 </table>
 </form>
 </div>
+
 </body>
 </html>
