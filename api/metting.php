@@ -62,7 +62,7 @@ function sign(){
     $sql = "SELECT * FROM member WHERE userid=$userid";
     $member = $db->get_row($sql);
     $sign_time = date('Y-m-d H:i:s',time());
-    $sql = "SELECT * FROM metting_sign WHERE userid = '{$userid}' and id = '{$mettingid}'";
+    $sql = "SELECT * FROM metting_sign WHERE userid = '{$userid}' and mettingid = '{$mettingid}'";
     $metting = $db->get_row($sql);
     if(is_array($metting) && $metting){
 
