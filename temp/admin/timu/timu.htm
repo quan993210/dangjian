@@ -62,54 +62,54 @@
                 </td>
             </tr>
         </table>
-        <div id="choice">
+        <div id="choice" {if $timu.type eq 2}style="display: none"{/if}>>
             <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
                 <tr>
                     <td class="label">选项：</td>
                     <td>
-                        <input type="text" name="choice[A]" value="" size="55" />
-                        <input name="choice[correct]" type="radio" value="A" />
+                        <input type="text" name="choice[A]" value="{$choice.A.name}" size="55" />
+                        <input name="choice[correct]" type="radio" value="A" {if $timu.correct == 'A'}checked {/if} />
                     </td>
                 </tr>
                 <tr>
                     <td class="label">选项：</td>
                     <td>
-                        <input type="text" name="choice[B]" value="" size="55" />
-                        <input name="choice[correct]" type="radio" value="B" />
+                        <input type="text" name="choice[B]" value="{$choice.B.name}" size="55" />
+                        <input name="choice[correct]" type="radio" value="B" {if $timu.correct == 'B'}checked {/if} />
                     </td>
                 </tr>
                 <tr>
                     <td class="label">选项：</td>
                     <td>
-                        <input type="text" name="choice[C]" value="" size="55" />
-                        <input name="choice[correct]" type="radio" value="C" />
+                        <input type="text" name="choice[C]" value="{$choice.C.name}" size="55" />
+                        <input name="choice[correct]" type="radio" value="C" {if $timu.correct == 'C'}checked {/if} />
                     </td>
                 </tr>
                 <tr>
                     <td class="label">选项：</td>
                     <td>
-                        <input type="text" name="choice[D]" value="" size="55" />
-                        <input name="choice[correct]" type="radio" value="D" />
+                        <input type="text" name="choice[D]" value="{$choice.D.name}" size="55" />
+                        <input name="choice[correct]" type="radio" value="D" {if $timu.correct == 'D'}checked {/if} />
                     </td>
                 </tr>
             </table>
         </div>
 
 
-        <div id="judge" style="display: none">
+        <div id="judge" {if $timu.type eq 2}style="display: "{else}style="display: none"{/if}>>
             <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
                 <tr>
                     <td class="label">选项：</td>
                     <td>
-                        <input type="text" name="judge[A]" value="" size="55" />
-                        <input name="judge[correct]" type="radio" value="A" />
+                        <input type="text" name="judge[A]" value="{$judge.A.name}" size="55" />
+                        <input name="judge[correct]" type="radio" value="A" {if $timu.correct == 'A'}checked {/if} />
                     </td>
                 </tr>
                 <tr>
                     <td class="label">选项：</td>
                     <td>
-                        <input type="text" name="judge[B]" value="" size="55" />
-                        <input name="judge[correct]" type="radio" value="B" />
+                        <input type="text" name="judge[B]" value="{$judge.B.name}" size="55" />
+                        <input name="judge[correct]" type="radio" value="B" {if $timu.correct == 'B'}checked {/if} />
                     </td>
                 </tr>
             </table>
@@ -119,8 +119,7 @@
                 <td colspan="2" align="center">
                     <input type="hidden" value="{$action}" name="action" />
                     <input type="hidden" value="{$now_page}" name="now_page" />
-                    <input type="hidden" value="{$timu.id}" name="id" />
-                    <input type="hidden" value="{$timu.pic}" name="pic_name" />
+                    <input type="hidden" value="{$timu.timuid}" name="timuid" />
                     <input type="submit" value="确定">
                 </td>
             </tr>

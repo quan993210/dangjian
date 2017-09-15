@@ -80,6 +80,7 @@
     <tr align="center">
 	  <th width="5%"><input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" name="checkbox[]">编号</th>
       <th width="15%">题目分类</td>
+		<th width="10%">题目类型</td>
       <th width="55%">题目</td>
       <th width="15%">操作</td>
     </tr>
@@ -87,10 +88,13 @@
 		<tr align="center">
 		  <td><span><input name="checkboxes[]" type="checkbox" value="{$timu_list[loop].timuid}" />{$timu_list[loop].timuid}</span></td>
           <td class="first-cell">{$timu_list[loop].catname}</td>
-          <td>
+			<td class="first-cell">{if $timu_list[loop].type eq 1}选择题{else}判断题{/if}</td>
+          <td class="first-cell">
 			  {$timu_list[loop].title}
 			  {section name=answer loop=$timu_list[loop].answer}
-			  <p>{$timu_list[loop].answer[answer].number}.{$timu_list[loop].answer[answer].name}</p>
+			  <p {if $timu_list[loop].correct == $timu_list[loop].answer[answer].number} style="color: red"{/if}>
+				  {$timu_list[loop].answer[answer].number}．{$timu_list[loop].answer[answer].name}
+			  </p>
 			  {/section}
 		  </td>
 

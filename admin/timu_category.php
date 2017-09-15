@@ -79,6 +79,12 @@ function timu_category_list()
 	$start    	= ($now_page - 1) * $page_size;	
 	$sql 		= "SELECT *  FROM timu_category {$con} {$order} LIMIT {$start}, {$page_size}";
 	$arr 		= $db->get_all($sql);
+
+	foreach($arr as $key=>$val){
+		$sql 		= "SELECT COUNT(timuid) FROM timu WHERE catid = '{$val['id']}'";
+		$sum 		= $db->get_one($sql);
+		$arr[$key]['sum'] = $sum;
+	}
 	
 	$sql 		= "SELECT COUNT(id) FROM timu_category {$con}";
 	$total 		= $db->get_one($sql);

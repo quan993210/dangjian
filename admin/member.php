@@ -44,13 +44,13 @@ function get_con()
 
 	//文章分类
 
-	$con= "";
+	$con= "WHERE is_delete = '0'";
 	//关键字
 	$keyword = crequest('keyword');
 	$smarty->assign('keyword', $keyword);
 	if (!empty($keyword))
 	{
-		$con = " WHERE (name like '%{$keyword}%' or brief like '%{$keyword}%' or captain like '%{$keyword}%')";
+		$con = " AND (name like '%{$keyword}%' or brief like '%{$keyword}%' or captain like '%{$keyword}%')";
 	}
 
 
@@ -213,7 +213,11 @@ function del_member()
 	global $db;
 
 	$userid = irequest('userid');
-	$sql = "DELETE FROM member WHERE userid = '{$userid}'";
+	/*$sql = "DELETE FROM member WHERE userid = '{$userid}'";
+	$db->query($sql);*/
+
+	$update_col = "is_delete = '1'";
+	$sql = "UPDATE member SET {$update_col} WHERE userid = '{$userid}'";
 	$db->query($sql);
 
 	$aid  = $_SESSION['admin_id'];
@@ -235,8 +239,16 @@ function del_sel_member()
 	$userid = crequest('checkboxes');
 	if (empty($userid))alert_back('请选中需要删除的选项');
 
-	$sql = "DELETE FROM member WHERE userid IN ({$userid})";
-	$db->query($sql);
+	/*$sql = "DELETE FROM member WHERE userid IN ({$userid})";
+	$db->query($sql);*/
+
+	$sql = "SELECT * FROM member WHERE userid IN ({$userid})";
+	$member_all = $db->get_all($sql);
+	$update_col = "is_delete = '1'";
+	foreach($member_all as $key=>$val){
+		$sql = "UPDATE member SET {$update_col} WHERE userid = '{$val['userid']}'";
+		$db->query($sql);
+	}
 
 	$aid  = $_SESSION['admin_id'];
 	$text = '批量删除会员，批量删除会员ID：' . $userid;

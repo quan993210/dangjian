@@ -50,13 +50,13 @@ switch ($action)
 function get_con()
 {
     global $smarty;
-    $con = "";
+    $con= "WHERE is_delete = '0'";
     //会议分类
     $keyword = crequest('keyword');
     $smarty->assign('keyword', $keyword);
     if (!empty($keyword))
     {
-        $con .=" where title = '{$keyword}' ";
+        $con .=" AND title = '{$keyword}' ";
     }
 
     return $con;
@@ -221,7 +221,10 @@ function del_metting()
 
     $id  = irequest('id');
 
-    $sql = "DELETE FROM metting WHERE id = '{$id}'";
+   /* $sql = "DELETE FROM metting WHERE id = '{$id}'";
+    $db->query($sql);*/
+    $update_col = "is_delete = '1'";
+    $sql = "UPDATE metting SET {$update_col} WHERE id = '{$id}'";
     $db->query($sql);
 
     $aid  = $_SESSION['admin_id'];
@@ -245,8 +248,15 @@ function del_sel_metting()
         alert_back('请选中需要删除的选项');
 
 
-    $sql = "DELETE FROM metting WHERE id IN ({$id})";
-    $db->query($sql);
+  /*  $sql = "DELETE FROM metting WHERE id IN ({$id})";
+    $db->query($sql);*/
+    $sql = "SELECT * FROM metting WHERE id IN ({$id})";
+    $metting_all = $db->get_all($sql);
+    $update_col = "is_delete = '1'";
+    foreach($metting_all as $key=>$val){
+        $sql = "UPDATE metting SET {$update_col} WHERE id = '{$val['id']}'";
+        $db->query($sql);
+    }
 
     $aid  = $_SESSION['admin_id'];
     $text = '批量删除会议，批量删除会议ID：' . $id;

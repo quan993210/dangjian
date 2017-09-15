@@ -228,11 +228,15 @@ function del_news()
 	global $db;
 	
 	$id  = irequest('id');
-	$sql = "SELECT cover FROM news WHERE id = '{$id}'";
+	/*$sql = "SELECT cover FROM news WHERE id = '{$id}'";
 	$row = $db->get_row($sql);
-	del_img($row['cover']);
+	del_img($row['cover']);*/
 	
-	$sql = "DELETE FROM news WHERE id = '{$id}'";
+	/*$sql = "DELETE FROM news WHERE id = '{$id}'";
+	$db->query($sql);*/
+
+	$update_col = "is_delete = '1'";
+	$sql = "UPDATE news SET {$update_col} WHERE id = '{$id}'";
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
@@ -255,16 +259,24 @@ function del_sel_news()
 	if ($id == '')
 		alert_back('请选中需要删除的选项');
 		
-	$sql = "SELECT cover FROM news WHERE id IN ({$id})";
+	/*$sql = "SELECT cover FROM news WHERE id IN ({$id})";
 	$imgs_all = $db->get_all($sql);
 	for ($i = 0; $i < count($imgs_all); $i++)
 	{
 		$cover = $imgs_all[$i]['cover'];
 		del_img($cover);
-	}	
+	}*/
+
+	$sql = "SELECT * FROM news WHERE id IN ({$id})";
+	$news_all = $db->get_all($sql);
+	$update_col = "is_delete = '1'";
+	foreach($news_all as $key=>$val){
+		$sql = "UPDATE news SET {$update_col} WHERE id = '{$val['id']}'";
+		$db->query($sql);
+	}
 	
-	$sql = "DELETE FROM news WHERE id IN ({$id})";
-	$db->query($sql);
+/*	$sql = "DELETE FROM news WHERE id IN ({$id})";
+	$db->query($sql);*/
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '批量删除内容，批量删除内容ID：' . $id;

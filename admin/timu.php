@@ -24,7 +24,7 @@ switch ($action)
 		case "do_add_timu":
                       do_add_timu();
 					  break;
-	   	/*case "mod_timu":
+	   	case "mod_timu":
                       mod_timu();
 					  break;
 		case "do_mod_timu":
@@ -35,10 +35,8 @@ switch ($action)
 					  break;
 	   	case "del_sel_timu":
                       del_sel_timu();
-					  break;				  					  	
-	   	case "del_one_img":
-                      del_one_img();
-					  break;*/
+					  break;
+
 }
 
 function get_con()
@@ -90,7 +88,7 @@ function timu_list()
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 
 	foreach($arr as $key=>$val){
-		$sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}'";
+		$sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}' ORDER BY id ASC";
 		$answer 		= $db->get_all($sql);
 		$arr[$key]['answer'] = $answer;
 	}
@@ -189,10 +187,22 @@ function mod_timu()
 {
 	global $db, $smarty;
 	
-	$id  = irequest('id');
-	$sql = "SELECT * FROM timu WHERE id = '{$id}'";
+	$timuid  = irequest('timuid');
+	$sql = "SELECT * FROM timu WHERE timuid = '{$timuid}'";
 	$row = $db->get_row($sql);
 	$smarty->assign('timu', $row);
+
+	$sql = "SELECT * FROM timu_answer WHERE timuid = '{$timuid}'";
+	$data = $db->get_all($sql);
+	foreach($data as $key=>$val){
+		$answer[$val['number']] = $val;
+	}
+	if($row['type'] == 1){
+		$smarty->assign('choice', $answer);
+	}else{
+		$smarty->assign('judge', $answer);
+	}
+
 	
 	$now_page = irequest('now_page');
 	$smarty->assign('now_page', $now_page);
@@ -211,35 +221,58 @@ function mod_timu()
 function do_mod_timu()
 {
 	global $db;
-	
 	$title    = crequest('title');
-	$cid	  = irequest('cid');
-	$url      = crequest('url');
-	$order_num= irequest('order_num');
-	
-	$pic = $_FILES['pic'];
-	if (empty($pic['name']))
-	{
-		$pic_path = crequest('pic_name');
-	}
-	else
-	{
-		del_img(crequest('pic_name'));
-		
-		$upload_path = '/upload/timu/' . date('ym') . '/'; 
-		$pic_name = @upload($pic, $upload_path);
-		$pic_path = $upload_path . $pic_name;
-	}
-	
+	$catid      = crequest('catid');
+	$type	  = irequest('type');
+	$now_time = now_time();
+
+	check_null($catid, 			'题目分类');
 	check_null($title, 			'题目标题');
-	
-	$id = irequest('id');
-	$update_col = "title = '{$title}', cid = '{$cid}', pic = '{$pic_path}', url = '{$url}', order_num = '{$order_num}'";
-	$sql = "UPDATE timu SET {$update_col} WHERE id = '{$id}'";
+	check_null($type, 			'题目类型');
+	if($type == 1){  //选择题
+		$answer = $_POST['choice'];
+		$A = $answer['A'];
+		$B = $answer['B'];
+		$C = $answer['C'];
+		$D = $answer['D'];
+		if(!$A || !$B  || !$C  ||  !$D){
+			check_null('', 			'选择题选项');
+		}
+		$correct = $answer['correct'];
+		check_null($correct, 			'选择题正确答案');
+
+
+
+	}else{
+		$answer = $_POST['judge'];
+		$A = $answer['A'];
+		$B = $answer['B'];
+		if(!$A || !$B){
+			check_null('', 			'判断题选项');
+		}
+		$correct = $answer['correct'];
+		check_null($correct, 			'判断题正确答案');
+
+	}
+
+	$timuid = irequest('timuid');
+	//修改题目表
+	$update_col = "catid = '{$catid}', title = '{$title}', type = '{$type}', correct = '{$correct}'";
+	$sql = "UPDATE timu SET {$update_col} WHERE timuid = '{$timuid}'";
 	$db->query($sql);
+
+	//修改题目时，答案做新数据，重新插入题目答案表
+	$sql = "DELETE FROM timu_answer WHERE timuid = '{$timuid}'";
+	$db->query($sql);
+	unset($answer['correct']);
+	foreach($answer as $key=>$val){
+		$sql = "INSERT INTO timu_answer (timuid,name,number,add_time_format) VALUES ('{$timuid}', '{$val}', '{$key}','{$now_time}')";
+		$db->query($sql);
+	}
+
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '修改题目，修改题目ID：' . $id;
+	$text = '修改题目，修改题目ID：' . $timuid;
 	operate_log($aid, 'timu', 2, $text);
 	
 	$now_page = irequest('now_page');
@@ -254,18 +287,15 @@ function del_timu()
 {
 	global $db;
 	
-	$id  = irequest('id');
-	$sql = "SELECT pic FROM timu WHERE id = '{$id}'";
-	$row = $db->get_row($sql);
-	del_img($row['pic']);
-	
-	$sql = "DELETE FROM timu WHERE id = '{$id}'";
+	$timuid  = irequest('timuid');
+
+	$update_col = "is_delete = '1'";
+	$sql = "UPDATE timu SET {$update_col} WHERE timuid = '{$timuid}'";
 	$db->query($sql);
-	
+
 	$aid  = $_SESSION['admin_id'];
-	$text = '删除题目，删除题目ID：' . $id;
+	$text = '删除题目，删除题目ID：' . $timuid;
 	operate_log($aid, 'timu', 3, $text);
-	
 	$now_page = irequest('now_page');
 	$url_to = "timu.php?action=list&page={$now_page}";
 	href_locate($url_to);	
@@ -282,16 +312,16 @@ function del_sel_timu()
 	if ($id == '')
 		alert_back('请选中需要删除的选项');
 		
-	$sql = "SELECT pic FROM timu WHERE id IN ({$id})";
-	$imgs_all = $db->get_all($sql);
-	for ($i = 0; $i < count($imgs_all); $i++)
-	{
-		$pic = $imgs_all[$i]['pic'];
-		del_img($pic);
-	}	
+
+	$sql = "SELECT * FROM timu WHERE timuid IN ({$id})";
+	$timu_all = $db->get_all($sql);
+	$update_col = "is_delete = '1'";
+	foreach($timu_all as $key=>$val){
+		$sql = "UPDATE timu SET {$update_col} WHERE timuid = '{$val['timuid']}'";
+		$db->query($sql);
+	}
 	
-	$sql = "DELETE FROM timu WHERE id IN ({$id})";
-	$db->query($sql);
+
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '批量删除题目，批量删除题目ID：' . $id;
@@ -302,25 +332,6 @@ function del_sel_timu()
 	href_locate($url_to);	
 }
 
-/*------------------------------------------------------ */
-//-- 删除题目图片
-/*------------------------------------------------------ */	
-function del_one_img()
-{
-	$img_name = crequest('img_name');
-	//del_img($img_name);
-	
-	$id = irequest('id');
-	$now_page = irequest('now_page');
-	
-	global $db;
-	$replace_img = $img_name . '|';
-	$sql = "UPDATE timu SET imgs = replace(imgs, '{$replace_img}', '') WHERE id = '{$id}'";
-	$db->query($sql);
-	
-	$url_to = "timu.php?action=mod_timu&id={$id}&now_page=$now_page";
-	href_locate($url_to, '删除成功');	
-}
 
 /*------------------------------------------------------ */
 //-- 题目分类
