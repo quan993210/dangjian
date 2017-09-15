@@ -36,93 +36,95 @@
 <form name="frm" action="timu.php" method="post" enctype="multipart/form-data">
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
     <tr>
-      <td class="label">题目分类：</td>
-	  <td>
-        <select name="catid" id="catid">
-            <option value="0">选择题目分类</option>
-            {section name=loop loop=$timu_category}
-            <option value="{$timu_category[loop].id}" {if $timu.catid eq $timu_category[loop].id}selected{/if}>{$timu_category[loop].name}</option>
-            {/section}
-        </select>       
-      </td>
-    </tr>
-	
-    <tr>
-      <td class="label">题目标题：</td>
-	  <td>
-          <textarea rows="3" cols="3" name="title" placeholder="题目标题" style="width: 400px">{$timu.title}</textarea>
-      </td>
+        <td class="label">题目分类：</td>
+        <td>
+            <select name="catid" id="catid">
+                <option value="0">选择题目分类</option>
+                {section name=loop loop=$timu_category}
+                <option value="{$timu_category[loop].id}" {if $timu.catid eq $timu_category[loop].id}selected{/if}>{$timu_category[loop].name}</option>
+                {/section}
+            </select>
+        </td>
     </tr>
     <tr>
-      <td class="label">题目类型：</td>
-	  <td>
-          <select name="type" id="type">
-              <option value="1" {if $timu.type eq 1}selected{/if}>选择题</option>
-              <option value="2" {if $timu.type eq 2}selected{/if}>判断题</option>
-          </select>
-      </td>
+        <td class="label">题目标题：</td>
+        <td>
+            <textarea rows="3" cols="3" name="title" placeholder="题目标题" style="width: 400px">{$timu.title}</textarea>
+        </td>
     </tr>
-
-
+    <tr>
+        <td class="label">题目类型：</td>
+        <td>
+            <select name="type" id="type">
+                <option value="1" {if $timu.type eq 1}selected{/if}>选择题</option>
+                <option value="2" {if $timu.type eq 2}selected{/if}>判断题</option>
+            </select>
+        </td>
+    </tr>
+</table>
     <div id="choice">
-        <tr>
-            <td class="label">选项：</td>
-            <td>
-                <input type="text" name="choice[A]" value="" size="55" />
-                <input name="choice[correct]" type="radio" value="A" />
-            </td>
-        </tr>
-        <tr>
-            <td class="label">选项：</td>
-            <td>
-                <input type="text" name="choice[B]" value="" size="55" />
-                <input name="choice[correct]" type="radio" value="B" />
-            </td>
-        </tr>
-        <tr>
-            <td class="label">选项：</td>
-            <td>
-                <input type="text" name="choice[C]" value="" size="55" />
-                <input name="choice[correct]" type="radio" value="C" />
-            </td>
-        </tr>
-        <tr>
-            <td class="label">选项：</td>
-            <td>
-                <input type="text" name="choice[D]" value="" size="55" />
-                <input name="choice[correct]" type="radio" value="D" />
-            </td>
-        </tr>
-    </div>
-</table>
-    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
-    <div id="judge" style="display: none">
-        <tr>
-            <td class="label">选项：</td>
-            <td>
-                <input type="text" name="judge[A]" value="" size="55" />
-                <input name="judge[correct]" type="radio" value="A" />
-            </td>
-        </tr>
-        <tr>
-            <td class="label">选项：</td>
-            <td>
-                <input type="text" name="judge[B]" value="" size="55" />
-                <input name="judge[correct]" type="radio" value="B" />
-            </td>
-        </tr>
+        <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
+            <tr>
+                <td class="label">选项：</td>
+                <td>
+                    <input type="text" name="choice[A]" value="" size="55" />
+                    <input name="choice[correct]" type="radio" value="A" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label">选项：</td>
+                <td>
+                    <input type="text" name="choice[B]" value="" size="55" />
+                    <input name="choice[correct]" type="radio" value="B" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label">选项：</td>
+                <td>
+                    <input type="text" name="choice[C]" value="" size="55" />
+                    <input name="choice[correct]" type="radio" value="C" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label">选项：</td>
+                <td>
+                    <input type="text" name="choice[D]" value="" size="55" />
+                    <input name="choice[correct]" type="radio" value="D" />
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <tr>
-      <td colspan="2" align="center">
-      	<input type="hidden" value="{$action}" name="action" />
-      	<input type="hidden" value="{$now_page}" name="now_page" />
-      	<input type="hidden" value="{$timu.id}" name="id" />
-        <input type="hidden" value="{$timu.pic}" name="pic_name" />
-      	<input type="submit" value="确定">
-      </td>
-    </tr>
-</table>
+
+    <div id="judge" style="display: none">
+        <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
+            <tr>
+                <td class="label">选项：</td>
+                <td>
+                    <input type="text" name="judge[A]" value="" size="55" />
+                    <input name="judge[correct]" type="radio" value="A" />
+                </td>
+            </tr>
+            <tr>
+                <td class="label">选项：</td>
+                <td>
+                    <input type="text" name="judge[B]" value="" size="55" />
+                    <input name="judge[correct]" type="radio" value="B" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
+        <tr>
+            <td colspan="2" align="center">
+                <input type="hidden" value="{$action}" name="action" />
+                <input type="hidden" value="{$now_page}" name="now_page" />
+                <input type="hidden" value="{$timu.id}" name="id" />
+                <input type="hidden" value="{$timu.pic}" name="pic_name" />
+                <input type="submit" value="确定">
+            </td>
+        </tr>
+    </table>
 </form>
 </div>
 
