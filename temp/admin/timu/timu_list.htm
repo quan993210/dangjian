@@ -66,7 +66,7 @@
     <select name="cid" id="cid">
        	<option value="0">选择题目分类</option>
        	{section name=loop loop=$timu_category}
-       	<option value="{$timu_category[loop].id}" {if $cid eq $timu_category[loop].catid}selected{/if}>{$timu_category[loop].name}</option>
+       	<option value="{$timu_category[loop].id}" {if $cid eq $timu_category[loop].id}selected{/if}>{$timu_category[loop].name}</option>
     	{/section}
     </select> 
     
