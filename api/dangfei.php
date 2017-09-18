@@ -183,7 +183,7 @@ function getSign($params) {
         }
     }
     $stringA = implode("&", $newArr);
-    $stringSignTemp = $stringA."&key=".$KEY;
+    $stringSignTemp = $stringA."&key=".WX_KEY;
 
     $stringSignTemp = MD5($stringSignTemp);
     $sign = strtoupper($stringSignTemp);
@@ -280,4 +280,8 @@ function getNonceStr() {
     $nonce_str = mb_substr($nonceStrTemp, 5,37);
     return $nonce_str;
 }
+
+
+
+
 
