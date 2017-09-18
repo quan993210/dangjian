@@ -127,9 +127,7 @@ function wx_pay($info){
     $post['spbill_create_ip'] = $spbill_create_ip;//服务器终端的ip
     $post['total_fee'] = $cost ;        //总金额 最低为一分钱 必须是整数
     $post['trade_type'] = $trade_type;
-    print_r($post);
     $sign = MakeSign($post,$KEY);              //签名
-    print_r($sign);
     $post_xml = '<xml>
                <appid>'.$appid.'</appid>
                <body>'.$body.'</body>
@@ -144,7 +142,6 @@ function wx_pay($info){
                <sign>'.$sign.'</sign>
             </xml> ';
 
-    print_r($post_xml);
     //统一下单接口prepay_id
     $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
     $xml = http_request($url,$post_xml);     //POST方式请求http
