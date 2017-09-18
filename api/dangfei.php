@@ -150,7 +150,7 @@ function wx_pay($info){
 
     if($array['return_code'] == 'SUCCESS'){
         $time = time();
-        $tmp='';                            //临时数组用于签名
+        $tmp=array();                            //临时数组用于签名
         $tmp['appId'] = $appid;
         $tmp['nonceStr'] = $nonce_str;
         $tmp['package'] = 'prepay_id='.$array['prepay_id'];
