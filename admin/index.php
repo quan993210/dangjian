@@ -76,6 +76,7 @@ function menu()
 	unset($sub);
 	$sub[]  = array('url' => 'timu_category.php', 		'name' => '题目分类');
 	$sub[]  = array('url' => 'timu.php', 				'name' => '题目列表');
+	$sub[]  = array('url' => 'test.php', 				'name' => '测试试卷');
 	$menu[] = array('name' => '题目管理', 				'sub' => $sub);
 
 	//unset($sub);

@@ -128,9 +128,6 @@ function wx_pay($info){
     $post['total_fee'] = $cost ;        //总金额 最低为一分钱 必须是整数
     $post['trade_type'] = $trade_type;
     $sign = MakeSign($post,$KEY);              //签名
-    print($sign);
-    $sign = getSign($post);
-    print($sign);
     $post_xml = '<xml>
                <appid>'.$appid.'</appid>
                <body>'.$body.'</body>
@@ -159,6 +156,7 @@ function wx_pay($info){
         $tmp['package'] = 'prepay_id='.$array['prepay_id'];
         $tmp['signType'] = 'MD5';
         $tmp['timeStamp'] = "$time";
+        print_r($tmp);
 
         $data['state'] = 1;
         $data['timeStamp'] = "$time";           //时间戳
@@ -173,21 +171,6 @@ function wx_pay($info){
         showapierror($array['return_msg']);
     }
 
-}
-
-function getSign($params) {
-    ksort($params);
-    foreach ($params as $key => $item) {
-        if (!empty($item)) {
-            $newArr[] = $key.'='.$item;
-        }
-    }
-    $stringA = implode("&", $newArr);
-    $stringSignTemp = $stringA."&key=".WX_KEY;
-
-    $stringSignTemp = MD5($stringSignTemp);
-    $sign = strtoupper($stringSignTemp);
-    return $sign;
 }
 
 /**
@@ -280,8 +263,4 @@ function getNonceStr() {
     $nonce_str = mb_substr($nonceStrTemp, 5,37);
     return $nonce_str;
 }
-
-
-
-
 
