@@ -26,25 +26,28 @@ ksort($post_data);// 对数据进行排序
 $str = ToUrlParams($post_data);//对数组数据拼接成key=value字符串
 $user_sign = strtoupper(md5($post_data));   //再次生成签名，与$postSign比较
 
-if($postSign !=$user_sign){
-    $error['errcode'] = '100005';
-    $error['errmsg'] = '签名错误！';
-    wx_error_log($error);
-    exit();
-}
 
 
-$sql = "SELECT * FROM  `order` WHERE ordersn='{$post_data['out_trade_no']}'";
-$orderinfo = $db->get_row($sql);
-//查询订单是否存在
-if (!$orderinfo){
-    $error['errcode'] = '100001';
-    $error['errmsg'] = '订单不存在';
-    wx_error_log($error);
-    exit();
-}
+
 
 if($post_data['return_code']=='SUCCESS'&&$postSign){
+
+    if($postSign !=$user_sign){
+        $error['errcode'] = '100005';
+        $error['errmsg'] = '签名错误！';
+        wx_error_log($error);
+        exit();
+    }
+
+    $sql = "SELECT * FROM  `order` WHERE ordersn='{$post_data['out_trade_no']}'";
+    $orderinfo = $db->get_row($sql);
+//查询订单是否存在
+    if (!$orderinfo){
+        $error['errcode'] = '100001';
+        $error['errmsg'] = '订单不存在';
+        wx_error_log($error);
+        exit();
+    }
     /*
     * 首先判断，订单是否已经更新为ok，因为微信会总共发送8次回调确认
     * 其次，订单已经为ok的，直接返回SUCCESS
