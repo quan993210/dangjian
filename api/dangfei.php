@@ -156,7 +156,7 @@ function wx_pay($info){
         $tmp['package'] = 'prepay_id='.$array['prepay_id'];
         $tmp['signType'] = 'MD5';
         $tmp['timeStamp'] = "$time";
-        print_r($tmp);
+        //print_r($tmp);
 
         $data['state'] = 1;
         $data['timeStamp'] = "$time";           //时间戳
