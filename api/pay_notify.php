@@ -81,7 +81,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
         $ordersn = $post_data['out_trade_no'];
         $pay_time	= time();
         $pay_time_format	= now_time();
-        $sql = "UPDATE `order` SET channel = '{$channel}',pay_time = '{$pay_time}',pay_time_fromat = '{$pay_time_fromat}',status = '{$status}' WHERE  ordersn=$ordersn";
+        $sql = "UPDATE `order` SET channel = '{$channel}',pay_time = '{$pay_time}',pay_time_fromat = '{$pay_time_format}',status = '{$status}' WHERE  ordersn=$ordersn";
         $db->query($sql);
         $sql = "UPDATE dangfei_data SET status = '{$status}' WHERE id='{$orderinfo['dangfei_data_id']}'";
         $db->query($sql);
