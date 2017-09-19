@@ -24,7 +24,7 @@ switch ($action)
 		case "do_add_test":
                       do_add_test();
 					  break;
-	   	case "mod_test":
+	   /*	case "mod_test":
                       mod_test();
 					  break;
 		case "do_mod_test":
@@ -35,7 +35,7 @@ switch ($action)
 					  break;
 	   	case "del_sel_test":
                       del_sel_test();
-					  break;
+					  break;*/
 
 }
 
@@ -43,13 +43,6 @@ function get_con()
 {
 	global $smarty;
 	$con = 'WHERE is_delete = 0';
-	//题目分类
-	$cid = irequest('cid');
-	$smarty->assign('cid', $cid);
-	if (!empty($cid))
-	{
-		$con .=" and t.catid = '{$cid}'";
-	}
 	
 	//关键字
 	$keyword = crequest('keyword');
@@ -64,49 +57,40 @@ function get_con()
 }
 
 /*------------------------------------------------------ */
-//-- 题目列表
+//-- 测试列表
 /*------------------------------------------------------ */	
 function test_list()
 {
 	global $db, $smarty;
-	
 	//搜索条件
 	$con 		= get_con(); 
 
-	$order 	 	 = 'ORDER BY t.testid DESC';
+	$order 	 	 = 'ORDER BY testid DESC';
 	
 	//列表信息
 	$now_page 	= irequest('page');
 	$now_page 	= $now_page == 0 ? 1 : $now_page;	
 	$page_size 	= 20;
 	$start    	= ($now_page - 1) * $page_size;	
-	$sql 		= "SELECT t.*, c.name AS catname FROM test AS t LEFT JOIN test_category AS c ON t.catid = c.id {$con} {$order} LIMIT {$start}, {$page_size}";
+	$sql 		= "SELECT * FROM test {$con} {$order} LIMIT {$start}, {$page_size}";
 	$arr 		= $db->get_all($sql);
 
-	$sql 		= "SELECT COUNT(t.testid) FROM test AS t {$con}";
+	$sql 		= "SELECT COUNT(testid) FROM test {$con}";
 	$total 		= $db->get_one($sql);
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 
-	foreach($arr as $key=>$val){
-		$sql 		= "SELECT * FROM test_answer WHERE testid = '{$val['testid']}' ORDER BY id ASC";
-		$answer 		= $db->get_all($sql);
-		$arr[$key]['answer'] = $answer;
-	}
 
 	$smarty->assign('test_list'  ,   $arr);
 	$smarty->assign('pageshow'  ,   $page->show(6));
 	$smarty->assign('now_page'  ,   $page->now_page);
 
 	
-	//题目分类
-	$smarty->assign('test_category', get_test_category());
-	
-    $smarty->assign('page_title', '题目列表');
+    $smarty->assign('page_title', '测试试卷列表');
 	$smarty->display('test/test_list.htm');
 }
 
 /*------------------------------------------------------ */
-//-- 添加题目
+//-- 添加测试
 /*------------------------------------------------------ */	
 function add_test()
 {
@@ -116,72 +100,77 @@ function add_test()
 	$smarty->assign('test_category',  get_test_category());
 
 	$smarty->assign('action', 'do_add_test');
-	$smarty->assign('page_title', '添加题目');
+	$smarty->assign('page_title', '添加测试');
 	$smarty->display('test/test.htm');
 }
 
 /*------------------------------------------------------ */
-//-- 添加题目
+//-- 添加测试
 /*------------------------------------------------------ */	
 function do_add_test()
 {
 	global $db;
 	$title    = crequest('title');
-	$catid      = crequest('catid');
-	$type	  = irequest('type');
+	$limit_time     = crequest('limit_time');
+	$limit_count	  = irequest('limit_count');
 	$now_time = now_time();
+	$time = time();
 
-	check_null($catid, 			'题目分类');
-	check_null($title, 			'题目标题');
-	check_null($type, 			'题目类型');
-	if($type == 1){  //选择题
-		$answer = $_POST['choice'];
-		$A = $answer['A'];
-		$B = $answer['B'];
-		$C = $answer['C'];
-		$D = $answer['D'];
-		if(!$A || !$B  || !$C  ||  !$D){
-			check_null('', 			'选择题选项');
-		}
-		$correct = $answer['correct'];
-		check_null($correct, 			'选择题正确答案');
+	check_null($title, 			'测试标题');
+	check_null($limit_time, 			'测试时间');
+	check_null($limit_count, 			'题目数量');
 
-
-
-	}else{
-		$answer = $_POST['choice'];
-		$A = $answer['A'];
-		$B = $answer['B'];
-		if(!$A || !$B){
-			check_null('', 			'判断题选项');
-		}
-		$correct = $answer['correct'];
-		check_null($correct, 			'判断题正确答案');
-
+	$catids = implode(',',$_POST['catid']);
+	$sql = "SELECT COUNT(id) FROM timu WHERE catid IN ({$catids})";
+	$total 		= $db->get_one($sql);
+	if($total < $limit_count){
+		check_null($limit_count, 			'题库中题目数量不足');
 	}
 
-	//插入题目表
-	$sql = "INSERT INTO test (catid,title,type,correct, add_time_format) VALUES ('{$catid}', '{$title}', '{$type}', '{$correct}', '{$now_time}')";
-	$db->query($sql);
+	$sql 		= "SELECT timuid FROM timu WHERE catid IN ({$catids})";
+	$timu 		= $db->get_all($sql);
+	$result = array();
 
-	//插入题目答案表
-	$testid = $db->link_id->insert_id;
-	unset($answer['correct']);
-	foreach($answer as $key=>$val){
-		$sql = "INSERT INTO test_answer (testid,name,number,add_time_format) VALUES ('{$testid}', '{$val}', '{$key}','{$now_time}')";
+	$arr_len = count($timu);
+	$start = 0;
+	while($start < $limit_count)
+	{
+		$random = rand(0, $arr_len - $start - 1);
+		$result[] = $timu[$random];
+		swap($timu[$random] , $timu[$arr_len - $start - 1]);
+		$start += 1;
+	}
+
+	/*if(is_array($result) && $result){
+		//插入测试试卷表
+		$sql = "INSERT INTO test (title,limit_count,limit_time, timu_catids,add_time,add_time_format) VALUES ('{$title}', '{$limit_count}', '{$limit_time}', '{$catids}', '{$time}', '{$now_time}')";
 		$db->query($sql);
+
+		$testid = $db->link_id->insert_id;
+		//插入测试题目表
+		foreach($result as $key=>$val){
+			$sql = "INSERT INTO test_answer (testid,name,number,add_time_format) VALUES ('{$testid}', '{$val}', '{$key}','{$now_time}')";
+			$db->query($sql);
+
+		}
 	}
+
+
+
+
+
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '添加题目，添加题目ID：' . $testid;
-	operate_log($aid, 'test', 1, $text);
+	$text = '添加测试，添加测试ID：' . $testid;
+	operate_log($aid, 'test', 1, $text);*/
 	
 	$url_to = "test.php?action=list";
 	url_locate($url_to, '添加成功');	
 }
 
+
 /*------------------------------------------------------ */
-//-- 修改题目
+//-- 修改测试
 /*------------------------------------------------------ */	
 function mod_test()
 {
@@ -211,12 +200,12 @@ function mod_test()
 	$smarty->assign('test_category',  get_test_category());
 	
 	$smarty->assign('action', 'do_mod_test');
-	$smarty->assign('page_title', '修改题目');
+	$smarty->assign('page_title', '修改测试');
 	$smarty->display('test/test.htm');
 }
 
 /*------------------------------------------------------ */
-//-- 修改题目
+//-- 修改测试
 /*------------------------------------------------------ */	
 function do_mod_test()
 {
@@ -227,8 +216,8 @@ function do_mod_test()
 	$now_time = now_time();
 
 	check_null($catid, 			'题目分类');
-	check_null($title, 			'题目标题');
-	check_null($type, 			'题目类型');
+	check_null($title, 			'测试标题');
+	check_null($type, 			'测试类型');
 	if($type == 1){  //选择题
 		$answer = $_POST['choice'];
 		$A = $answer['A'];
@@ -256,12 +245,12 @@ function do_mod_test()
 	}
 
 	$testid = irequest('testid');
-	//修改题目表
+	//修改测试表
 	$update_col = "catid = '{$catid}', title = '{$title}', type = '{$type}', correct = '{$correct}'";
 	$sql = "UPDATE test SET {$update_col} WHERE testid = '{$testid}'";
 	$db->query($sql);
 
-	//修改题目时，答案做新数据，重新插入题目答案表
+	//修改测试时，答案做新数据，重新插入测试答案表
 	$sql = "DELETE FROM test_answer WHERE testid = '{$testid}'";
 	$db->query($sql);
 	unset($answer['correct']);
@@ -272,7 +261,7 @@ function do_mod_test()
 
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '修改题目，修改题目ID：' . $testid;
+	$text = '修改测试，修改测试ID：' . $testid;
 	operate_log($aid, 'test', 2, $text);
 	
 	$now_page = irequest('now_page');
@@ -281,7 +270,7 @@ function do_mod_test()
 }
 
 /*------------------------------------------------------ */
-//-- 删除题目
+//-- 删除测试
 /*------------------------------------------------------ */	
 function del_test()
 {
@@ -294,7 +283,7 @@ function del_test()
 	$db->query($sql);
 
 	$aid  = $_SESSION['admin_id'];
-	$text = '删除题目，删除题目ID：' . $testid;
+	$text = '删除测试，删除测试ID：' . $testid;
 	operate_log($aid, 'test', 3, $text);
 	$now_page = irequest('now_page');
 	$url_to = "test.php?action=list&page={$now_page}";
@@ -302,7 +291,7 @@ function del_test()
 }
 
 /*------------------------------------------------------ */
-//-- 批量删除题目
+//-- 批量删除测试
 /*------------------------------------------------------ */	
 function del_sel_test()
 {
@@ -324,7 +313,7 @@ function del_sel_test()
 
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '批量删除题目，批量删除题目ID：' . $id;
+	$text = '批量删除测试，批量删除测试ID：' . $id;
 	operate_log($aid, 'test', 4, $text);
 	
 	$now_page = irequest('now_page');
@@ -340,8 +329,15 @@ function get_test_category()
 {
 	global $db;
 	
-	$sql = "SELECT id, name FROM test_category ORDER BY id DESC";
+	$sql = "SELECT id, name FROM timu_category ORDER BY id DESC";
 	$res = $db->get_all($sql);
 	
 	return $res;
+}
+
+function swap(&$a, &$b)
+{
+	$temp = $b;
+	$b = $a;
+	$a = $temp;
 }

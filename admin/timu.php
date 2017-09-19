@@ -149,7 +149,7 @@ function do_add_timu()
 
 
 	}else{
-		$answer = $_POST['choice'];
+		$answer = $_POST['judge'];
 		$A = $answer['A'];
 		$B = $answer['B'];
 		if(!$A || !$B){
