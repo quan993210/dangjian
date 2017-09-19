@@ -23,10 +23,6 @@ unset($post_data['sign']);
  *  并校验返回的【订单金额是否与商户侧的订单金额】一致，
  *  防止数据泄漏导致出现“假通知”，造成资金损失。
  */
-//ksort($post_data);// 对数据进行排序
-//$str = ToUrlParams($post_data);//对数组数据拼接成key=value字符串
-//$user_sign = strtoupper(md5($post_data));   //再次生成签名，与$postSign比较
-
 $KEY =         WX_KEY;    //微信支付key
 $user_sign = MakeSign($post_data,$KEY);
 
