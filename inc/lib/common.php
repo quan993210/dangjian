@@ -1001,7 +1001,7 @@ function wx_error_log($error)
     global $db;
     if(!is_array($error)){
         $error['errcode'] = '000000';
-        $error['errmsg'] = '位置参数';
+        $error['errmsg'] = '未知参数';
     }
     $errcode =  $error['errcode'];
     $errmsg =  $error['errmsg'];
@@ -1009,7 +1009,7 @@ function wx_error_log($error)
     $today    = date('Ymd');
     $now_time = now_time();
 
-    $sql = "INSERT INTO wx_error_log(errcode, errmsg,ip, today, add_time) VALUES ('{$errcode}', '{$errmsg}', '{$ip}', '{$today}', '{$now_time}')";
+    $sql = "INSERT INTO wx_error_log(errcode, errmsg,ip, today, now_time) VALUES ('{$errcode}', '{$errmsg}', '{$ip}', '{$today}', '{$now_time}')";
     $db->query($sql);
 
     return;
