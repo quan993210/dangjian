@@ -8,6 +8,7 @@
  */
 /* 微信支付完成，回调地址url方法 */
 define('APPID','wx6ce6752b26628e64');
+define('WX_KEY','jiangxijinlukejikaifa5803015gong');
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
@@ -22,21 +23,20 @@ unset($post_data['sign']);
  *  并校验返回的【订单金额是否与商户侧的订单金额】一致，
  *  防止数据泄漏导致出现“假通知”，造成资金损失。
  */
-ksort($post_data);// 对数据进行排序
-$str = ToUrlParams($post_data);//对数组数据拼接成key=value字符串
-$user_sign = strtoupper(md5($post_data));   //再次生成签名，与$postSign比较
+//ksort($post_data);// 对数据进行排序
+//$str = ToUrlParams($post_data);//对数组数据拼接成key=value字符串
+//$user_sign = strtoupper(md5($post_data));   //再次生成签名，与$postSign比较
 
-
-
-
+$KEY =         WX_KEY;    //微信支付key
+$user_sign = MakeSign($post_data,$KEY);
 
 if($post_data['return_code']=='SUCCESS'&&$postSign){
 
     if($postSign !=$user_sign){
         $error['errcode'] = '100005';
         $error['errmsg'] = '签名错误！';
-        posAccessLog(__FILE__,$error);
-        wx_error_log($error);
+        wx_error_log(__FILE__,$error);
+        insert_error_log($error);
         exit();
     }
 
@@ -46,8 +46,8 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     if (!$orderinfo){
         $error['errcode'] = '100001';
         $error['errmsg'] = '订单不存在';
-        posAccessLog(__FILE__,$error);
-        wx_error_log($error);
+        wx_error_log(__FILE__,$error);
+        insert_error_log($error);
         exit();
     }
     /*
@@ -60,16 +60,16 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     if (intval($post_data['total_fee']) != $orderinfo['cost']*100){
         $error['errcode'] = '100002';
         $error['errmsg'] = '订单金额不匹配';
-        posAccessLog(__FILE__,$error);
-        wx_error_log($error);
+        wx_error_log(__FILE__,$error);
+        insert_error_log($error);
         exit();
     }
     //判读appid是否正确
     if ($post_data['appid'] != APPID){
         $error['errcode'] = '100003';
         $error['errmsg'] = 'appid错误';
-        posAccessLog(__FILE__,$error);
-        wx_error_log($error);
+        wx_error_log(__FILE__,$error);
+        insert_error_log($error);
         exit();
     }
 
@@ -91,8 +91,8 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
 }else{
     $error['errcode'] = '100004';
     $error['errmsg'] = $postSign['return_msg'];
-    posAccessLog(__FILE__,$error);
-    wx_error_log($error);
+    wx_error_log(__FILE__,$error);
+    insert_error_log($error);
     exit();
 }
 
@@ -105,9 +105,10 @@ function post_data(){
             $receipt = $GLOBALS['HTTP_RAW_POST_DATA'];
         }
     }
-    posAccessLog(__FILE__,$receipt);
+    wx_log(__FILE__,$receipt);
     return $receipt;
 }
+
 
 
 //获取xml里面数据，转换成array
@@ -131,6 +132,23 @@ function object_to_array($obj) {
     }
 
     return $obj;
+}
+
+/**
+ * 生成签名, $KEY就是支付key
+ * @return 签名
+ */
+function MakeSign( $params,$KEY){
+    //签名步骤一：按字典序排序数组参数
+    ksort($params);
+    $string = ToUrlParams($params);  //参数进行拼接key=value&k=v
+    //签名步骤二：在string后加入KEY
+    $string = $string . "&key=".$KEY;
+    //签名步骤三：MD5加密
+    $string = md5($string);
+    //签名步骤四：所有字符转为大写
+    $result = strtoupper($string);
+    return $result;
 }
 
 /**
