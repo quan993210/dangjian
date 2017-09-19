@@ -1015,3 +1015,19 @@ function wx_error_log($error)
     return;
 }
 
+//日志记录功能
+function posAccessLog($file,$data){
+    $dir = dirname($file);
+    $dir .=  DIRECTORY_SEPARATOR.'log'.DIRECTORY_SEPARATOR.date('Y').DIRECTORY_SEPARATOR.date('m').DIRECTORY_SEPARATOR.date('d').DIRECTORY_SEPARATOR;
+    $filname = basename($file);
+    $filname .= '.log';
+    if(!file_exists($dir)){
+        mkdir($dir,0777,true);
+    }
+    $error_str = date("Y-m-d H:i:s");
+    $error_str .= "\r\n".'接收到的数据通知信息'."\r\n";
+    $error_str .= $data;
+    $error_str .= "\r\n\r\n";
+    error_log($error_str,3,$dir.$filname);
+}
+

@@ -35,6 +35,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     if($postSign !=$user_sign){
         $error['errcode'] = '100005';
         $error['errmsg'] = '签名错误！';
+        posAccessLog(__FILE__,$error);
         wx_error_log($error);
         exit();
     }
@@ -45,6 +46,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     if (!$orderinfo){
         $error['errcode'] = '100001';
         $error['errmsg'] = '订单不存在';
+        posAccessLog(__FILE__,$error);
         wx_error_log($error);
         exit();
     }
@@ -58,6 +60,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     if (intval($post_data['total_fee']) != $orderinfo['cost']*100){
         $error['errcode'] = '100002';
         $error['errmsg'] = '订单金额不匹配';
+        posAccessLog(__FILE__,$error);
         wx_error_log($error);
         exit();
     }
@@ -65,6 +68,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
     if ($post_data['appid'] != APPID){
         $error['errcode'] = '100003';
         $error['errmsg'] = 'appid错误';
+        posAccessLog(__FILE__,$error);
         wx_error_log($error);
         exit();
     }
@@ -87,6 +91,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
 }else{
     $error['errcode'] = '100004';
     $error['errmsg'] = $postSign['return_msg'];
+    posAccessLog(__FILE__,$error);
     wx_error_log($error);
     exit();
 }
@@ -100,6 +105,7 @@ function post_data(){
             $receipt = $GLOBALS['HTTP_RAW_POST_DATA'];
         }
     }
+    posAccessLog(__FILE__,$receipt);
     return $receipt;
 }
 
