@@ -30,11 +30,11 @@ function get_metting(){
     global $db;
     if(isset($_POST['mettingid']) && !empty($_POST['mettingid']) ) {
         $mettingid = intval(trim($_POST['mettingid']));
-        $sql = "SELECT * FROM metting WHERE id =$mettingid ORDER BY id DESC";
+        $sql = "SELECT * FROM metting WHERE id =$mettingid and is_delete =0 ORDER BY id DESC";
         $metting = $db->get_row($sql);
         showapisuccess($metting);
     }else{
-        $sql = "SELECT * FROM metting WHERE 1=1";
+        $sql = "SELECT * FROM metting WHERE is_delete =0";
         $metting = $db->get_all($sql);
         showapisuccess($metting);
     }
