@@ -346,6 +346,46 @@ function test_detail(){
 
 
 /*------------------------------------------------------ */
+//-- 测试答题列表
+/*------------------------------------------------------ */
+function dati_list(){
+	global $db, $smarty;
+	$testid =  irequest('testid');
+	$con 		= "WHERE a.testid = '{$testid}'";
+	$order 	 	 = 'ORDER BY a.id ASC';
+
+	//列表信息
+	$now_page 	= irequest('page');
+	$now_page 	= $now_page == 0 ? 1 : $now_page;
+	$page_size 	= 20;
+	$start    	= ($now_page - 1) * $page_size;
+	$sql 		= "SELECT b.*,a.id as test_timu_id FROM test_timu as a LEFT JOIN timu as b on a.timuid=b.timuid {$con} {$order} LIMIT {$start}, {$page_size}";
+	$arr 		= $db->get_all($sql);
+
+	$sql 		= "SELECT COUNT(a.timuid) FROM test_timu as a LEFT JOIN timu as b on a.timuid=b.timuid {$con} ";
+	$total 		= $db->get_one($sql);
+	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
+
+	foreach($arr as $key=>$val){
+		$sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}' ORDER BY id ASC";
+		$answer 		= $db->get_all($sql);
+		$arr[$key]['answer'] = $answer;
+
+		$sql = "SELECT id, name FROM timu_category WHERE id  = '{$val['catid']}'";
+		$cat = $db->get_row($sql);
+		$arr[$key]['catname'] = $cat['name'];
+	}
+
+	$smarty->assign('timu_list'  ,   $arr);
+	$smarty->assign('pageshow'  ,   $page->show(6));
+	$smarty->assign('now_page'  ,   $page->now_page);
+
+	$smarty->assign('page_title', '测试题目列表');
+	$smarty->display('test/test_timu.htm');
+}
+
+
+/*------------------------------------------------------ */
 //-- 题目分类
 /*------------------------------------------------------ */
 function get_test_category()
