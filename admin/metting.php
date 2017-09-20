@@ -324,10 +324,10 @@ function sign()
     $arr 		= $db->get_all($sql);
     foreach($arr as $key=>$val){
         $sign_time = strtotime($val['sign_time']);
-        if($sign_time < $start_time){
+        if($sign_time > $start_time){
             $arr[$key]['status'] = "已迟到";
         }else{
-            $arr[$key]['status'] = "未迟到";
+            $arr[$key]['status'] = "准时参加";
         }
     }
 
