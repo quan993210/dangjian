@@ -62,7 +62,9 @@
                 <td class="label">选择题库：</td>
                 <td>
                     {section name=loop loop=$test_category}
-                    <label><input name="catid[]" type="checkbox" value="{$test_category[loop].id}" />{$test_category[loop].name} </label>
+                    <label>
+                        <input {if strstr($test.timu_catids,$test_category[loop].id)}checked{/if} name="catid[]" type="checkbox" value="{$test_category[loop].id}" />{$test_category[loop].name}
+                    </label>
                     {/section}
                 </td>
             </tr>

@@ -24,7 +24,7 @@ switch ($action)
 		case "do_add_test":
                       do_add_test();
 					  break;
-	   /*	case "mod_test":
+	   	case "mod_test":
                       mod_test();
 					  break;
 		case "do_mod_test":
@@ -35,7 +35,10 @@ switch ($action)
 					  break;
 	   	case "del_sel_test":
                       del_sel_test();
-					  break;*/
+					  break;
+	case "test_detail":
+		test_detail();
+		break;
 
 }
 
@@ -121,13 +124,13 @@ function do_add_test()
 	check_null($limit_count, 			'题目数量');
 
 	$catids = implode(',',$_POST['catid']);
-	$sql = "SELECT COUNT(id) FROM timu WHERE catid IN ({$catids})";
+	$sql = "SELECT COUNT(timuid) FROM timu WHERE catid IN ({$catids})";
 	$total 		= $db->get_one($sql);
 	if($total < $limit_count){
 		check_null($limit_count, 			'题库中题目数量不足');
 	}
 
-	$sql 		= "SELECT timuid FROM timu WHERE catid IN ({$catids})";
+	$sql 		= "SELECT * FROM timu WHERE catid IN ({$catids})";
 	$timu 		= $db->get_all($sql);
 	$result = array();
 
@@ -141,7 +144,7 @@ function do_add_test()
 		$start += 1;
 	}
 
-	/*if(is_array($result) && $result){
+	if(is_array($result) && $result){
 		//插入测试试卷表
 		$sql = "INSERT INTO test (title,limit_count,limit_time, timu_catids,add_time,add_time_format) VALUES ('{$title}', '{$limit_count}', '{$limit_time}', '{$catids}', '{$time}', '{$now_time}')";
 		$db->query($sql);
@@ -149,20 +152,14 @@ function do_add_test()
 		$testid = $db->link_id->insert_id;
 		//插入测试题目表
 		foreach($result as $key=>$val){
-			$sql = "INSERT INTO test_answer (testid,name,number,add_time_format) VALUES ('{$testid}', '{$val}', '{$key}','{$now_time}')";
+			$sql = "INSERT INTO test_timu (testid,timuid,add_time,add_time_format) VALUES ('{$testid}', '{$val['timuid']}', '{$time}','{$now_time}')";
 			$db->query($sql);
-
 		}
 	}
-
-
-
-
-
 	
 	$aid  = $_SESSION['admin_id'];
 	$text = '添加测试，添加测试ID：' . $testid;
-	operate_log($aid, 'test', 1, $text);*/
+	operate_log($aid, 'test', 1, $text);
 	
 	$url_to = "test.php?action=list";
 	url_locate($url_to, '添加成功');	
@@ -181,18 +178,6 @@ function mod_test()
 	$row = $db->get_row($sql);
 	$smarty->assign('test', $row);
 
-	$sql = "SELECT * FROM test_answer WHERE testid = '{$testid}'";
-	$data = $db->get_all($sql);
-	foreach($data as $key=>$val){
-		$answer[$val['number']] = $val;
-	}
-	if($row['type'] == 1){
-		$smarty->assign('choice', $answer);
-	}else{
-		$smarty->assign('judge', $answer);
-	}
-
-	
 	$now_page = irequest('now_page');
 	$smarty->assign('now_page', $now_page);
     
@@ -210,53 +195,52 @@ function mod_test()
 function do_mod_test()
 {
 	global $db;
+	$testid = irequest('testid');
 	$title    = crequest('title');
-	$catid      = crequest('catid');
-	$type	  = irequest('type');
+	$limit_time     = crequest('limit_time');
+	$limit_count	  = irequest('limit_count');
 	$now_time = now_time();
+	$time = time();
 
-	check_null($catid, 			'题目分类');
 	check_null($title, 			'测试标题');
-	check_null($type, 			'测试类型');
-	if($type == 1){  //选择题
-		$answer = $_POST['choice'];
-		$A = $answer['A'];
-		$B = $answer['B'];
-		$C = $answer['C'];
-		$D = $answer['D'];
-		if(!$A || !$B  || !$C  ||  !$D){
-			check_null('', 			'选择题选项');
-		}
-		$correct = $answer['correct'];
-		check_null($correct, 			'选择题正确答案');
+	check_null($limit_time, 			'测试时间');
+	check_null($limit_count, 			'题目数量');
 
-
-
-	}else{
-		$answer = $_POST['judge'];
-		$A = $answer['A'];
-		$B = $answer['B'];
-		if(!$A || !$B){
-			check_null('', 			'判断题选项');
-		}
-		$correct = $answer['correct'];
-		check_null($correct, 			'判断题正确答案');
-
+	$catids = implode(',',$_POST['catid']);
+	$sql = "SELECT COUNT(timuid) FROM timu WHERE catid IN ({$catids})";
+	$total 		= $db->get_one($sql);
+	if($total < $limit_count){
+		check_null($limit_count, 			'题库中题目数量不足');
 	}
 
-	$testid = irequest('testid');
-	//修改测试表
-	$update_col = "catid = '{$catid}', title = '{$title}', type = '{$type}', correct = '{$correct}'";
-	$sql = "UPDATE test SET {$update_col} WHERE testid = '{$testid}'";
-	$db->query($sql);
+	$sql 		= "SELECT * FROM timu WHERE catid IN ({$catids})";
+	$timu 		= $db->get_all($sql);
+	$result = array();
 
-	//修改测试时，答案做新数据，重新插入测试答案表
-	$sql = "DELETE FROM test_answer WHERE testid = '{$testid}'";
-	$db->query($sql);
-	unset($answer['correct']);
-	foreach($answer as $key=>$val){
-		$sql = "INSERT INTO test_answer (testid,name,number,add_time_format) VALUES ('{$testid}', '{$val}', '{$key}','{$now_time}')";
+	$arr_len = count($timu);
+	$start = 0;
+	while($start < $limit_count)
+	{
+		$random = rand(0, $arr_len - $start - 1);
+		$result[] = $timu[$random];
+		swap($timu[$random] , $timu[$arr_len - $start - 1]);
+		$start += 1;
+	}
+
+	if(is_array($result) && $result){
+		//插入测试试卷表
+		$update_col = "title = '{$title}', limit_count = '{$limit_count}', limit_time = '{$limit_time}', timu_catids = '{$catids}'";
+		$sql = "UPDATE test SET {$update_col} WHERE testid = '{$testid}'";
 		$db->query($sql);
+
+		//修改测试时，题目做为新数据，重新插入测试表
+		$sql = "DELETE FROM test_timu WHERE testid = '{$testid}'";
+		$db->query($sql);
+		//插入测试题目表
+		foreach($result as $key=>$val){
+			$sql = "INSERT INTO test_timu (testid,timuid,add_time,add_time_format) VALUES ('{$testid}', '{$val['timuid']}', '{$time}','{$now_time}')";
+			$db->query($sql);
+		}
 	}
 
 	
@@ -319,6 +303,45 @@ function del_sel_test()
 	$now_page = irequest('now_page');
 	$url_to = "test.php?action=list&page={$now_page}";
 	href_locate($url_to);	
+}
+
+/*------------------------------------------------------ */
+//-- 测试题目详情
+/*------------------------------------------------------ */
+function test_detail(){
+	global $db, $smarty;
+	$testid =  irequest('testid');
+	$con 		= "WHERE a.testid = '{$testid}'";
+	$order 	 	 = 'ORDER BY a.id ASC';
+
+	//列表信息
+	$now_page 	= irequest('page');
+	$now_page 	= $now_page == 0 ? 1 : $now_page;
+	$page_size 	= 20;
+	$start    	= ($now_page - 1) * $page_size;
+	$sql 		= "SELECT b.*,a.id as test_timu_id FROM test_timu as a LEFT JOIN timu as b on a.timuid=b.timuid {$con} {$order} LIMIT {$start}, {$page_size}";
+	$arr 		= $db->get_all($sql);
+
+	$sql 		= "SELECT COUNT(a.timuid) FROM test_timu as a LEFT JOIN timu as b on a.timuid=b.timuid {$con} ";
+	$total 		= $db->get_one($sql);
+	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
+
+	foreach($arr as $key=>$val){
+		$sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}' ORDER BY id ASC";
+		$answer 		= $db->get_all($sql);
+		$arr[$key]['answer'] = $answer;
+
+		$sql = "SELECT id, name FROM timu_category WHERE id  = '{$val['catid']}'";
+		$cat = $db->get_row($sql);
+		$arr[$key]['catname'] = $cat['name'];
+	}
+
+	$smarty->assign('timu_list'  ,   $arr);
+	$smarty->assign('pageshow'  ,   $page->show(6));
+	$smarty->assign('now_page'  ,   $page->now_page);
+
+	$smarty->assign('page_title', '测试题目列表');
+	$smarty->display('test/test_timu.htm');
 }
 
 
