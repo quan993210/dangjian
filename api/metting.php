@@ -34,7 +34,7 @@ function get_metting(){
         $metting = $db->get_row($sql);
         showapisuccess($metting);
     }else{
-        $sql = "SELECT * FROM metting WHERE is_delete =0";
+        $sql = "SELECT * FROM metting WHERE is_delete =0 ORDER BY testid DESC";
         $metting = $db->get_all($sql);
         showapisuccess($metting);
     }
