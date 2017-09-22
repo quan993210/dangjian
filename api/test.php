@@ -67,7 +67,7 @@ function creat_dati(){
             showapierror('参数错误！');
         }
 
-       /* $sql = "SELECT * FROM test_dati WHERE userid='{$userid}' and testid='{$testid}'";
+       /* $sql = "SELECT * FROM test_dati WHERE userid='{$userid}' and testid='{$testid}' and status =1";
         $dati = $db->get_row($sql);
         if(is_array($dati) && $dati){
             //重新点击  存在答题记录
