@@ -27,6 +27,9 @@ switch ($action)
     case "submit_test":
         submit_test();
         break;
+    case "my_test":
+        my_test();
+        break;
 }
 
 
@@ -167,11 +170,77 @@ function submit_dati(){
 function submit_test()
 {
     global $db;
-    $now_time = now_time();
-    $time = time();
-    if (!empty($_POST['userid']) && !empty($_POST['testid'])) {
+    if (!empty($_POST['userid']) && !empty($_POST['testid']) && !empty($_POST['test_dati_id'])) {
+        //检查答题用户
+        $userid = $_POST['userid'];
+        $sql = "SELECT * FROM member WHERE userid='{$userid}'";
+        $member = $db->get_row($sql);
+        if(!is_array($member) && !$member){
+            showapierror('参数错误！');
+        }
+
+        //获取试卷题目
+        $testid = $_POST['testid'];
+        $sql = "SELECT id FROM test_timu WHERE testid='{$testid}'";
+        $test_timu = $db->get_all($sql);
+        if(!is_array($test_timu) && !$test_timu){
+            showapierror('参数错误！');
+        }
+        $a1 = array();
+        foreach($test_timu as $val){
+            $a1[] = $val['id'];
+        }
+
+        //获取已经提交过得答题
+        $test_dati_id = $_POST['test_dati_id'];
+        $sql = "SELECT test_timu_id FROM test_dati_detail WHERE test_dati_id='{$test_dati_id}' and userid='{$userid}'";
+        $test_dati_detail = $db->get_all($sql);
+        if(!is_array($test_dati_detail) && !$test_dati_detail){
+            showapierror('参数错误！');
+        }
+
+        $a2 = array();
+        foreach($test_dati_detail as $val){
+            $a2[] = $val['test_timu_id'];
+        }
+
+        //判断提交试卷中的题目是否全部答过
+        $result = array_diff($a1,$a2);
+        if($result){
+            $complete = 0;  //未答完题目
+            $test_timu_ids = implode(',',$result);
+        }else{
+            $complete = 1; //已答完
+        }
+
+        //更新答题记录分数
+        $update_col = "status = '2'";
+        $sql = "UPDATE test_dati SET {$update_col} WHERE userid = '{$userid}' and testid =  '{$testid}'";
+        $db->query($sql);
+
+        $sql = "SELECT * FROM test_dati WHERE id='{$test_dati_id}' and userid = '{$userid}' and testid =  '{$testid}'";
+        $test_dati = $db->get_row($sql);
+        $test_dati['complete'] = $complete;
+        $test_dati['test_timu_ids'] = $test_timu_ids;
+        showapisuccess($test_dati);
 
     } else {
+        showapierror('参数错误！');
+    }
+}
+
+function my_test(){
+    global $db;
+    if (!empty($_POST['userid'])) {
+        //检查答题用户
+        $userid = $_POST['userid'];
+        $sql = "SELECT a.*,b.title FROM test_dati as a LEFT JOIN test as b on a.testid = b.testid WHERE a.userid='{$userid}'";
+        $test_dati = $db->get_all($sql);
+        if(!is_array($test_dati) && !$test_dati){
+            showapierror('参数错误！');
+        }
+        showapisuccess($test_dati);
+    }else {
         showapierror('参数错误！');
     }
 }
