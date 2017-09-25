@@ -67,34 +67,60 @@ function creat_dati(){
             showapierror('参数错误！');
         }
 
-       /* $sql = "SELECT * FROM test_dati WHERE userid='{$userid}' and testid='{$testid}' and status =1";
-        $dati = $db->get_row($sql);
-        if(is_array($dati) && $dati){
-            //重新点击  存在答题记录
-            $test_dati_id = $dati['id'];
+        $test_dati_id = $_POST['test_dati_id'];
+        //重新点击  存在答题记录
+        if($test_dati_id){
+            //获取已经提交过得答题
+            $test_dati_id = $_POST['test_dati_id'];
+            $sql = "SELECT test_timu_id FROM test_dati_detail WHERE test_dati_id='{$test_dati_id}' and userid='{$userid}'";
+            $test_dati_detail = $db->get_all($sql);
+            if(!is_array($test_dati_detail) && !$test_dati_detail){
+                showapierror('参数错误！');
+            }
+            $a2 = array();
+            foreach($test_dati_detail as $val){
+                $a2[] = $val['test_timu_id'];
+            }
+
+            $a1 = array();
+            foreach($test_timu as $val){
+                $a1[] = $val['test_timu_id'];
+            }
+
+            //判断提交试卷中的题目是否全部答过
+            $result = array_diff($a1,$a2);
+            if($result){
+                foreach($result as $id){
+                    $sql = "SELECT a.id as test_timu_id, b.* FROM test_timu as a LEFT JOIN timu as b on a.timuid=b.timuid WHERE a.id='{$id}'";
+                    $result_timu[] = $db->get_row($sql);
+                }
+            }else{
+                $result_timu[] = ""; //已答完
+            }
+            $test_dati['testid'] = $testid;
+            $test_dati['test_dati_id'] = $test_dati_id;
+            $test_dati['timu'] = $result_timu;
+            showapisuccess($test_dati);
         }else{
             //创建答题记录
-            $sql = "INSERT INTO test_dati (userid,username,testid,status,add_time,add_time_format) VALUES ('{$userid}','{$member['nickname']}','{$testid}', '{$time}','{$now_time}')";
+            $sql = "INSERT INTO test_dati (userid,username,testid,status,add_time,add_time_format) VALUES ('{$userid}','{$member['name']}','{$testid}', '1','{$time}','{$now_time}')";
             $db->query($sql);
             $test_dati_id = $db->link_id->insert_id;
-        }*/
-
-        //创建答题记录
-        $sql = "INSERT INTO test_dati (userid,username,testid,status,add_time,add_time_format) VALUES ('{$userid}','{$member['name']}','{$testid}', '1','{$time}','{$now_time}')";
-        $db->query($sql);
-        $test_dati_id = $db->link_id->insert_id;
 
 
-        //获取题目答案
-        foreach($test_timu as $key=>$val){
-            $sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}' ORDER BY id ASC";
-            $answer 		= $db->get_all($sql);
-            $test_timu[$key]['answer'] = $answer;
+            //获取题目答案
+            foreach($test_timu as $key=>$val){
+                $sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}' ORDER BY id ASC";
+                $answer 		= $db->get_all($sql);
+                $test_timu[$key]['answer'] = $answer;
+            }
+            $test_dati['testid'] = $testid;
+            $test_dati['test_dati_id'] = $test_dati_id;
+            $test_dati['timu'] = $test_timu;
+            showapisuccess($test_dati);
         }
-        $test_dati['testid'] = $testid;
-        $test_dati['test_dati_id'] = $test_dati_id;
-        $test_dati['timu'] = $test_timu;
-        showapisuccess($test_dati);
+
+
     }else{
         showapierror('参数错误！');
     }
