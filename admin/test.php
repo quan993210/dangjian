@@ -354,8 +354,8 @@ function test_detail(){
 function dati_list(){
 	global $db, $smarty;
 	$testid =  irequest('testid');
-	$con 		= "WHERE testid = '{$testid}' and score=(select max(score) from test_dati)";
-	$order 	 	 = 'ORDER BY id ASC';
+	$con 		= "WHERE testid = '{$testid}' group by userid";
+	$order 	 	 = 'ORDER BY add_time DESC';
 
 	//列表信息
 	$now_page 	= irequest('page');
@@ -363,21 +363,23 @@ function dati_list(){
 	$page_size 	= 20;
 	$start    	= ($now_page - 1) * $page_size;
 	$sql 		= "select * from test_dati {$con} {$order} LIMIT {$start}, {$page_size}";
-	print_r($sql);
 	$arr 		= $db->get_all($sql);
 
-	$sql 		= "SELECT COUNT(id) FROM test_dati {$con}  ";
+	$sql 		= "select count(*) as total from (select count(*) from  test_dati {$con}) u   ";
 	$total 		= $db->get_one($sql);
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 
 	foreach($arr as $key=>$val){
-		$sql 		= "SELECT count( id ) FROM test_dati WHERE testid = '1' GROUP BY userid";
+		$sql        = "select score from test_dati WHERE testid = '{$testid}' and userid ='{$val['userid']}' order by score DESC";
+		$score 		= $db->get_one($sql);
+		$arr[$key]['score'] = $score;
+		$sql 		= "SELECT count( id ) FROM test_dati WHERE testid = '{$testid}' and userid ='{$val['userid']}'";
 		$count 		= $db->get_one($sql);
 		$arr[$key]['count'] = $count;
 	}
 
 	$sql 		= "SELECT title FROM test where testid='{$testid}' ";
-	$title 		= $db->get_one($sql);
+
 	$smarty->assign('dati_list'  ,   $arr);
 	$smarty->assign('pageshow'  ,   $page->show(6));
 	$smarty->assign('now_page'  ,   $page->now_page);
