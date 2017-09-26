@@ -366,6 +366,7 @@ function dati_list(){
 	$arr 		= $db->get_all($sql);
 
 	$sql 		= "SELECT COUNT(id) FROM test_dati {$con}  ";
+	print_r($sql);
 	$total 		= $db->get_one($sql);
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 
