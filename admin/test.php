@@ -363,10 +363,10 @@ function dati_list(){
 	$page_size 	= 20;
 	$start    	= ($now_page - 1) * $page_size;
 	$sql 		= "select * from test_dati {$con} {$order} LIMIT {$start}, {$page_size}";
+	print_r($sql);
 	$arr 		= $db->get_all($sql);
 
 	$sql 		= "SELECT COUNT(id) FROM test_dati {$con}  ";
-	print_r($sql);
 	$total 		= $db->get_one($sql);
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 
