@@ -75,7 +75,8 @@ function show_pic(type)
       	<img src="{if $news.cover neq ''}{$url_path}{$news.cover}{else}/images/default_news.jpg{/if}" id="upload_pic" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
         <input type="hidden" value="{$news.cover}" name="pic_path" id="pic_path" />
         <input type="button" id="pickfiles" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
-      </td>
+		  <div style="color:#ff0000">图片大小为710px*428px</div>
+	  </td>
     </tr>
     
     <tr>
