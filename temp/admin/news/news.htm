@@ -7,9 +7,15 @@
 <link href="{$admin_temp_path}/css/main.css" rel="stylesheet" type="text/css" />
 <script src="{$url_path}/js/jquery.js"></script>
 <script src="{$url_path}/js/Datepicker/Wdatepicker.js" type="text/javascript"></script>
-<script src="{$url_path}/js/editor/kindeditor.js" charset="utf-8"></script>
-<script src="{$url_path}/js/editor/lang/zh_CN.js" charset="utf-8"></script>
+
 <script type="text/javascript" src="/js/plupload/plupload.full.min.js"></script>
+
+	<link href="{$url_path}/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+	<script type="text/javascript" src="{$url_path}/js/umeditor/third-party/jquery.min.js"></script>
+	<script type="text/javascript" src="{$url_path}/js/umeditor/third-party/template.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="{$url_path}/js/umeditor/umeditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="{$url_path}/js/umeditor/umeditor.min.js"></script>
+	<script type="text/javascript" src="{$url_path}/js/umeditor/lang/zh-cn/zh-cn.js"></script>
 {literal}
 <script language="javascript">
 function add_img()
@@ -89,20 +95,11 @@ function show_pic(type)
     <tr>
       <td class="label">内容：</td>
 	  <td>
-      	<textarea id="content" name="content" style="width:700px;height:300px;">{$news.content}</textarea>
-        {literal}
-    	<script>
-					var editor;
-					KindEditor.ready(function(K) {
-						editor = K.create('textarea[name="content"]', {
-							items : [
-								'source','fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
-								'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
-								'insertunorderedlist', '|', 'emoticons', 'image', 'link']
-						});
-					});
-		</script>
-        {/literal}
+		  <textarea id="content" name="content" style="width:700px;height:300px;">{$news.content}</textarea>
+		  <script type="text/javascript">
+			  //实例化编辑器
+			  var um = UM.getEditor('content');
+		  </script>
       </td>
     </tr>
 	<tr>
