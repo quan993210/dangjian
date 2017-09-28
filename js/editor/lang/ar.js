@@ -49,7 +49,7 @@ KindEditor.lang({
 	emoticons : 'إدراج وجه ضاحك',
 	link : 'رابط',
 	unlink : 'إزالة الرابط',
-	fullscreen : 'محرر ملئ الشاشة(Esc)',
+	fullscreen : 'محرر ملئ الشاشة',
 	about : 'حول',
 	print : 'طباعة',
 	filemanager : 'مدير الملفات',
@@ -74,6 +74,8 @@ KindEditor.lang({
 	deleteMedia : 'حذف الوسائط',
 	editLink : 'خصائص الرابط',
 	deleteLink : 'إزالة الرابط',
+	editAnchor : 'Anchor properties',
+	deleteAnchor : 'Delete Anchor',
 	tableprop : 'خصائص الجدول',
 	tablecellprop : 'خصائص الخلية',
 	tableinsert : 'إدراج جدول',
@@ -110,6 +112,7 @@ KindEditor.lang({
 	uploadError : 'Upload Error',
 	'plainpaste.comment' : 'إستخدم إختصار لوحة المفاتيح (Ctrl+V) للصق داخل النافذة.',
 	'wordpaste.comment' : 'إستخدم إختصار لوحة المفاتيح (Ctrl+V) للصق داخل النافذة.',
+	'code.pleaseInput' : 'Please input code.',
 	'link.url' : 'الرابط',
 	'link.linkType' : 'الهدف',
 	'link.newWindow' : 'نافذة جديدة',
@@ -194,6 +197,7 @@ KindEditor.lang({
 	'map.search' : 'بحث',
 	'baidumap.address' : 'العنوان: ',
 	'baidumap.search' : 'بحث',
+	'baidumap.insertDynamicMap' : 'Dynamic Map',
 	'anchor.name' : 'إسم الرابط',
 	'formatblock.formatBlock' : {
 		h1 : 'عنوان 1',
@@ -229,3 +233,10 @@ KindEditor.lang({
 		'3.html' : 'قائمة'
 	}
 }, 'ar');
+
+KindEditor.each(KindEditor.options.items, function(i, name) {
+	if (name == 'baidumap') {
+		KindEditor.options.items[i] = 'map';
+	}
+});
+KindEditor.options.langType = 'ar';

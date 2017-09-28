@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.6, created on 2017-08-24 15:21:15
+<?php /* Smarty version Smarty-3.0.6, created on 2017-09-28 19:58:41
          compiled from "E:/phpStudy/WWW/dangjian/temp/admin\common/top.htm" */ ?>
-<?php /*%%SmartyHeaderCode:9222599e7e6b0e1117-46551415%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:620359cce3f10aba99-34196442%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '9faa9d5937f2fcf21f2468cfbcf26f6df095452b' => 
     array (
       0 => 'E:/phpStudy/WWW/dangjian/temp/admin\\common/top.htm',
-      1 => 1501893769,
+      1 => 1506392245,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '9222599e7e6b0e1117-46551415',
+  'nocache_hash' => '620359cce3f10aba99-34196442',
   'function' => 
   array (
   ),

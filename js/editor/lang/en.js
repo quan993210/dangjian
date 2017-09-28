@@ -48,7 +48,7 @@ KindEditor.lang({
 	emoticons : 'Insert emoticon',
 	link : 'Link',
 	unlink : 'Unlink',
-	fullscreen : 'Toggle fullscreen mode(Esc)',
+	fullscreen : 'Toggle fullscreen mode',
 	about : 'About',
 	print : 'Print',
 	filemanager : 'File Manager',
@@ -73,6 +73,8 @@ KindEditor.lang({
 	deleteMedia : 'Delete media',
 	editLink : 'Link properties',
 	deleteLink : 'Unlink',
+	editAnchor : 'Anchor properties',
+	deleteAnchor : 'Delete Anchor',
 	tableprop : 'Table properties',
 	tablecellprop : 'Cell properties',
 	tableinsert : 'Insert table',
@@ -109,6 +111,7 @@ KindEditor.lang({
 	uploadError : 'Upload Error',
 	'plainpaste.comment' : 'Use keyboard shortcut(Ctrl+V) to paste the text into the window.',
 	'wordpaste.comment' : 'Use keyboard shortcut(Ctrl+V) to paste the text into the window.',
+	'code.pleaseInput' : 'Please input code.',
 	'link.url' : 'URL',
 	'link.linkType' : 'Target',
 	'link.newWindow' : 'New window',
@@ -193,6 +196,7 @@ KindEditor.lang({
 	'map.search' : 'Search',
 	'baidumap.address' : 'Address: ',
 	'baidumap.search' : 'Search',
+	'baidumap.insertDynamicMap' : 'Dynamic Map',
 	'anchor.name' : 'Anchor name',
 	'formatblock.formatBlock' : {
 		h1 : 'Heading 1',
@@ -228,3 +232,10 @@ KindEditor.lang({
 		'3.html' : 'List'
 	}
 }, 'en');
+
+KindEditor.each(KindEditor.options.items, function(i, name) {
+	if (name == 'baidumap') {
+		KindEditor.options.items[i] = 'map';
+	}
+});
+KindEditor.options.langType = 'en';

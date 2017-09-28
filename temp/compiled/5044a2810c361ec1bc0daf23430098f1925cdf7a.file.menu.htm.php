@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.6, created on 2017-08-24 15:21:18
+<?php /* Smarty version Smarty-3.0.6, created on 2017-09-28 19:58:43
          compiled from "E:/phpStudy/WWW/dangjian/temp/admin\common/menu.htm" */ ?>
-<?php /*%%SmartyHeaderCode:31447599e7e6e06acf0-72589529%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:1418759cce3f349e8e4-71746261%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '5044a2810c361ec1bc0daf23430098f1925cdf7a' => 
     array (
       0 => 'E:/phpStudy/WWW/dangjian/temp/admin\\common/menu.htm',
-      1 => 1501893769,
+      1 => 1506392245,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '31447599e7e6e06acf0-72589529',
+  'nocache_hash' => '1418759cce3f349e8e4-71746261',
   'function' => 
   array (
   ),
@@ -28,12 +28,12 @@ $_smarty_tpl->decodeProperties(array (
 /css/menu.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div class="tit">
+<!--<div class="tit">
 	<div>
     	<img src="<?php echo $_smarty_tpl->getVariable('admin_temp_path')->value;?>
 /images/set.png" style="" /> 内容管理
 	</div>
-</div>
+</div>-->
 <div class="wrap">
 	<?php unset($_smarty_tpl->tpl_vars['smarty']->value['section']['loop']);
 $_smarty_tpl->tpl_vars['smarty']->value['section']['loop']['name'] = 'loop';

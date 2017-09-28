@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.6, created on 2017-08-24 15:21:21
+<?php /* Smarty version Smarty-3.0.6, created on 2017-09-28 19:58:44
          compiled from "E:/phpStudy/WWW/dangjian/temp/admin\common/main.htm" */ ?>
-<?php /*%%SmartyHeaderCode:19745599e7e7198d389-75735644%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:722859cce3f4a79bb2-97524427%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'd8f78d370a3e843bc38591e64a4cd60280373ab4' => 
     array (
       0 => 'E:/phpStudy/WWW/dangjian/temp/admin\\common/main.htm',
-      1 => 1501893769,
+      1 => 1506564755,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '19745599e7e7198d389-75735644',
+  'nocache_hash' => '722859cce3f4a79bb2-97524427',
   'function' => 
   array (
   ),
@@ -107,44 +107,7 @@ $_smarty_tpl->decodeProperties(array (
   </tr>
 </table></td>
   </tr>
-  <tr>
-    <td colspan="2"><table width="100%" style="border:1px solid #bbdde5;" cellspacing="0" cellpadding="0">
-  <tr>
-    <td height="30" class="tbhead">版权信息</td>
-  </tr>
-  <tr>
-    <td class="newtable">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr>
-        <td width="160" height="38" class="dott">版权所有：				</td>
-        <td class="dott"><?php echo $_smarty_tpl->getVariable('sys_info')->value['copyright'];?>
-</td>
-      </tr>
-      <tr>
-        <td height="38" class="dott">程序版本：				</td>
-        <td class="dott"><?php echo $_smarty_tpl->getVariable('sys_info')->value['version'];?>
-</td>
-      </tr>
-      <tr>
-        <td height="38" class="dott">技术支持：				</td>
-        <td class="dott"><?php echo $_smarty_tpl->getVariable('sys_info')->value['support'];?>
-</td>
-      </tr>
-      <tr>
-        <td height="38" class="dott">服务热线：				</td>
-        <td class="dott"><?php echo $_smarty_tpl->getVariable('sys_info')->value['service'];?>
- </td>
-      </tr>
-      <tr>
-        <td height="38" class="dott">联系QQ：				</td>
-        <td class="dott"><?php echo $_smarty_tpl->getVariable('sys_info')->value['qq'];?>
- </td>
-      </tr>
-    </table>
-	</td>
-  </tr>
-</table></td>
-  </tr>
+
 </table>
 </body>
 </html>

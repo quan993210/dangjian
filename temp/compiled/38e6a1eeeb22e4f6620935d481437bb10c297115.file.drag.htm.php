@@ -1,17 +1,17 @@
-<?php /* Smarty version Smarty-3.0.6, created on 2017-08-24 15:21:25
+<?php /* Smarty version Smarty-3.0.6, created on 2017-09-28 19:58:42
          compiled from "E:/phpStudy/WWW/dangjian/temp/admin\common/drag.htm" */ ?>
-<?php /*%%SmartyHeaderCode:8413599e7e758583b3-49526786%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:2861259cce3f21c2229-37280515%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '38e6a1eeeb22e4f6620935d481437bb10c297115' => 
     array (
       0 => 'E:/phpStudy/WWW/dangjian/temp/admin\\common/drag.htm',
-      1 => 1501893769,
+      1 => 1506392245,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '8413599e7e758583b3-49526786',
+  'nocache_hash' => '2861259cce3f21c2229-37280515',
   'function' => 
   array (
   ),

@@ -635,6 +635,23 @@
 	margin: 0;
 	padding: 0;
 }
+.ke-dialog .ke-header {
+	width: 100%;
+	margin-bottom: 10px;
+}
+.ke-dialog .ke-header .ke-left {
+	float: left;
+}
+.ke-dialog .ke-header .ke-right {
+	float: right;
+}
+.ke-dialog .ke-header label {
+	margin-right: 0;
+	cursor: pointer;
+	font-weight: normal;
+	display: inline;
+	vertical-align: top;
+}
 .ke-dialog-content {
 	background-color: #FFF;
 	width: 100%;
@@ -771,7 +788,7 @@
 	opacity:0.5;
 }
 .ke-button-common {
-	background: url(background.png) no-repeat scroll 0 -25px transparent;
+	background: url(background.png) no-repeat;
 	cursor: pointer;
 	height: 23px;
 	line-height: 23px;
@@ -783,7 +800,6 @@
 .ke-button-outer {
 	background-position: 0 -25px;
 	padding: 0;
-	position: relative;
 	display: -moz-inline-stack;
 	display: inline-block;
 	vertical-align: middle;
@@ -792,13 +808,12 @@
 }
 .ke-button {
 	background-position: right -25px;
-	padding: 0 12px;
-	margin: 0;
+	padding: 0 14px 0 12px;
+	margin: 0 0 0 2px;
 	font-family: "sans serif",tahoma,verdana,helvetica;
 	border: 0 none;
 	color: #333;
 	font-size: 12px;
-	left: 2px;
 	text-decoration: none;
 }
 /* inputbox */
@@ -845,12 +860,13 @@
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
+	*height: 25px;
 }
 .ke-upload-area .ke-upload-file {
 	position: absolute;
+	font-size: 60px;
 	top: 0;
 	right: 0;
-	height: 25px;
 	padding: 0;
 	margin: 0;
 	z-index: 811212;
@@ -1128,21 +1144,4 @@
 	width: 30%;
 	text-align: center;
 }
-/* template */
-.ke-plugin-template .ke-header {
-	width: 100%;
-	margin-bottom: 10px;
-}
-.ke-plugin-template label {
-	margin-right: 0;
-	cursor: pointer;
-	font-weight: normal;
-	display: inline;
-	vertical-align: top;
-}
-.ke-plugin-template .ke-left {
-	float: left;
-}
-.ke-plugin-template .ke-right {
-	float: right;
-}
+
