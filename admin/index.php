@@ -60,7 +60,7 @@ function menu()
 	$sub[]  = array('url' => 'news.php', 			'name' => '内容列表');
 	$sub[]  = array('url' => 'dangfei.php', 			'name' => '党费列表');
 	$sub[]  = array('url' => 'metting.php', 			'name' => '会议列表');
-
+	$sub[]  = array('url' => 'carousel.php', 			'name' => '首页轮播图');
 
 	$menu[] = array('name' => '网站管理', 				'sub' => $sub);
 	
