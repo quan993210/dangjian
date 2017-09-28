@@ -94,6 +94,13 @@ function creat_dati(){
                     $sql = "SELECT a.id as test_timu_id, b.* FROM test_timu as a LEFT JOIN timu as b on a.timuid=b.timuid WHERE a.id='{$id}'";
                     $result_timu[] = $db->get_row($sql);
                 }
+
+                //获取题目答案
+                foreach($result_timu as $key=>$val){
+                    $sql 		= "SELECT * FROM timu_answer WHERE timuid = '{$val['timuid']}' ORDER BY id ASC";
+                    $answer 		= $db->get_all($sql);
+                    $result_timu[$key]['answer'] = $answer;
+                }
             }else{
                 $result_timu[] = ""; //已答完
             }
