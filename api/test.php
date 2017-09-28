@@ -260,7 +260,7 @@ function my_test(){
     if (!empty($_POST['userid'])) {
         //检查答题用户
         $userid = $_POST['userid'];
-        $sql = "SELECT a.*,b.title FROM test_dati as a LEFT JOIN test as b on a.testid = b.testid WHERE a.userid='{$userid}'";
+        $sql = "SELECT a.*,b.title,b.limit_count,b.limit_time FROM test_dati as a LEFT JOIN test as b on a.testid = b.testid WHERE a.userid='{$userid}'";
         $test_dati = $db->get_all($sql);
         if(!is_array($test_dati) && !$test_dati){
             showapierror('参数错误！');
