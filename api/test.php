@@ -35,16 +35,40 @@ switch ($action)
 
 function get_test(){
     global $db;
-    if(isset($_POST['testid']) && !empty($_POST['testid']) ) {
-        $testid = intval(trim($_POST['testid']));
-        $sql = "SELECT * FROM test WHERE testid ='{$testid}' and is_delete =0 ORDER BY testid DESC";
-        $test = $db->get_row($sql);
-        showapisuccess($test);
+    if(isset($_POST['userid']) && !empty($_POST['userid']) ) {
+        $userid = $_POST['userid'];
+        if(isset($_POST['testid']) && !empty($_POST['testid']) ) {
+            $testid = intval(trim($_POST['testid']));
+            $sql = "SELECT * FROM test WHERE testid ='{$testid}' and is_delete =0 ORDER BY testid DESC";
+            $test = $db->get_row($sql);
+            showapisuccess($test);
+        }else{
+            $sql = "SELECT * FROM test WHERE is_delete =0 ORDER BY testid DESC";
+            $test = $db->get_all($sql);
+
+            foreach($test as $key=>$val){
+                if($db->get_one("SELECT * FROM test_dati WHERE testid = '{$val['testid']}' and userid ='{$userid}' and status =2")){
+                    $status = 2;
+                    $sql        = "select score from test_dati WHERE testid = '{$val['testid']}' and userid ='{$userid}' and status =2 order by score DESC";
+                    $score 		= $db->get_one($sql);
+                }elseif($db->get_one("SELECT * FROM test_dati WHERE testid = '{$val['testid']}' and userid ='{$userid}' and status =1")){
+                    $status = 1;
+                    $score = 0;
+                }else{
+                    $status = 0;
+                    $score = 0;
+                }
+                $test[$key]['score'] = $score;
+                $test[$key]['status'] = $status;
+                $test[$key]['userid'] = $userid;
+
+            }
+            showapisuccess($test);
+        }
     }else{
-        $sql = "SELECT * FROM test WHERE is_delete =0 ORDER BY testid DESC";
-        $test = $db->get_all($sql);
-        showapisuccess($test);
+        showapierror('参数错误！');
     }
+
 }
 
 function creat_dati(){

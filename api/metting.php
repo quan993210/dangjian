@@ -79,7 +79,9 @@ function sign(){
         $sql = "INSERT INTO metting_sign (mettingid,userid,username, sign_time,lng,lat) VALUES ('{$mettingid}','{$userid}','{$member['name']}', '{$sign_time}', '{$lng}', '{$lat}')";
         $db->query($sql);
     }
-    showapisuccess(array(),'签到成功');
+    $sql = "SELECT * FROM metting_sign WHERE userid = '{$userid}' and mettingid = '{$mettingid}'";
+    $metting = $db->get_row($sql);
+    showapisuccess($metting,'签到成功');
 }
 
 /**
