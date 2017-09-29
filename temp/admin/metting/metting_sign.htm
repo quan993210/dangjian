@@ -49,13 +49,15 @@
     <tr align="center">
 	  <th width="5%"><input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" name="checkbox[]">编号</th>
 		<th width="15%">姓名</td>
-      <th width="20%">签到时间</td>
+      <th width="20%">签到地址</td>
+		<th width="20%">签到时间</td>
       <th width="10%">是否迟到</td>
     </tr>
 	{section name=loop loop=$metting_sign}
 		<tr align="center">
 		  <td><span><input name="checkboxes[]" type="checkbox" value="{$metting_sign[loop].id}" />{$metting_sign[loop].id}</span></td>
 			<td class="first-cell"><span>{$metting_sign[loop].username}</span></td>
+			<td>{$metting_sign[loop].address}</td>
           <td>{$metting_sign[loop].sign_time}</td>
 			<td>{$metting_sign[loop].status}</td>
 		</tr>  

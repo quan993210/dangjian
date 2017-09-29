@@ -269,7 +269,7 @@ function del_sel_metting()
 
 
 
-function metting_data(){
+/*function metting_data(){
     global $db, $smarty;
     $mettingid = irequest('mettingid');
     //搜索条件
@@ -301,7 +301,7 @@ function metting_data(){
 
     $smarty->assign('page_title', '会议详情列表');
     $smarty->display('metting/metting_data_list.htm');
-}
+}*/
 
 
 /*------------------------------------------------------ */
@@ -329,7 +329,14 @@ function sign()
         }else{
             $arr[$key]['status'] = "准时参加";
         }
+
+        if($val['lng'] && $val['lat']){
+            $url = "http://api.map.baidu.com/geocoder/v2/?location=".$val['lat'].",".$val['lng']."&output=json&pois=1&ak=kk5HwsY5iPbyrRvfnzXekNxAYRuCEh9m";
+            $addr = json_decode(https_request($url),true);
+            $arr[$key]['address'] = $addr['result']['formatted_address'];
+        }
     }
+
 
     $sql 		= "SELECT COUNT(id) FROM metting_sign WHERE mettingid = '{$mettingid}'";
     $total 		= $db->get_one($sql);
@@ -346,6 +353,28 @@ function sign()
     $smarty->assign('page_title', '会议详情列表');
     $smarty->display('metting/metting_sign.htm');
 }
+
+/**
+ * @explain
+ * 发送http请求，并返回数据
+ **/
+function https_request($url, $data = null)
+{
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+    if (!empty($data)) {
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    }
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($curl);
+    curl_close($curl);
+    return $output;
+}
+
+
 
 
 

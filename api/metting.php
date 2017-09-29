@@ -46,6 +46,13 @@ function my_metting(){
         $userid = intval(trim($_POST['userid']));
         $sql = "SELECT a.*,b.title FROM metting_sign as a LEFT JOIN metting as b on b.id=a.mettingid WHERE a.userid ='{$userid}'";
         $metting = $db->get_all($sql);
+        foreach($metting as $key=>$val){
+            if($val['lng'] && $val['lat']){
+                $url = "http://api.map.baidu.com/geocoder/v2/?location=".$val['lat'].",".$val['lng']."&output=json&pois=1&ak=kk5HwsY5iPbyrRvfnzXekNxAYRuCEh9m";
+                $addr = json_decode(https_request($url),true);
+                $metting[$key]['address'] = $addr['result']['formatted_address'];
+            }
+        }
         showapisuccess($metting);
     }else{
         showapierror('参数错误！');
@@ -56,6 +63,8 @@ function sign(){
     global $db;
     $userid = $_GET['userid'];
     $mettingid = $_GET['mettingid'];
+    $lng = $_GET['lng'];
+    $lat = $_GET['lat'];
     if(!$userid || !$mettingid){
         showapierror('缺少签到参数,签到失败');
     }
@@ -67,8 +76,28 @@ function sign(){
     if(is_array($metting) && $metting){
 
     }else{
-        $sql = "INSERT INTO metting_sign (mettingid,userid,username, sign_time) VALUES ('{$mettingid}','{$userid}','{$member['name']}', '{$sign_time}')";
+        $sql = "INSERT INTO metting_sign (mettingid,userid,username, sign_time,lng,lat) VALUES ('{$mettingid}','{$userid}','{$member['name']}', '{$sign_time}', '{$lng}', '{$lat}')";
         $db->query($sql);
     }
     showapisuccess(array(),'签到成功');
+}
+
+/**
+ * @explain
+ * 发送http请求，并返回数据
+ **/
+function https_request($url, $data = null)
+{
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+    if (!empty($data)) {
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    }
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($curl);
+    curl_close($curl);
+    return $output;
 }
