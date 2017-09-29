@@ -41,6 +41,21 @@ function get_test(){
             $testid = intval(trim($_POST['testid']));
             $sql = "SELECT * FROM test WHERE testid ='{$testid}' and is_delete =0 ORDER BY testid DESC";
             $test = $db->get_row($sql);
+
+            if($db->get_one("SELECT * FROM test_dati WHERE testid = '{$test['testid']}' and userid ='{$userid}' and status =2")){
+                $status = 2;
+                $sql        = "select score from test_dati WHERE testid = '{$test['testid']}' and userid ='{$userid}' and status =2 order by score DESC";
+                $score 		= $db->get_one($sql);
+            }elseif($db->get_one("SELECT * FROM test_dati WHERE testid = '{$test['testid']}' and userid ='{$userid}' and status =1")){
+                $status = 1;
+                $score = 0;
+            }else{
+                $status = 0;
+                $score = 0;
+            }
+            $test['score'] = $score;
+            $test['status'] = $status;
+            $test['userid'] = $userid;
             showapisuccess($test);
         }else{
             $sql = "SELECT * FROM test WHERE is_delete =0 ORDER BY testid DESC";
