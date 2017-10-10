@@ -193,7 +193,7 @@ function submit_dati(){
         if(!is_array($test) && !$test){
             showapierror('参数错误！');
         }
-        $score = 100/ $test['limit_count'];
+        $score = floor( 100/ $test['limit_count']);
 
         //获取答题记录用于更新答题分数
         $test_dati_id = $_POST['test_dati_id'];

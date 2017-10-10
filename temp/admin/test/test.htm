@@ -50,12 +50,7 @@
             <tr>
                 <td class="label">题目数量：</td>
                 <td>
-                    <select name="limit_count" id="limit_count">
-                        <option value="5" {if $test.limit_count eq 2}selected{/if}>5</option>
-                        <option value="10" {if $test.limit_count eq 3}selected{/if}>10</option>
-                        <option value="20" {if $test.limit_count eq 20}selected{/if}>20</option>
-                        <option value="50" {if $test.limit_count eq 50}selected{/if}>50</option>
-                    </select>
+                    <input type="text" name="limit_count" value="{$test.limit_count}" />
                 </td>
             </tr>
             <tr>

@@ -86,6 +86,7 @@
       <th width="20%">内容分类</td>
       <th width="5%">浏览次数</td>
       <th width="15%">添加时间</td>
+		<th width="5%">排序</td>
       <th width="15%">操作</td>
     </tr>
 	{section name=loop loop=$news_list}
@@ -95,6 +96,7 @@
           <td>{$news_list[loop].catname}</td>
           <td>{$news_list[loop].viewcout}</td>
           <td>{$news_list[loop].add_time_format}</td>
+			<td>{$news_list[loop].listorder}</td>
 		  <td>
           	<a href="news.php?action=mod_news&id={$news_list[loop].id}&now_page={$now_page}">修改</a> |
             <a href="javascript:void(0);" onclick="check_del('news.php?action=del_news&id={$news_list[loop].id}&nowpage={$nowpage}');">删除</a>
