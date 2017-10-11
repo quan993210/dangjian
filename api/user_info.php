@@ -24,6 +24,9 @@ switch ($action)
     case "upload_avatar":
         upload_avatar();
         break;
+    case "update_gender":
+        update_gender();
+        break;
 }
 function get_user_info(){
     global $db;
@@ -178,52 +181,24 @@ function upload_avatar()
     showapisuccess($member);
 }
 
-
-
-
-
-
-/*function upload_avatar()
-{
+function update_gender(){
     global $db;
     $userid = irequest('userid');
-    $url = $_POST['image_url'];
-    $save_dir = '../upload/member/' . date('ym') ;
-    $filename = "";
-    if(trim($url)==''){
-        showapierror('图片路径不对！');
+    $gender = irequest('gender');
+    if(!$gender || !$userid){
+        showapierror('参数错误');
+    }else{
+        $sql = "UPDATE member SET gender = '{$gender}' WHERE userid = '{$userid}'";
+        $db->query($sql);
+        $sql = "SELECT * FROM member WHERE userid=$userid";
+        $member = $db->get_row($sql);
+        showapisuccess($member);
     }
 
-    if(trim($filename)==''){//保存文件名
-        $ext=strrchr($url,'.');
-        if($ext!='.gif'&&$ext!='.jpg'){
-            return array('file_name'=>'','save_path'=>'','error'=>3);
-        }
-        $filename=time().$ext;
-    }
-    if(0!==strrpos($save_dir,'/')){
-        $save_dir.='/';
-    }
-    //创建保存目录
-    if(!file_exists($save_dir)&&!mkdir($save_dir,0777,true)){
-        showapierror('上传失败');
-    }
-    ob_start();
-    readfile($url);
-    $img=ob_get_contents();
-    ob_end_clean();
-    //$size=strlen($img);
-    //文件大小
-    $fp2=@fopen($save_dir.$filename,'a');
-    fwrite($fp2,$img);
-    fclose($fp2);
-    unset($img,$url);
-    $pic_path = substr($save_dir,2).$filename;
-    $sql = "UPDATE member SET avatar = '{$pic_path}' WHERE userid = '{$userid}'";
-    $db->query($sql);
-    $sql = "SELECT * FROM member WHERE userid=$userid";
-    $member = $db->get_row($sql);
-    showapisuccess($member);
-}*/
+}
+
+
+
+
 
 
