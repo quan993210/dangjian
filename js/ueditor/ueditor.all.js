@@ -11470,6 +11470,8 @@ UE.plugins['font'] = function () {
     me.setOpt({
         'fontfamily': [
             { name: 'songti', val: '宋体,SimSun'},
+            { name: 'SimSun', val: '仿宋,SimSun'},
+            { name: 'FangSong_GB2312', val: '仿宋_GB2312 ,FangSong_GB2312'},
             { name: 'yahei', val: '微软雅黑,Microsoft YaHei'},
             { name: 'kaiti', val: '楷体,楷体_GB2312, SimKai'},
             { name: 'heiti', val: '黑体, SimHei'},
