@@ -83,8 +83,9 @@
     <tr align="center">
 	  <th width="5%"><input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" name="checkbox[]">编号</th>
       <th width="35%">标题</td>
-      <th width="20%">内容分类</td>
+      <th width="10%">内容分类</td>
       <th width="5%">浏览次数</td>
+		<th width="10%">发布时间</td>
       <th width="15%">添加时间</td>
 		<th width="5%">排序</td>
       <th width="15%">操作</td>
@@ -95,6 +96,7 @@
           <td class="first-cell"><span>{$news_list[loop].title}</span></td>
           <td>{$news_list[loop].catname}</td>
           <td>{$news_list[loop].viewcout}</td>
+			<td>{$news_list[loop].release_time}</td>
           <td>{$news_list[loop].add_time_format}</td>
 			<td>{$news_list[loop].listorder}</td>
 		  <td>

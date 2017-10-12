@@ -135,6 +135,7 @@ function do_add_news()
 	$catid	  = irequest('catid');
 	$title    = crequest('title');
 	$brief    = crequest('brief');
+	$release_time	  = crequest('release_time');
 	$content  = $_REQUEST['content'];
 	$pic_path = crequest('pic_path');
 	$video_url	  = crequest('video_url');
@@ -148,7 +149,7 @@ function do_add_news()
 	check_null($pic_path, 			'图片');
 	check_null($content, 			'内容');
 
-	$sql = "INSERT INTO news (catid,cover,title, brief, content, video_url, audio_url, add_time, add_time_format, listorder) VALUES('{$catid}','{$pic_path}','{$title}', '{$brief}', '{$content}', '{$video_url}', '{$audio_url}', '{$add_time}', '{$add_time_format}', '{$listorder}')";
+	$sql = "INSERT INTO news (catid,cover,title, brief,release_time, content, video_url, audio_url, add_time, add_time_format, listorder) VALUES('{$catid}','{$pic_path}','{$title}', '{$brief}', '{$release_time}','{$content}', '{$video_url}', '{$audio_url}', '{$add_time}', '{$add_time_format}', '{$listorder}')";
 	$db->query($sql);
 	
 	unset($_SESSION['news_pic_path']);
@@ -194,6 +195,7 @@ function do_mod_news()
 	$catid	  = irequest('catid');
 	$title    = crequest('title');
 	$brief    = crequest('brief');
+	$release_time	  = crequest('release_time');
 	$content  = $_REQUEST['content'];
 	$pic_path = crequest('pic_path');
 	$video_url	  = crequest('video_url');
@@ -205,7 +207,7 @@ function do_mod_news()
 	check_null($title, 			'内容标题');
 	
 	$id = irequest('id');
-	$update_col = "title = '{$title}', brief = '{$brief}', content = '{$content}', cover = '{$pic_path}', catid = '{$catid}', video_url = '{$video_url}', audio_url = '{$audio_url}', listorder = '{$listorder}', add_time = '{$add_time}', add_time_format = '{$add_time_format}'";
+	$update_col = "title = '{$title}', brief = '{$brief}', release_time='{$release_time}',content = '{$content}', cover = '{$pic_path}', catid = '{$catid}', video_url = '{$video_url}', audio_url = '{$audio_url}', listorder = '{$listorder}', add_time = '{$add_time}', add_time_format = '{$add_time_format}'";
 	$sql = "UPDATE news SET {$update_col} WHERE id='{$id}'";
 	$db->query($sql);
 	

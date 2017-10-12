@@ -89,8 +89,12 @@ function show_pic(type)
 	  <td>
       	<input type="text" id="brief" name="brief" value="{$news.brief}" />
       </td>
-    </tr>     
-    <tr>
+    </tr>
+	<tr>
+		<td class="label">发布时间：</td>
+		<td><input type="text" name="release_time" onclick="return select_time()"  value="{$news.release_time}" /></td>
+	</tr>
+	<tr>
       <td class="label">内容：</td>
 	  <td>
 		  <textarea id="content" name="content" style="width:700px;height:300px;">{$news.content}</textarea>
