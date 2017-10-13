@@ -221,7 +221,7 @@ function submit_dati(){
 
         //更新答题记录分数
         $update_col = "score = '{$test_dati['score']}'";
-        $sql = "UPDATE test_dati SET {$update_col} WHERE userid = '{$userid}' and testid =  '{$testid}'";
+        $sql = "UPDATE test_dati SET {$update_col} WHERE userid = '{$userid}' and testid =  '{$testid}' and id ='{$test_dati_id}'";
         $db->query($sql);
 
 
