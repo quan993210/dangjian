@@ -76,7 +76,7 @@
           <td>{$member_list[loop].add_time_format}</td>
           <td>
             <a href="member.php?action=mod_member&userid={$member_list[loop].userid}&now_page={$now_page}">修改</a> |
-            <a href="javascript:void(0);" onclick="check_del('member.php?action=del_member&id={$member_list[loop].userid}&nowpage={$nowpage}');">删除</a>
+            <a href="javascript:void(0);" onclick="check_del('member.php?action=del_member&userid={$member_list[loop].userid}&nowpage={$nowpage}');">删除</a>
           </td>
 		</tr>  
 	{/section}

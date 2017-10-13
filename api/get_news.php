@@ -35,7 +35,7 @@ function news_list(){
         //列表信息
         $now_page 	= intval($_POST['page']);
         $now_page 	= $now_page == 0 ? 1 : $now_page;
-        $page_size 	= 5;
+        $page_size 	= 6;
         $start    	= ($now_page - 1) * $page_size;
 
         $sql = "SELECT * FROM news WHERE catid =$catid and is_delete =0 {$order} LIMIT {$start}, {$page_size}";
