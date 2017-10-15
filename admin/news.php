@@ -146,7 +146,7 @@ function do_add_news()
 
 	check_null($catid, 			'分类');
 	check_null($title, 			'标题');
-	check_null($pic_path, 			'图片');
+	//check_null($pic_path, 			'图片');
 	check_null($content, 			'内容');
 
 	$sql = "INSERT INTO news (catid,cover,title, brief,release_time, content, video_url, audio_url, add_time, add_time_format, listorder) VALUES('{$catid}','{$pic_path}','{$title}', '{$brief}', '{$release_time}','{$content}', '{$video_url}', '{$audio_url}', '{$add_time}', '{$add_time_format}', '{$listorder}')";
