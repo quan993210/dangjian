@@ -76,7 +76,7 @@ function news_list()
 	$con 		= get_con(); 
 	
 	//排序字段
-	$order 	 	 = 'ORDER BY a.listorder DESC';
+	$order 	 	 = 'ORDER BY a.listorder DESC, id DESC';
 	
 	//列表信息
 	$now_page 	= irequest('page');
