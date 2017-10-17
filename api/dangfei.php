@@ -29,9 +29,10 @@ switch ($action)
 
 function my_dangfei(){
     global $db;
-    if(isset($_POST['mobile']) && !empty($_POST['mobile']) ) {
+    if(isset($_POST['mobile']) && !empty($_POST['mobile']) &&isset($_POST['userid']) && !empty($_POST['userid']) ) {
         $mobile = trim($_POST['mobile']);
-        $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile =$mobile ORDER BY id DESC";
+        $userid = trim($_POST['userid']);
+        $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile =$mobile and a.userid =$userid ORDER BY id DESC";
         $news = $db->get_all($sql);
         showapisuccess($news);
     }else{
