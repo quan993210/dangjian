@@ -24,6 +24,9 @@ switch ($action)
     case "view_news":
         view_news();
         break;
+    case "latest_news":
+        latest_news();
+        break;
 }
 
 function news_list(){
@@ -84,5 +87,22 @@ function view_news(){
 
     showapisuccess();
 }
+
+
+function latest_news(){
+    global $db;
+    $order 	 	 = 'ORDER BY id DESC';
+    if(isset($_POST['catid']) && !empty($_POST['catid']) ) {
+        $catid = intval(trim($_POST['catid']));
+        $sql = "SELECT * FROM news WHERE catid =$catid and is_delete =0 {$order} LIMIT 10";
+        $news = $db->get_all($sql);
+        showapisuccess($news);
+    }else{
+        $sql = "SELECT * FROM news WHERE  is_delete =0 {$order} LIMIT 10";
+        $news = $db->get_all($sql);
+        showapisuccess($news);
+    }
+}
+
 
 
