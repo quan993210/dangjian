@@ -136,7 +136,7 @@ function do_add_member()
 
 	check_null($name  	,   '用户名');
 	check_null($mobile  	,   '手机号');
-	$sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
+	$sql = "SELECT * FROM member WHERE mobile = '{$mobile}' and is_delete = 0";
 	$member = $db->get_row($sql);
 	if($member){
 		alert_back('系统已存在该手机号，请勿重复添加！');
@@ -160,7 +160,7 @@ function mod_member()
 	global $db, $smarty;
 
 	$userid = irequest('userid');
-	$sql = "SELECT * FROM member WHERE userid = '{$userid}'";
+	$sql = "SELECT * FROM member WHERE userid = '{$userid}' and is_delete = 0";
 	$member = $db->get_row($sql);
 	$smarty->assign('member', $member);
 	$smarty->assign('url_path', URL_PATH);
@@ -184,7 +184,7 @@ function do_mod_member()
 
 	check_null($name  	,   '用户名');
 	check_null($mobile  	,   '手机号');
-	$sql = "SELECT * FROM member WHERE mobile = '{$mobile}'";
+	$sql = "SELECT * FROM member WHERE mobile = '{$mobile}' and is_delete = 0";
 	$member = $db->get_row($sql);
 	if($member['userid'] != $userid){
 		alert_back('系统已存在该手机号，请勿重复添加！');
@@ -242,7 +242,7 @@ function del_sel_member()
 	/*$sql = "DELETE FROM member WHERE userid IN ({$userid})";
 	$db->query($sql);*/
 
-	$sql = "SELECT * FROM member WHERE userid IN ({$userid})";
+	$sql = "SELECT * FROM member WHERE userid IN ({$userid}) and is_delete = 0";
 	$member_all = $db->get_all($sql);
 	$update_col = "is_delete = '1'";
 	foreach($member_all as $key=>$val){
