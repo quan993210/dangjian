@@ -186,7 +186,7 @@ function do_mod_member()
 	check_null($mobile  	,   '手机号');
 	$sql = "SELECT * FROM member WHERE mobile = '{$mobile}' and is_delete = 0";
 	$member = $db->get_row($sql);
-	if($member['userid'] != $userid){
+	if($member && $member['userid'] != $userid){
 		alert_back('系统已存在该手机号，请勿重复添加！');
 	}
 
