@@ -80,7 +80,8 @@ function login_openid(){
     global $db;
     if(isset($_POST['openid']) && !empty($_POST['openid'])) {
         $openid = $_POST['openid'];
-        $sql = "SELECT * FROM member WHERE openid = '{$openid}'";
+        $mobile = $_POST['mobile'];
+        $sql = "SELECT * FROM member WHERE openid = '{$openid}' and mobile = '{$mobile}'";
         $member = $db->get_row($sql);
         showapisuccess($member);
 
