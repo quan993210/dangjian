@@ -41,7 +41,7 @@ function bind_user(){
             $session_key = wxCode($code);
             $userInfo = decryptData($session_key,$encryptedData,$iv);
             if ($userInfo && !empty($userInfo) && isset($userInfo['openId']) && !empty($userInfo['openId'])) {
-                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}'";
+                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}' and mobile = '{$mobile}'";
                 $member = $db->get_row($sql);
                 if($member['mobile'] == $mobile &&  $member && isset($member['openid']) && !empty($member['openid'])){
                    /* $nickname    	= $userInfo['nickname'];
@@ -60,7 +60,7 @@ function bind_user(){
                     $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE mobile = '{$mobile}'";
                     $db->query($sql);
                     //print_r($sql);
-                    $sql = "SELECT * FROM member WHERE mobile=$mobile";
+                    $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}' and mobile = '{$mobile}'";
                     $member = $db->get_row($sql);
                     showapisuccess($member);
                 }
