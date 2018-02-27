@@ -2,7 +2,8 @@
 define('IN_APP', true);
 
 //数据库信息配置
-define("DB_HOST", 'rm-uf67c488j8l36xkjmo.mysql.rds.aliyuncs.com');
+//define("DB_HOST", 'rm-uf67c488j8l36xkjmo.mysql.rds.aliyuncs.com');
+define("DB_HOST", 'rm-uf6626r586f38e3f5.mysql.rds.aliyuncs.com');
 define("DB_NAME", 'dangjian');
 define("DB_USER", 'dangjian');
 define("DB_PASS", 'j0QluaLhcIlVSeDS');
