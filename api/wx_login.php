@@ -102,17 +102,9 @@ function bind_user(){
 
 function login_openid(){
     global $db;
-    if(isset($_POST['openid']) && !empty($_POST['openid'])&& !empty($_POST['adminid'])) {
-        $openid = $_POST['openid'];
-        $adminid  = $_POST["adminid"];
-        $mobile = $_POST['mobile'];
-        $sql = "SELECT * FROM member WHERE openid = '{$openid}' and adminid='{$adminid}' and mobile = '{$mobile}'";
-        $member = $db->get_row($sql);
-        showapisuccess($member);
-
-    }else{
-        showapierror('参数错误！');
-    }
+    $sql = "SELECT * FROM member WHERE userid = 214 ";
+    $member = $db->get_row($sql);
+    showapisuccess($member);
 }
 
 
