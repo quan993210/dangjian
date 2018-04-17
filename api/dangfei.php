@@ -6,14 +6,19 @@
  * Time: 21:23
  * 党费
  */
-define('WE_NOTIFY_URL','https://dangjian.famishare.me/api/pay_notify.php');
-define('APPID','wx6ce6752b26628e64');
-define('MCH_ID','1487989782');
-define('WX_KEY','jiangxijinlukejikaifa5803015gong');
+define('WE_NOTIFY_URL','https://dangjian.jlzhdj.com/api/pay_notify.php');
+
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
-
+global $db;
+$adminid  = $_POST["adminid"];
+$sql = "SELECT * FROM admin WHERE id = '{$adminid}'";
+$res = $db->get_row($sql);
+define('APPID',$res['appid']);
+define('MCH_ID',$res['mch_id']);
+define('WX_KEY',$res['wx_key']);
+define('APPSECRET',$res['appsecret']);
 $action = crequest("action");
 $action = $action == '' ? 'my_dangfei' : $action;
 
@@ -29,10 +34,11 @@ switch ($action)
 
 function my_dangfei(){
     global $db;
-    if(isset($_POST['mobile']) && !empty($_POST['mobile']) &&isset($_POST['userid']) && !empty($_POST['userid']) ) {
+    $adminid  = $_POST["adminid"];
+    if(isset($_POST['mobile']) && !empty($_POST['mobile']) &&isset($_POST['userid']) && !empty($_POST['userid']) && !empty($_POST['adminid']) ) {
         $mobile = trim($_POST['mobile']);
         $userid = trim($_POST['userid']);
-        $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile =$mobile and a.userid =$userid ORDER BY id DESC";
+        $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile =$mobile and a.userid =$userid and a.adminid='{$adminid}' ORDER BY id DESC";
         $news = $db->get_all($sql);
         showapisuccess($news);
     }else{
@@ -42,9 +48,9 @@ function my_dangfei(){
 
 function create_order(){
     global $db;
-
+    $adminid  = $_POST["adminid"];
     $userid = isset($_POST['userid']) ? trim($_POST['userid']) : showapierror('userid_error');
-    $sql = "SELECT * FROM member WHERE userid='{$userid}'";
+    $sql = "SELECT * FROM member WHERE userid='{$userid}' and adminid='{$adminid}'";
     $userinfo = $db->get_row($sql);
     if(!$userinfo){
         showapierror('user_not_find');
@@ -63,7 +69,7 @@ function create_order(){
         $dangfei_data_id = $_POST['dangfei_data_id'];
         $userid = $_POST['userid'];
 
-        $sql = "SELECT * FROM `dangfei_data` WHERE dangfeiid='{$dangfeiid}' and id='{$dangfei_data_id}' and userid='{$userid}'";
+        $sql = "SELECT * FROM `dangfei_data` WHERE dangfeiid='{$dangfeiid}' and id='{$dangfei_data_id}' and userid='{$userid}' and adminid='{$adminid}'";
         $dangfei_data = $db->get_row($sql);
         if(!$dangfei_data){
             showapierror('支付党费信息不存在！');
@@ -77,7 +83,7 @@ function create_order(){
             $add_time = time();
             $add_time_format = now_time();
             $status = 1;
-            $sql = "INSERT INTO `order` (dangfeiid,dangfei_data_id,userid, name, cost, ordersn,add_time,add_time_format,status) VALUES ('{$dangfeiid}','{$dangfei_data_id}','{$userid}', '{$name}', '{$cost}', '{$ordersn}', '{$add_time}', '{$add_time_format}','{$status}')";
+            $sql = "INSERT INTO `order` (dangfeiid,dangfei_data_id,userid, name, cost, ordersn,add_time,add_time_format,status,adminid) VALUES ('{$dangfeiid}','{$dangfei_data_id}','{$userid}', '{$name}', '{$cost}', '{$ordersn}', '{$add_time}', '{$add_time_format}','{$status}','{$adminid}')";
             $db->query($sql);
             $sql = "SELECT * FROM `order` WHERE ordersn='{$ordersn}'";
             $orderinfo = $db->get_row($sql);

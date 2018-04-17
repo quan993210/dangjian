@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$page_title}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="{$admin_temp_path}/css/general.css" rel="stylesheet" type="text/css" />
+<link href="{$admin_temp_path}/css/main.css" rel="stylesheet" type="text/css" />
+<script src="{$url_path}/js/jquery.js"></script>
+<script src="{$url_path}/js/editor/kindeditor.js" charset="utf-8"></script>
+<script src="{$url_path}/js/editor/lang/zh_CN.js" charset="utf-8"></script>
+<script type="text/javascript" src="{$url_path}/js/plupload/plupload.full.min.js"></script>
+{literal}
+<style>
+.pic-list div{float:left;margin-right:10px;text-align:center;}
+.pic-list img{width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;}
+</style>
+{/literal}
+</head>
+<body>
+<h1>
+<span class="action-span"><a href="javascript:history.back();">返回</a></span>
+<span class="action-span1"><a href="">{$sys_name} 管理中心</a>  - {$page_title} </span>
+<div style="clear:both"></div>
+</h1>
+<div id="tabbody-div">
+<form name="form" action="" method="post" enctype="multipart/form-data">
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
+    <tr>
+      <td class="label">头像：</td>
+        <td>
+            <img src="{if $user.avatar neq ''}{$user.avatar}{else}{$url_path}/image/default.png{/if}" style="width: 50px;height: 50px;border-radius:50%; overflow:hidden;" />
+        </td>
+    </tr>
+    <tr>
+        <td class="label">昵称：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.nickname}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">姓名：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.username}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">性别：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{if $user.gender eq 1}男{elseif $user.gender eq 2}女{else}不详{/if}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">电话：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.mobile}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">邮箱：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.email}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">生日：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.birthday}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">申请职位次数：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.count_apply}" size="32" /></td>
+    </tr>
+   <!-- <tr>
+        <td class="label">城市：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.city}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">地址：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.address}" size="32" /></td>
+    </tr>-->
+    <tr>
+        <td class="label">毕业学校：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.school}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">学历：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.education}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">职位意向：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.position}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">期望薪资：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.salary}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">期望地区：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.region}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">参加工作年数：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.working_years}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">平台：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.platform}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">设备型号：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.device}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">系统：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.system}" size="32" /></td>
+    </tr>
+    <tr>
+        <td class="label">其他要求：</td>
+        <td><textarea name="required" readonly="readonly" rows="2" cols="30">{$user.required}</textarea></td>
+    </tr>
+    <tr>
+        <td class="label">备注：</td>
+        <td><textarea name="memo" readonly="readonly" rows="5" cols="30">{$user.memo}</textarea></td>
+    </tr>
+   <!-- <tr>
+        <td class="label">排序：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.listorder}" size="32" /></td>
+    </tr>-->
+    <tr>
+        <td class="label">添加时间：</td>
+        <td><input type="text" readonly="readonly" name="name" value="{$user.add_time_format}" size="32" /></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+      <input type="hidden" name="action" value="{$action}" />
+      <input type="hidden" name="userid" value="{$user.userid}" id="userid" />
+      <input type="hidden" name="now_page" value="{$now_page}" />
+   <!--   <input type="submit" value="确定">  -->
+      </td>
+    </tr>
+</table>
+</form>
+</div>
+</body>
+</html>

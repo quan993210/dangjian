@@ -158,6 +158,46 @@ class cls_mysql
     {
         return $this->version;
     }
+
+    function insert($table,$data)
+    {
+        $keys=join(',',array_keys($data));
+        $values="'".join("','", array_values($data))."'";
+        $sql="insert {$table} ({$keys}) VALUES ({$values})";
+        if ($this->query($sql) !== false)
+        {
+            return $this->insert_id();
+        }
+        else
+        {
+            return false;
+        }
+    }
+    function insert_id()
+    {
+        return mysqli_insert_id($this->link_id);
+    }
+
+
+    function update($table,$data,$where=null){
+        $sets = "";
+        foreach ($data as $key=>$val){
+            if($val != ""){
+                $sets.=$key."='".$val."',";
+            }
+        }
+        $sets=rtrim($sets,','); //去掉SQL里的最后一个逗号
+        $where=$where==null?'':' WHERE '.$where;
+        $sql="UPDATE {$table} SET {$sets} {$where}";
+        if ($this->query($sql) !== false)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
   
 ?>

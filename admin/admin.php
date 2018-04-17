@@ -1,22 +1,12 @@
 <?php
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
-$action = $action == '' ? 'list' : $action; 
+$action = $action == '' ? 'mod_admin' : $action;
 
 switch ($action) 
 {
-		case "list":
-                      admin_list();
-					  break;			  
-	   	case "add_admin":
-                      add_admin();
-					  break;
-		case "do_add_admin":
-                      do_add_admin();
-					  break;			  
 	   	case "mod_admin":
                       mod_admin();
 					  break;				  
@@ -134,8 +124,8 @@ function do_add_admin()
 function mod_admin()
 {	
 	global $db, $smarty;
-	
-	$id  = irequest('id');
+
+	$id  = $_SESSION["admin_id"];
 	$sql = "SELECT * FROM admin WHERE id = '{$id}'";
 	$res = $db->get_row($sql);
 	$smarty->assign('admin', $res);
@@ -154,25 +144,20 @@ function mod_admin()
 function do_mod_admin()
 {
 	global $db;
+	$id  = $_SESSION["admin_id"];
+    $info = $_POST['info'];
+	$info['password'] = $info['password'] == '' ? '': md5($info['password']);
+
 	
-    $id 	  = irequest('id');
-	$userid   = crequest('username');
-    $pwd 	  = crequest('pwd');
-	$email    = crequest('email');
+
+	$db->update('admin',$info,"id=$id");
 	
-	$admin_group = '';
-	$code 		 = '';
-	
-	$sql = "UPDATE admin set userid = '{$userid}', email = '{$email}' ";
-	$sql .= $pwd == '' ? "WHERE id = '{$id}'" : ", password = '" . md5($pwd) . "' WHERE id = '{$id}'";
-	$db->query($sql);
-	
-	$aid  = $_SESSION['admin_id'];
+	$aid  = $id;
 	$text = '修改管理员信息，修改管理员ID：' . $id;
 	operate_log($aid, 1, 2, $text);
 
 	$now_page = irequest('now_page');
-	$url_to = "admin.php?action=list&page=$now_page";
+	$url_to = "admin.php";
 	url_locate($url_to, '修改成功');		
 }
 

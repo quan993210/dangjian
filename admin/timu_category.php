@@ -8,7 +8,6 @@
  */
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action; 
@@ -44,15 +43,15 @@ switch ($action)
 function get_con()
 {
 	global $smarty;
+	$adminid  = $_SESSION["admin_id"];
 
-
-	$con ='' ;
+	$con ="where adminid = '{$adminid}' ";
 	//关键字
 	$keyword = crequest('keyword');
 	$smarty->assign('keyword', $keyword);
 	if (!empty($keyword))
 	{
-		$con .= " WHERE name like '%{$keyword}%' ";
+		$con .= " and name like '%{$keyword}%' ";
 	}
 	
 	
@@ -122,13 +121,14 @@ function add_timu_category()
 function do_add_timu_category()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	$name      = crequest('name');
 	$logo      = crequest('logo_path');
 	$add_time	= time();
 	$add_time_format	= now_time();
 	check_null($name, '题目分类名称');
 	
-	$sql = "INSERT INTO timu_category (name,logo, add_time, add_time_format) VALUES ('{$name}', '{$logo}', '{$add_time}', '{$add_time_format}')";
+	$sql = "INSERT INTO timu_category (name,logo, add_time, add_time_format,adminid) VALUES ('{$name}', '{$logo}', '{$add_time}', '{$add_time_format}','{$adminid}')";
 	$db->query($sql);
 
 	$aid  = $_SESSION['admin_id'];

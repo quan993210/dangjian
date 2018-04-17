@@ -8,7 +8,6 @@
  */
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action; 
@@ -42,7 +41,8 @@ switch ($action)
 function get_con()
 {
 	global $smarty;
-	$con = 'WHERE is_delete = 0';
+	$adminid  = $_SESSION["admin_id"];
+	$con = "WHERE t.is_delete = 0 and t.adminid='{$adminid}'";
 	//题目分类
 	$cid = irequest('cid');
 	$smarty->assign('cid', $cid);
@@ -126,6 +126,7 @@ function add_timu()
 function do_add_timu()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	$title    = crequest('title');
 	$catid      = crequest('catid');
 	$type	  = irequest('type');
@@ -161,14 +162,14 @@ function do_add_timu()
 	}
 
 	//插入题目表
-	$sql = "INSERT INTO timu (catid,title,type,correct, add_time_format) VALUES ('{$catid}', '{$title}', '{$type}', '{$correct}', '{$now_time}')";
+	$sql = "INSERT INTO timu (catid,title,type,correct, add_time_format,adminid) VALUES ('{$catid}', '{$title}', '{$type}', '{$correct}', '{$now_time}','{$adminid}')";
 	$db->query($sql);
 
 	//插入题目答案表
 	$timuid = $db->link_id->insert_id;
 	unset($answer['correct']);
 	foreach($answer as $key=>$val){
-		$sql = "INSERT INTO timu_answer (timuid,name,number,add_time_format) VALUES ('{$timuid}', '{$val}', '{$key}','{$now_time}')";
+		$sql = "INSERT INTO timu_answer (timuid,name,number,add_time_format,adminid) VALUES ('{$timuid}', '{$val}', '{$key}','{$now_time}','{$adminid}')";
 		$db->query($sql);
 	}
 	
@@ -221,6 +222,7 @@ function mod_timu()
 function do_mod_timu()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	$title    = crequest('title');
 	$catid      = crequest('catid');
 	$type	  = irequest('type');
@@ -266,7 +268,7 @@ function do_mod_timu()
 	$db->query($sql);
 	unset($answer['correct']);
 	foreach($answer as $key=>$val){
-		$sql = "INSERT INTO timu_answer (timuid,name,number,add_time_format) VALUES ('{$timuid}', '{$val}', '{$key}','{$now_time}')";
+		$sql = "INSERT INTO timu_answer (timuid,name,number,add_time_format,adminid) VALUES ('{$timuid}', '{$val}', '{$key}','{$now_time}','{$adminid}')";
 		$db->query($sql);
 	}
 
@@ -339,8 +341,8 @@ function del_sel_timu()
 function get_timu_category()
 {
 	global $db;
-	
-	$sql = "SELECT id, name FROM timu_category ORDER BY id DESC";
+	$adminid  = $_SESSION["admin_id"];
+	$sql = "SELECT id, name FROM timu_category where adminid='{$adminid}' ORDER BY id DESC";
 	$res = $db->get_all($sql);
 	
 	return $res;

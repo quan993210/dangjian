@@ -467,6 +467,26 @@ function check_admin_login()
 	}	
 }
 
+
+/**
+ * 判断党委是否登录
+ *
+ * @access  public
+ * @param   string  $adminID
+ * @param   string  $sCode
+ * @return  boolean
+ */
+function check_dangwei_login()
+{
+    if (strpos(CURRENT_PATH, 'index.php') !== false)return;
+
+    if($_COOKIE["dangwei_id"] == '')
+    {
+        href_locate('index.php');
+        die;
+    }
+}
+
 /**
  * 检查不能为空的字符串
  *
@@ -960,6 +980,26 @@ function operate_log($aid, $type, $status, $text = '')
 	return;
 }
 
+/*
+ *$type 代表栏目，分别对应左边的菜单栏，如category代表分类管理
+ *$status代表某个具体操作，对应到函数中
+ *
+*/
+function dangwei_operate_log($aid, $type, $status, $text = '')
+{
+    global $db;
+
+    //$aid	  = $_SESSION['admin_id'];
+    $ip 	  = real_ip();
+    $today    = date('Ymd');
+    $now_time = now_time();
+
+    $sql = "INSERT INTO dangwei_operate_log (aid, type, status, content, ip, today, add_time) VALUES ('{$aid}', '{$type}', '{$status}', '{$text}', '{$ip}', '{$today}', '{$now_time}')";
+    $db->query($sql);
+
+    return;
+}
+
 /**
  * 产生随机字符串
  *
@@ -1008,8 +1048,9 @@ function insert_error_log($error)
     $ip 	  = real_ip();
     $today    = date('Ymd');
     $now_time = now_time();
+    $adminid = $error['adminid'];
 
-    $sql = "INSERT INTO wx_error_log(errcode, errmsg,ip, today, now_time) VALUES ('{$errcode}', '{$errmsg}', '{$ip}', '{$today}', '{$now_time}')";
+    $sql = "INSERT INTO wx_error_log(errcode, errmsg,ip, today, now_time,adminid) VALUES ('{$errcode}', '{$errmsg}', '{$ip}', '{$today}', '{$now_time}','{$adminid}')";
     $db->query($sql);
 
     return;

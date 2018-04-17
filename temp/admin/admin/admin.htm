@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>添加管理员</title>
@@ -35,27 +35,44 @@
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
     <tr>
       <td class="label">用户名：</td>
-	  <td><input type="text" name="username" value="{$admin.userid}"></td>
+	  <td><input type="text" name="info[userid]" readonly="readonly" value="{$admin.userid}"></td>
     </tr>
-    {if $action eq 'do_add_admin'}
-	<tr>
-      <td class="label">密&nbsp;&nbsp;&nbsp;&nbsp;码：</td>
-	  <td><input type="password" name="pwd" value=""></td>
-    </tr>
-	<tr>
-      <td class="label">确认密码：</td>
-	  <td><input type="password" name="cfm_pwd" value=""></td>
-    </tr>
-    {else}
     <tr>
-      <td class="label">密&nbsp;&nbsp;&nbsp;&nbsp;码：</td>
-	  <td><input type="password" name="pwd" value=""> (留空表示不修改)</td>
+      <td class="label">密码：</td>
+	  <td><input type="password" name="info[password]" value=""> (留空表示不修改)</td>
     </tr>
-    {/if}
     <tr>
       <td class="label">邮箱：</td>
-	  <td><input type="text" name="email" value="{$admin.email}"></td>
+	  <td><input type="text" name="info[email]" value="{$admin.email}"></td>
     </tr>
+	<tr>
+		<td class="label">appid：</td>
+		<td><input type="text" name="info[appid]" value="{$admin.appid}"></td>
+	</tr>
+	<tr>
+		<td class="label">appsecret：</td>
+		<td><input type="text" name="info[appsecret]" value="{$admin.appsecret}"></td>
+	</tr>
+	<tr>
+		<td class="label">商户号：</td>
+		<td><input type="text" name="info[mac_id]" value="{$admin.mac_id}"></td>
+	</tr>
+	<tr>
+		<td class="label">支付key：</td>
+		<td><input type="text" name="info[wx_key]" value="{$admin.wx_key}"></td>
+	</tr>
+	<tr>
+		<td class="label">会员统计：</td>
+		<td><input type="text" name="info[member_count]" value="{$admin.member_count}"></td>
+	</tr>
+	<tr>
+		<td class="label">文章统计：</td>
+		<td><input type="text" name="info[news_count]" value="{$admin.news_count}"></td>
+	</tr>
+	<tr>
+		<td class="label">订单统计：</td>
+		<td><input type="text" name="info[order_count]" value="{$admin.order_count}"></td>
+	</tr>
     <tr>
       <td colspan="2" align="center">
       	<input type="hidden" value="{$action}" name="action" />

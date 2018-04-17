@@ -8,7 +8,6 @@
  */
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action;
@@ -52,13 +51,14 @@ switch ($action)
 function get_con()
 {
     global $smarty;
-    $con = "";
+    $adminid  = $_SESSION["admin_id"];
+    $con = "where adminid = $adminid";
     //党费分类
     $year = irequest('year');
     $smarty->assign('year', $year);
     if (!empty($year))
     {
-        $con .=" where year = '{$year}' ";
+        $con .=" and year = '{$year}' ";
     }
 
     return $con;
@@ -122,6 +122,7 @@ function add_dangfei()
 function do_add_dangfei()
 {
     global $db;
+    $adminid  = $_SESSION["admin_id"];
     $exten = explode('.', $_FILES['dangfei']['name']);
     if($exten[1] !='xls' && $exten[1] !='xlsx'){
         alert_back('请按模板导入EXCEL文件');
@@ -141,7 +142,7 @@ function do_add_dangfei()
 
 
 
-    $sql = "INSERT INTO dangfei (title, year, add_time, add_time_format) VALUES('{$title}','{$year}', '{$add_time}', '{$add_time_format}')";
+    $sql = "INSERT INTO dangfei (title, year, add_time, add_time_format,adminid) VALUES('{$title}','{$year}', '{$add_time}', '{$add_time_format}','{$adminid}')";
     $db->query($sql);
     $dangfeiid = $db->link_id->insert_id;
     $aid  = $_SESSION['admin_id'];
@@ -166,6 +167,7 @@ function do_add_dangfei()
 
 function add_dangfei_data($data,$dangfei){
     global $db;
+    $adminid  = $_SESSION["admin_id"];
     $one = $data[0];
     unset($data[0]);
     $dangfeiid = $dangfei['id'];
@@ -184,8 +186,8 @@ function add_dangfei_data($data,$dangfei){
         $sql = "SELECT * FROM dangfei_data WHERE name = '{$name}' and mobile = '{$mobile}' and dangfeiid = '{$dangfeiid}' and add_time = '{$add_time}'";
         $row = $db->get_row($sql);
         if(!$row){
-            $sql = "INSERT INTO dangfei_data (dangfeiid, userid, name,mobile,cost,status,add_time, add_time_format) VALUES
-                      ('{$dangfeiid}','{$userid}', '{$name}','{$mobile}', '{$cost}','1', '{$add_time}', '{$add_time_format}')";
+            $sql = "INSERT INTO dangfei_data (dangfeiid, userid, name,mobile,cost,status,add_time, add_time_format,adminid) VALUES
+                      ('{$dangfeiid}','{$userid}', '{$name}','{$mobile}', '{$cost}','1', '{$add_time}', '{$add_time_format}','{$adminid}')";
             if(!$db->query($sql)){
                 url_locate('dangfei.php?action=list', '第'.$key.'行导入错误');
             }
@@ -353,12 +355,13 @@ function del_one_img()
 
 function dangfei_data(){
     global $db, $smarty;
+    $adminid  = $_SESSION["admin_id"];
     $dangfeiid = irequest('dangfeiid');
     //搜索条件
     $status = irequest('status');
     $smarty->assign('status', $status);
     $where =$status ? " where dangfeiid = '{$dangfeiid}' and status = '{$status}' " : " where dangfeiid = '{$dangfeiid}' ";
-
+    $where.=" and adminid='{$adminid}";
     //排序字段
     $order 	 	 = 'ORDER BY status ASC,id DESC';
 

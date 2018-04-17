@@ -8,7 +8,6 @@
  */
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action; 
@@ -48,7 +47,8 @@ switch ($action)
 function get_con()
 {
 	global $smarty;
-	$con = 'WHERE is_delete = 0';
+	$adminid  = $_SESSION["admin_id"];
+	$con = "WHERE is_delete = 0 and adminid='{$adminid}'";
 	
 	//关键字
 	$keyword = crequest('keyword');
@@ -104,7 +104,7 @@ function add_test()
 	
 	//题目分类
 	$smarty->assign('test_category',  get_test_category());
-
+	$smarty->assign('info', get_member_info());
 	$smarty->assign('action', 'do_add_test');
 	$smarty->assign('page_title', '添加测试');
 	$smarty->display('test/test.htm');
@@ -116,24 +116,26 @@ function add_test()
 function do_add_test()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	$title    = crequest('title');
 	$limit_time     = crequest('limit_time');
 	$limit_count	  = irequest('limit_count');
 	$now_time = now_time();
 	$time = time();
+	$info = $_POST['info'];
 
 	check_null($title, 			'测试标题');
 	check_null($limit_time, 			'测试时间');
 	check_null($limit_count, 			'题目数量');
 
 	$catids = implode(',',$_POST['catid']);
-	$sql = "SELECT COUNT(timuid) FROM timu WHERE catid IN ({$catids})";
+	$sql = "SELECT COUNT(timuid) FROM timu WHERE catid IN ({$catids}) and adminid = '{$adminid}'";
 	$total 		= $db->get_one($sql);
 	if($total < $limit_count){
 		check_null('', 			'题库中题目数量不足');
 	}
 
-	$sql 		= "SELECT * FROM timu WHERE catid IN ({$catids})";
+	$sql 		= "SELECT * FROM timu WHERE catid IN ({$catids}) and adminid='{$adminid}'";
 	$timu 		= $db->get_all($sql);
 	$result = array();
 
@@ -149,13 +151,14 @@ function do_add_test()
 
 	if(is_array($result) && $result){
 		//插入测试试卷表
-		$sql = "INSERT INTO test (title,limit_count,limit_time, timu_catids,add_time,add_time_format) VALUES ('{$title}', '{$limit_count}', '{$limit_time}', '{$catids}', '{$time}', '{$now_time}')";
+		$sql = "INSERT INTO test (title,limit_count,limit_time, timu_catids,add_time,add_time_format,adminid) VALUES ('{$title}', '{$limit_count}', '{$limit_time}', '{$catids}', '{$time}', '{$now_time}','{$adminid}')";
 		$db->query($sql);
 
 		$testid = $db->link_id->insert_id;
+		$db->update('test',$info,"testid=$testid");
 		//插入测试题目表
 		foreach($result as $key=>$val){
-			$sql = "INSERT INTO test_timu (testid,timuid,add_time,add_time_format) VALUES ('{$testid}', '{$val['timuid']}', '{$time}','{$now_time}')";
+			$sql = "INSERT INTO test_timu (testid,timuid,add_time,add_time_format,adminid) VALUES ('{$testid}', '{$val['timuid']}', '{$time}','{$now_time}','{$adminid}')";
 			$db->query($sql);
 		}
 	}
@@ -186,7 +189,7 @@ function mod_test()
     
 	//题目分类
 	$smarty->assign('test_category',  get_test_category());
-	
+	$smarty->assign('info', get_member_info());
 	$smarty->assign('action', 'do_mod_test');
 	$smarty->assign('page_title', '修改测试');
 	$smarty->display('test/test.htm');
@@ -198,6 +201,7 @@ function mod_test()
 function do_mod_test()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	$testid = irequest('testid');
 	$title    = crequest('title');
 	$limit_time     = crequest('limit_time');
@@ -205,18 +209,20 @@ function do_mod_test()
 	$now_time = now_time();
 	$time = time();
 
+	$info = $_POST['info'];
+
 	check_null($title, 			'测试标题');
 	check_null($limit_time, 			'测试时间');
 	check_null($limit_count, 			'题目数量');
 
 	$catids = implode(',',$_POST['catid']);
-	$sql = "SELECT COUNT(timuid) FROM timu WHERE catid IN ({$catids})";
+	$sql = "SELECT COUNT(timuid) FROM timu WHERE catid IN ({$catids}) and adminid='{$adminid}'";
 	$total 		= $db->get_one($sql);
 	if($total < $limit_count){
 		check_null($limit_count, 			'题库中题目数量不足');
 	}
 
-	$sql 		= "SELECT * FROM timu WHERE catid IN ({$catids})";
+	$sql 		= "SELECT * FROM timu WHERE catid IN ({$catids}) and adminid='{$adminid}'";
 	$timu 		= $db->get_all($sql);
 	$result = array();
 
@@ -235,13 +241,13 @@ function do_mod_test()
 		$update_col = "title = '{$title}', limit_count = '{$limit_count}', limit_time = '{$limit_time}', timu_catids = '{$catids}'";
 		$sql = "UPDATE test SET {$update_col} WHERE testid = '{$testid}'";
 		$db->query($sql);
-
+		$db->update('test',$info,"testid=$testid");
 		//修改测试时，题目做为新数据，重新插入测试表
 		$sql = "DELETE FROM test_timu WHERE testid = '{$testid}'";
 		$db->query($sql);
 		//插入测试题目表
 		foreach($result as $key=>$val){
-			$sql = "INSERT INTO test_timu (testid,timuid,add_time,add_time_format) VALUES ('{$testid}', '{$val['timuid']}', '{$time}','{$now_time}')";
+			$sql = "INSERT INTO test_timu (testid,timuid,add_time,add_time_format,adminid) VALUES ('{$testid}', '{$val['timuid']}', '{$time}','{$now_time}','{$adminid}')";
 			$db->query($sql);
 		}
 	}
@@ -313,6 +319,7 @@ function del_sel_test()
 /*------------------------------------------------------ */
 function test_detail(){
 	global $db, $smarty;
+	$adminid  = $_SESSION["admin_id"];
 	$testid =  irequest('testid');
 	$con 		= "WHERE a.testid = '{$testid}'";
 	$order 	 	 = 'ORDER BY a.id ASC';
@@ -334,7 +341,7 @@ function test_detail(){
 		$answer 		= $db->get_all($sql);
 		$arr[$key]['answer'] = $answer;
 
-		$sql = "SELECT id, name FROM timu_category WHERE id  = '{$val['catid']}'";
+		$sql = "SELECT id, name FROM timu_category WHERE id  = '{$val['catid']}' and adminid='{$adminid}'";
 		$cat = $db->get_row($sql);
 		$arr[$key]['catname'] = $cat['name'];
 	}
@@ -352,9 +359,10 @@ function test_detail(){
 //-- 测试答题列表
 /*------------------------------------------------------ */
 function dati_list(){
+	$adminid  = $_SESSION["admin_id"];
 	global $db, $smarty;
 	$testid =  irequest('testid');
-	$con 		= "WHERE testid = '{$testid}' group by userid";
+	$con 		= "WHERE testid = '{$testid}' and adminid='{$adminid}' group by userid";
 	$order 	 	 = 'ORDER BY add_time DESC';
 
 	//列表信息
@@ -370,15 +378,15 @@ function dati_list(){
 	$page     	= new page(array('total'=>$total, 'page_size'=>$page_size));
 
 	foreach($arr as $key=>$val){
-		$sql        = "select score from test_dati WHERE testid = '{$testid}' and userid ='{$val['userid']}' order by score DESC";
+		$sql        = "select score from test_dati WHERE testid = '{$testid}' and userid ='{$val['userid']}' and adminid='{$adminid}' order by score DESC";
 		$score 		= $db->get_one($sql);
 		$arr[$key]['score'] = $score;
-		$sql 		= "SELECT count( id ) FROM test_dati WHERE testid = '{$testid}' and userid ='{$val['userid']}'";
+		$sql 		= "SELECT count( id ) FROM test_dati WHERE testid = '{$testid}' and userid ='{$val['userid']}' and adminid='{$adminid}'";
 		$count 		= $db->get_one($sql);
 		$arr[$key]['count'] = $count;
 	}
 
-	$sql 		= "SELECT title FROM test where testid='{$testid}' ";
+	$sql 		= "SELECT title FROM test where testid='{$testid}' and adminid='{$adminid}'";
 
 	$smarty->assign('dati_list'  ,   $arr);
 	$smarty->assign('pageshow'  ,   $page->show(6));
@@ -395,8 +403,8 @@ function dati_list(){
 function get_test_category()
 {
 	global $db;
-	
-	$sql = "SELECT id, name FROM timu_category ORDER BY id DESC";
+	$adminid  = $_SESSION["admin_id"];
+	$sql = "SELECT id, name FROM timu_category  where adminid='{$adminid}'ORDER BY id DESC";
 	$res = $db->get_all($sql);
 	
 	return $res;
@@ -407,4 +415,12 @@ function swap(&$a, &$b)
 	$temp = $b;
 	$b = $a;
 	$a = $temp;
+}
+
+function get_member_info(){
+	$info['identity'] = ['选择身份','正式党员','预备党员','积极分子','群众','发展对象'];
+	$info['position'] = ['选择职位','固定党员','一般党员'];
+	$info['grade'] = ['选择等级','无','初级','中级','高级级','正高级'];
+	$info['rank_title'] = ['选择职称','无','工程','经济','会记','政工'];
+	return $info;
 }

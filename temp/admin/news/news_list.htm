@@ -43,7 +43,7 @@
 	
 	function check_del(url)
 	{
-		if(confirm("您是否确认删除该内容！"))
+		if(confirm("您是否确认删除该新闻！"))
 		{
 			location.href = url;
 		}
@@ -55,7 +55,7 @@
 {/literal}
 </head>
 <h1>
-<span class="action-span"><a href="news.php?action=add_news">添加内容</a></span>
+<span class="action-span"><a href="news.php?action=add_news">添加新闻</a></span>
 <span class="action-span1"><a href="">{$sys_name} 管理中心</a>  - {$page_title} </span>
 <div style="clear:both"></div>
 </h1>
@@ -64,7 +64,7 @@
   <form action="" name="searchForm" onsubmit="">
     <img src="{$admin_temp_path}/images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
     <select name="catid" id="catid">
-       	<option value="0">选择内容分类</option>
+       	<option value="0">选择新闻分类</option>
        	{section name=loop loop=$news_category}
        	<option value="{$news_category[loop].catid}" {if $catid eq $news_category[loop].catid}selected{/if}>{$news_category[loop].catname}</option>
         {section name=subloop loop=$news_category[loop].sub}
@@ -74,7 +74,13 @@
     </select> 
     
     关键字 <input type="text" name="keyword" id="keyword" value="{$keyword}"/>
-    <input type="submit" value="搜索" class="button" />
+	  <select name="lables" id="lables">
+		  <option value="0">选择文章标签</option>
+		  {section name=loop loop=$lables}
+		  <option value="{$lables[loop].id}" {if $lable eq $lables[loop].id}selected{/if}>{$lables[loop].name}</option>
+		  {/section}
+	  </select>
+	  <input type="submit" value="搜索" class="button" />
   </form>
 </div>
 <form method="post" action="news.php?action=del_sel_news" name="listForm" onsubmit="return check()">
@@ -83,7 +89,7 @@
     <tr align="center">
 	  <th width="5%"><input onclick='listTable.selectAll(this, "checkboxes")' type="checkbox" name="checkbox[]">编号</th>
       <th width="35%">标题</td>
-      <th width="10%">内容分类</td>
+      <th width="10%">新闻分类</td>
       <th width="5%">浏览次数</td>
 		<th width="10%">发布时间</td>
       <th width="15%">添加时间</td>

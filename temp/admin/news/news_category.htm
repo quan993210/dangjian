@@ -37,10 +37,10 @@ function del_one(id)
 <form name="frm" action="news_category.php" method="post">
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
 	<tr>
-      <td class="label">选择内容分类：</td>
+      <td class="label">选择新闻分类：</td>
 	  <td>
       	<select name="pid">
-        	<option value="">请内容选择分类</option>
+        	<option value="">请新闻选择分类</option>
             {section name=loop loop=$top_news_category}
             <option value="{$top_news_category[loop].catid}" {if $cat.pid eq $top_news_category[loop].catid}selected{/if}>{$top_news_category[loop].catname}</option>
             {/section}
@@ -48,7 +48,7 @@ function del_one(id)
       </td>
     </tr>
     <tr>
-      <td class="label">内容分类名称：</td>
+      <td class="label">新闻分类名称：</td>
 	  <td><input type="text" name="catname" value="{$cat.catname}"></td>
     </tr>
     <tr>

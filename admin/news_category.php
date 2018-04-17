@@ -2,7 +2,6 @@
 //register_shutdown_function(function(){ var_dump(error_get_last()); });
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action; 
@@ -38,8 +37,9 @@ switch ($action)
 function get_con()
 {
 	global $smarty;
-    $con = 'WHERE c.is_delete= 0';
-	//父级内容分类
+	$adminid  = $_SESSION["admin_id"];
+    $con = "WHERE c.is_delete= 0 and c.adminid=$adminid";
+	//父级新闻分类
 	$pid = irequest('pid');
 	$smarty->assign('pid', $pid);
 	if (!empty($pid))
@@ -60,7 +60,7 @@ function get_con()
 }
 
 /*------------------------------------------------------ */
-//-- 内容分类列表
+//-- 新闻分类列表
 /*------------------------------------------------------ */	
 function news_category_list()
 {
@@ -88,29 +88,29 @@ function news_category_list()
 	$smarty->assign('pageshow'  ,   $page->show(6));
 	$smarty->assign('now_page'  ,   $page->now_page);
 	
-	//顶级内容分类
+	//顶级新闻分类
 	$smarty->assign('top_news_category', get_top_news_category());
 	
 	//表信息
 	$tbl = array('tbl' => 'news_category', 'col1' => 'name');			
 	$smarty->assign('tbl', $tbl);
 	
-	$page_title = '内容分类列表';
+	$page_title = '新闻分类列表';
     $smarty->assign('page_title', $page_title);
 	$smarty->display('news/news_category_list.htm');	
 }
 
 /*------------------------------------------------------ */
-//-- 添加内容分类
+//-- 添加新闻分类
 /*------------------------------------------------------ */	
 function add_news_category()
 {
 	global $smarty;
 	
-	//顶级内容分类
+	//顶级新闻分类
 	$smarty->assign('top_news_category', get_top_news_category());
 
-	$page_title = '添加内容分类';
+	$page_title = '添加新闻分类';
     $smarty->assign('page_title', $page_title);
 	
 	$smarty->assign('action', 'do_add_news_category');
@@ -118,24 +118,24 @@ function add_news_category()
 }
 
 /*------------------------------------------------------ */
-//-- 添加内容分类
+//-- 添加新闻分类
 /*------------------------------------------------------ */	
 function do_add_news_category()
 {
 	global $db;
-	
+	$adminid  = $_SESSION["admin_id"];
 	$pid = irequest('pid');
 	$catname      = crequest('catname');
 	$logo      = crequest('logo_path');
 	$listorder = irequest('listorder');
 	$add_time	= time();
 	$add_time_format	= now_time();
-	check_null($catname, '内容分类名称');
+	check_null($catname, '新闻分类名称');
 	
-	$sql = "INSERT INTO news_category (pid, catname, logo,listorder, add_time, add_time_format) VALUES ('{$pid}', '{$catname}', '{$logo}', '{$listorder}', '{$add_time}', '{$add_time_format}')";
+	$sql = "INSERT INTO news_category (pid, catname, logo,listorder, add_time, add_time_format, adminid) VALUES ('{$pid}', '{$catname}', '{$logo}', '{$listorder}', '{$add_time}', '{$add_time_format}', '{$adminid}')";
 	$db->query($sql);
 	$aid  = $_SESSION['admin_id'];
-	$text = '添加内容分类，添加内容分类ID：'.$db->link_id->insert_id;
+	$text = '添加新闻分类，添加新闻分类ID：'.$db->link_id->insert_id;
 	operate_log($aid, 'news_category', 1, $text);
 
 	$url_to = "news_category.php?action=list";
@@ -143,7 +143,7 @@ function do_add_news_category()
 }
 
 /*------------------------------------------------------ */
-//-- 修改内容分类
+//-- 修改新闻分类
 /*------------------------------------------------------ */	
 function mod_news_category()
 {
@@ -154,20 +154,20 @@ function mod_news_category()
 	$row = $db->get_row($sql);
 	$smarty->assign('cat', $row);
 	
-	//顶级内容分类
+	//顶级新闻分类
 	$smarty->assign('top_news_category', get_top_news_category());
 	
 	$now_page = irequest('now_page');
 	$smarty->assign('now_page', $now_page);
 	
-	$page_title = '修改内容分类';
+	$page_title = '修改新闻分类';
     $smarty->assign('page_title', $page_title);
 	$smarty->assign('action', 'do_mod_news_category');
 	$smarty->display('news/news_category.htm');
 }
 
 /*------------------------------------------------------ */
-//-- 修改内容分类
+//-- 修改新闻分类
 /*------------------------------------------------------ */	
 function do_mod_news_category()
 {
@@ -177,7 +177,7 @@ function do_mod_news_category()
 	$catname      = crequest('catname');
 	$logo      = crequest('logo_path');
 	$listorder = irequest('listorder');
-	check_null($catname, '内容分类名称');
+	check_null($catname, '新闻分类名称');
 	
 	$catid = irequest('catid');
 	$update_col = "catname = '{$catname}', pid = '{$pid}',logo = '{$logo}', listorder = '{$listorder}'";
@@ -185,7 +185,7 @@ function do_mod_news_category()
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '修改内容分类，修改内容分类ID：' . $catid;
+	$text = '修改新闻分类，修改新闻分类ID：' . $catid;
 	operate_log($aid, 'news_category', 2, $text);
 
 	$now_page = irequest('now_page');
@@ -194,7 +194,7 @@ function do_mod_news_category()
 }
 
 /*------------------------------------------------------ */
-//-- 删除内容分类
+//-- 删除新闻分类
 /*------------------------------------------------------ */	
 function del_news_category()
 {
@@ -209,7 +209,7 @@ function del_news_category()
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '删除内容分类，删除内容分类ID：' . $catid;
+	$text = '删除新闻分类，删除新闻分类ID：' . $catid;
 	operate_log($aid, 'news_category', 3, $text);
 	
 	$now_page = irequest('now_page');
@@ -218,7 +218,7 @@ function del_news_category()
 }
 
 /*------------------------------------------------------ */
-//-- 批量删除内容分类
+//-- 批量删除新闻分类
 /*------------------------------------------------------ */	
 function del_sel_news_category()
 {
@@ -240,7 +240,7 @@ function del_sel_news_category()
 	}
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '批量删除内容分类，批量删除内容分类ID：' . $catid;
+	$text = '批量删除新闻分类，批量删除新闻分类ID：' . $catid;
 	operate_log($aid, 'news_category', 4, $text);
 	
 	$now_page = irequest('now_page');
@@ -249,7 +249,7 @@ function del_sel_news_category()
 }
 
 /*------------------------------------------------------ */
-//-- 一级内容分类
+//-- 一级新闻分类
 /*------------------------------------------------------ */
 function get_top_news_category()
 {

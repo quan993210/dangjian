@@ -27,12 +27,76 @@
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
     <tr>
       <td class="label">用户名：</td>
-	  <td><input type="text" name="name" value="{$member.name}" size="32" /></td>
+	  <td colspan="2"><input type="text" name="member[name]" value="{$member.name}" size="32" /></td>
     </tr>
 	<tr>
 		<td class="label">手机号：</td>
-		<td><input type="text" name="mobile" value="{$member.mobile}" size="32" /></td>
+		<td colspan="2"><input type="text" name="member[mobile]" value="{$member.mobile}" size="32" /></td>
 	</tr>
+    <tr>
+        <td class="label">身份：</td>
+        <td colspan="2">
+            <select name="member[identity]">
+                {foreach item=identity key=key from=$info.identity}
+                <option value="{$key}" {if $member.identity == $key}selected {/if}>{$identity}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">职位：</td>
+        <td colspan="2">
+            <select name="member[position]">
+                {foreach item=position key=key from=$info.position}
+                <option value="{$key}" {if $member.position == $key}selected {/if}>{$position}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td class="label">职称：</td>
+        <td>
+            <select name="member[grade]">
+                {foreach item=grade key=key from=$info.grade}
+                <option value="{$key}" {if $member.grade == $key}selected {/if}>{$grade}</option>
+                {/foreach}
+            </select>
+            <select name="member[rank_title]">
+                {foreach item=rank_title key=key from=$info.rank_title}
+                <option value="{$key}" {if $member.rank_title == $key}selected {/if}>{$rank_title}</option>
+                {/foreach}
+            </select>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">是否为专职党务干事：</td>
+        <td>
+            <input name="member[is_party_affairs]" type="radio" value="2" {if $member.is_party_affairs == '2'}checked {/if} />否
+            <input name="member[is_party_affairs]" type="radio" value="1" {if $member.is_party_affairs == '1'}checked {/if} />是
+        </td>
+    </tr>
+    <tr>
+        <td class="label">是否违纪：</td>
+        <td>
+            <input name="member[is_discipline]" type="radio" value="2" {if $member.is_discipline == '2'}checked {/if} />否
+            <input name="member[is_discipline]" type="radio" value="1" {if $member.is_discipline == '1'}checked {/if} />是
+        </td>
+    </tr>
+    <tr>
+        <td class="label">是否是发展预备：</td>
+        <td>
+            <input name="member[is_prepare]" type="radio" value="2" {if $member.is_prepare == '2'}checked {/if} />否
+            <input name="member[is_prepare]" type="radio" value="1" {if $member.is_prepare == '1'}checked {/if} />是
+        </td>
+    </tr>
+    <tr>
+        <td class="label">是否退休：</td>
+        <td>
+            <input name="member[is_retire]" type="radio" value="2" {if $member.is_retire == '2'}checked {/if} />否
+            <input name="member[is_retire]" type="radio" value="1" {if $member.is_retire == '1'}checked {/if} />是
+        </td>
+    </tr>
     <tr>
       <td colspan="2" align="center">
       <input type="hidden" name="action" value="{$action}" />

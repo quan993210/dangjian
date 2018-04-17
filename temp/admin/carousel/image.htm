@@ -32,13 +32,15 @@
             <img src="{if $image.image1 neq ''}{$url_path}{$image.image1}{else}/images/default_news.jpg{/if}" id="upload_image1" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
             <input type="hidden" value="{$image.image1}" name="image1" id="image1" />
             <input type="button" id="pic_image1" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+            <a style="height: 19px;background: #fff; border: 1px #ccc solid;padding: 2px 8px 0px;display: inline-block;" href="carousel.php?action=del_image&img=1">清空</a>
             <div style="color:#ff0000">图片大小为750px*400px</div>
         </td>
         <td>
             <!--<input type="file" name="pic" value="">-->
             <img src="{if $image.image2 neq ''}{$url_path}{$image.image2}{else}/images/default_news.jpg{/if}" id="upload_image2" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
             <input type="hidden" value="{$image.image2}" name="image2" id="image2" />
-            <input type="button" id="pic_image2" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+            <input type="button" id="pic_image2" style="width: 100px;height: 30px;background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+            <a style="height: 19px;background: #fff; border: 1px #ccc solid;padding: 2px 8px 0px;display: inline-block;" href="carousel.php?action=del_image&img=2">清空</a>
             <div style="color:#ff0000">图片大小为750px*400px</div>
         </td>
         <td>
@@ -46,6 +48,7 @@
             <img src="{if $image.image3 neq ''}{$url_path}{$image.image3}{else}/images/default_news.jpg{/if}" id="upload_image3" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
             <input type="hidden" value="{$image.image3}" name="image3" id="image3" />
             <input type="button" id="pic_image3" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+            <a style="height: 19px;background: #fff; border: 1px #ccc solid;padding: 2px 8px 0px;display: inline-block;" href="carousel.php?action=del_image&img=3">清空</a>
             <div style="color:#ff0000">图片大小为750px*400px</div>
         </td>
     </tr>

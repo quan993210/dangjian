@@ -8,7 +8,6 @@
  */
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action;
@@ -50,7 +49,8 @@ switch ($action)
 function get_con()
 {
     global $smarty;
-    $con= "WHERE is_delete = '0'";
+    $adminid  = $_SESSION["admin_id"];
+    $con= "WHERE is_delete = '0' and adminid = $adminid";
     //会议分类
     $keyword = crequest('keyword');
     $smarty->assign('keyword', $keyword);
@@ -86,11 +86,11 @@ function metting_list()
     include "inc/plugin/phpqrcode.php";
     foreach($arr as $key=>$val){
         // 没有二维码图片的时候
-        if(!is_file($_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg")){
+        if(!is_file($_SERVER['DOCUMENT_ROOT'] .FILE_PATH. "/upload/metting/metting-".$val['id'].".jpg")){
             $value=$val['id'];
             $errorCorrectionLevel = 'L';
             $matrixPointSize = 12;
-            QRcode::png($value,$_SERVER['DOCUMENT_ROOT'] . "/upload/metting/metting-".$val['id'].".jpg", $errorCorrectionLevel, $matrixPointSize);
+            QRcode::png($value,$_SERVER['DOCUMENT_ROOT'] .FILE_PATH. "/upload/metting/metting-".$val['id'].".jpg", $errorCorrectionLevel, $matrixPointSize);
         }
 
         $sql 		= "SELECT COUNT(id) FROM metting_sign WHERE mettingid='{$val['id']}'";
@@ -131,6 +131,7 @@ function get_qrcode()
 function add_metting()
 {
     global $smarty;
+    $smarty->assign('info', get_member_info());
     $smarty->assign('action', 'do_add_metting');
     $smarty->assign('page_title', '添加会议');
     $smarty->display('metting/metting.htm');
@@ -142,18 +143,21 @@ function add_metting()
 function do_add_metting()
 {
     global $db;
-    $title    = crequest('title');
-    $start_time	  = crequest('start_time');
-    $sum	  = irequest('sum');
-    $add_time = time();
-    $add_time_format = now_time();
-    check_null($title, 			'会议标题');
-    check_null($sum, 			'参加人数');
-    check_null($start_time, 			'开始时间');
-
-    $sql = "INSERT INTO metting (title,start_time, sum, add_time, add_time_format) VALUES('{$title}','{$start_time}','{$sum}', '{$add_time}', '{$add_time_format}')";
-    $db->query($sql);
-    $mettingid = $db->link_id->insert_id;
+    $adminid  = $_SESSION["admin_id"];
+    $flg  = crequest('flg');
+    $data = $_POST['info'];
+    if($flg){
+        $data['flg'] = $flg;
+    }else{
+        $data['flg'] = 0;
+    }
+    $data['add_time'] = time();
+    $data['add_time_format'] = now_time();
+    $data['adminid'] = $adminid;
+    check_null($data['title'], 			'会议标题');
+    check_null($data['sum'], 			'参加人数');
+    check_null($data['start_time'], 			'开始时间');
+    $mettingid = $db->insert('metting',$data);
     $aid  = $_SESSION['admin_id'];
     $text = '添加会议，添加会议ID：' . $mettingid;
     operate_log($aid, 'metting', 1, $text);
@@ -178,7 +182,7 @@ function mod_metting()
 
     $now_page = irequest('now_page');
     $smarty->assign('now_page', $now_page);
-
+    $smarty->assign('info', get_member_info());
     $smarty->assign('action', 'do_mod_metting');
     $smarty->assign('page_title', '会议修改');
     $smarty->display('metting/metting.htm');
@@ -190,19 +194,21 @@ function mod_metting()
 function do_mod_metting()
 {
     global $db;
-    $title    = crequest('title');
-    $start_time	  = crequest('start_time');
-    $sum	  = irequest('sum');
-    $add_time = time();
-    $add_time_format = now_time();
-    check_null($title, 			'会议标题');
-    check_null($sum, 			'参加人数');
-    check_null($start_time, 			'开始时间');
+    $flg  = crequest('flg');
+    $data = $_POST['info'];
+    if($flg){
+        $data['flg'] = $flg;
+    }else{
+        $data['flg'] = 0;
+    }
+
+    check_null($data['title'], 			'会议标题');
+    check_null($data['sum'], 			'参加人数');
+    check_null($data['start_time'], 			'开始时间');
 
     $id = irequest('id');
-    $update_col = "title = '{$title}', sum = '{$sum}', start_time = '{$start_time}',add_time = '{$add_time}', add_time_format = '{$add_time_format}'";
-    $sql = "UPDATE metting SET {$update_col} WHERE id='{$id}'";
-    $db->query($sql);
+
+    $db->update('metting',$data,"id=$id");
     $aid  = $_SESSION['admin_id'];
     $text = '修改会议，修改会议ID：' . $id;
     operate_log($aid, 'metting', 2, $text);
@@ -310,9 +316,10 @@ function del_sel_metting()
 function sign()
 {
     global $db, $smarty;
+    $adminid  = $_SESSION["admin_id"];
     $order 	 	 = 'ORDER BY id DESC';
     $mettingid = irequest('id');
-    $sql 		= "SELECT * FROM metting WHERE id = '{$mettingid}'";
+    $sql 		= "SELECT * FROM metting WHERE id = '{$mettingid}' and adminid='{$adminid}'";
     $metting 		= $db->get_row($sql);
     $start_time = strtotime($metting['start_time']);
     //列表信息
@@ -320,7 +327,7 @@ function sign()
     $now_page 	= $now_page == 0 ? 1 : $now_page;
     $page_size 	= 20;
     $start    	= ($now_page - 1) * $page_size;
-    $sql 		= "SELECT * FROM metting_sign WHERE mettingid = '{$mettingid}'{$order} LIMIT {$start}, {$page_size}";
+    $sql 		= "SELECT * FROM metting_sign WHERE mettingid = '{$mettingid}' and adminid = '{$adminid}'{$order} LIMIT {$start}, {$page_size}";
     $arr 		= $db->get_all($sql);
     foreach($arr as $key=>$val){
         $sign_time = strtotime($val['sign_time']);
@@ -372,6 +379,14 @@ function https_request($url, $data = null)
     $output = curl_exec($curl);
     curl_close($curl);
     return $output;
+}
+
+function get_member_info(){
+    $info['identity'] = ['选择身份','正式党员','预备党员','积极分子','群众','发展对象'];
+    $info['position'] = ['选择职位','固定党员','一般党员'];
+    $info['grade'] = ['选择等级','无','初级','中级','高级级','正高级'];
+    $info['rank_title'] = ['选择职称','无','工程','经济','会记','政工'];
+    return $info;
 }
 
 

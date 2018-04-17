@@ -1,7 +1,10 @@
 <?php
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
-require("inc/lib_common.php");
+define('BD_APP_ID',10871419);
+define('BD_API_KEY','74gv9lTzWiVZNxyqMqXBYiEs');
+define('BD_SECRET_KEY','cpP5hWMTyllhgmeIvVXaddnXQqEaGSd0');
+
 
 $action = crequest("action");
 $action = $action == '' ? 'list' : $action; 
@@ -44,15 +47,22 @@ switch ($action)
 function get_con()
 {
 	global $smarty;
-	$con = "WHERE a.is_delete=0";
-	//内容分类
+	$adminid  = $_SESSION["admin_id"];
+	$con = "WHERE a.is_delete=0 and a.adminid = $adminid";
+	//新闻分类
 	$catid = irequest('catid');
 	$smarty->assign('catid', $catid);
 	if (!empty($catid))
 	{
 		$con .=" AND a.catid = '{$catid}' ";
 	}
-	
+
+	$lables = irequest('lables');
+	$smarty->assign('lable', $lables);
+	if (!empty($lables))
+	{
+		$con .=" AND a.lables like  '%{$lables}%'";
+	}
 	//关键字
 	$keyword = crequest('keyword');
 	$smarty->assign('keyword', $keyword);
@@ -66,7 +76,7 @@ function get_con()
 }
 
 /*------------------------------------------------------ */
-//-- 内容列表
+//-- 新闻列表
 /*------------------------------------------------------ */	
 function news_list()
 {
@@ -98,64 +108,75 @@ function news_list()
 	$tbl = array('tbl' => 'news', 'col1' => 'title', 'col2' => 'is_top');			
 	$smarty->assign('tbl', $tbl);
 	
-	//内容分类
+	//新闻分类
 	$smarty->assign('news_category', get_news_category());
-	
-    $smarty->assign('page_title', '内容列表');
+	$smarty->assign('lables',  get_lables());
+    $smarty->assign('page_title', '新闻列表');
 	$smarty->display('news/news_list.htm');	
 }
 
 /*------------------------------------------------------ */
-//-- 添加内容
+//-- 添加新闻
 /*------------------------------------------------------ */	
 function add_news()
 {
 	global $smarty;
-	//内容分类
+
+	//新闻分类
 	$smarty->assign('news_category',  get_news_category());
+	$smarty->assign('vote',  get_vote());
+	$smarty->assign('lables',  get_lables());
 	
-	if (!empty($_SESSION['news_pic_path']))
+	if (!empty($_SESSION['image1']))
 	{
-		$news['cover'] = $_SESSION['news_pic_path'];
+		$news['image1'] = $_SESSION['image1'];
+	}
+	if (!empty($_SESSION['image2']))
+	{
+		$news['image2'] = $_SESSION['image2'];
+	}
+	if (!empty($_SESSION['image3']))
+	{
+		$news['image3'] = $_SESSION['image3'];
 	}
 	
 	$smarty->assign('news', $news);
 	$smarty->assign('action', 'do_add_news');
-	$smarty->assign('page_title', '添加内容');
+	$smarty->assign('page_title', '添加新闻');
 	$smarty->display('news/news.htm');
 }
 
 /*------------------------------------------------------ */
-//-- 添加内容
+//-- 添加新闻
 /*------------------------------------------------------ */	
 function do_add_news()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
+	$info = $_POST['info'];
+	$info['add_time']	= time();
+	$info['add_time_format']	= now_time();
+	$info['adminid'] = $adminid;
+	$lables = $_POST['lables'];
+	$info['lables'] = implode(',',$lables);
 
-	$catid	  = irequest('catid');
-	$title    = crequest('title');
-	$brief    = crequest('brief');
-	$release_time	  = crequest('release_time');
-	$content  = $_REQUEST['content'];
-	$pic_path = crequest('pic_path');
-	$video_url	  = crequest('video_url');
-	$audio_url	  = crequest('audio_url');
-	$listorder= irequest('listorder');
-	$add_time	= time();
-	$add_time_format	= now_time();
+	check_null($info['catid'], 			'分类');
+	check_null($info['title'], 			'标题');
+	check_null($info['content'], 			'新闻');
 
-	check_null($catid, 			'分类');
-	check_null($title, 			'标题');
-	//check_null($pic_path, 			'图片');
-	check_null($content, 			'内容');
+	$newsid = $db->insert('news',$info);
 
-	$sql = "INSERT INTO news (catid,cover,title, brief,release_time, content, video_url, audio_url, add_time, add_time_format, listorder) VALUES('{$catid}','{$pic_path}','{$title}', '{$brief}', '{$release_time}','{$content}', '{$video_url}', '{$audio_url}', '{$add_time}', '{$add_time_format}', '{$listorder}')";
-	$db->query($sql);
-	
-	unset($_SESSION['news_pic_path']);
-	
+	if($info['is_transfor'] == 1){
+		$video = array();
+		$video_url = speech($newsid,$info['content']);
+		$video['audio_url'] = URL_PATH.$video_url;
+		$db->update('news',$video,"id='{$newsid}'");
+	}
+
+	unset($_SESSION['image1'],$_SESSION['image2'],$_SESSION['image3']);
+
 	$aid  = $_SESSION['admin_id'];
-	$text = '添加内容，添加内容ID：' . $db->link_id->insert_id;
+	$text = '添加新闻，添加新闻ID：' . $newsid;
 	operate_log($aid, 'news', 1, $text);
 	
 	$url_to = "news.php?action=list";
@@ -163,7 +184,7 @@ function do_add_news()
 }
 
 /*------------------------------------------------------ */
-//-- 修改内容
+//-- 修改新闻
 /*------------------------------------------------------ */	
 function mod_news()
 {
@@ -172,49 +193,49 @@ function mod_news()
 	$id  = irequest('id');
 	$sql = "SELECT * FROM news WHERE id = '{$id}'";
 	$row = $db->get_row($sql);
+
 	$smarty->assign('news', $row);
 	
 	$now_page = irequest('now_page');
 	$smarty->assign('now_page', $now_page);
-    
-	//内容分类
+
+	$lables = get_lables();
+	foreach($lables as $key=>$val){
+		if(strstr("{$row['lables']}","{$val['id']}")){
+			$lables[$key]['flg'] = 1;
+		}
+	}
+
+	//新闻分类
 	$smarty->assign('news_category',  get_news_category());
+	$smarty->assign('vote',  get_vote());
+	$smarty->assign('lables',  $lables);
 	
 	$smarty->assign('action', 'do_mod_news');
-	$smarty->assign('page_title', '修改内容');
+	$smarty->assign('page_title', '修改新闻');
 	$smarty->display('news/news.htm');
 }
 
 /*------------------------------------------------------ */
-//-- 修改内容
+//-- 修改新闻
 /*------------------------------------------------------ */	
 function do_mod_news()
 {
 	global $db;
-
-	$catid	  = irequest('catid');
-	$title    = crequest('title');
-	$brief    = crequest('brief');
-	$release_time	  = crequest('release_time');
-	$content  = $_REQUEST['content'];
-	$pic_path = crequest('pic_path');
-	$video_url	  = crequest('video_url');
-	$audio_url	  = crequest('audio_url');
-	$listorder= irequest('listorder');
-	$add_time	= time();
-	$add_time_format	= now_time();
-
-	check_null($title, 			'内容标题');
-	
+	$info = $_POST['info'];
+	$lables = $_POST['lables'];
+	$info['lables'] = implode(',',$lables);
+	check_null($info['title'], 			'标题');
 	$id = irequest('id');
-	$update_col = "title = '{$title}', brief = '{$brief}', release_time='{$release_time}',content = '{$content}', cover = '{$pic_path}', catid = '{$catid}', video_url = '{$video_url}', audio_url = '{$audio_url}', listorder = '{$listorder}', add_time = '{$add_time}', add_time_format = '{$add_time_format}'";
-	$sql = "UPDATE news SET {$update_col} WHERE id='{$id}'";
-	$db->query($sql);
-	
-	unset($_SESSION['news_pic_path']);
-	
+	if($info['is_transfor'] == 1){
+		$video_url = speech($id,$info['content']);
+		$info['audio_url'] = URL_PATH.$video_url;
+	}
+	$db->update('news',$info,"id='{$id}'");
+
+	unset($_SESSION['image1'],$_SESSION['image2'],$_SESSION['image3']);
 	$aid  = $_SESSION['admin_id'];
-	$text = '修改内容，修改内容ID：' . $id;
+	$text = '修改新闻，修改新闻ID：' . $id;
 	operate_log($aid, 'news', 2, $text);
 	
 	$now_page = irequest('now_page');
@@ -223,7 +244,7 @@ function do_mod_news()
 }
 
 /*------------------------------------------------------ */
-//-- 删除内容
+//-- 删除新闻
 /*------------------------------------------------------ */	
 function del_news()
 {
@@ -242,7 +263,7 @@ function del_news()
 	$db->query($sql);
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '删除内容，删除内容ID：' . $id;
+	$text = '删除新闻，删除新闻ID：' . $id;
 	operate_log($aid, 'news', 3, $text);
 	
 	$now_page = irequest('now_page');
@@ -251,7 +272,7 @@ function del_news()
 }
 
 /*------------------------------------------------------ */
-//-- 批量删除内容
+//-- 批量删除新闻
 /*------------------------------------------------------ */	
 function del_sel_news()
 {
@@ -281,7 +302,7 @@ function del_sel_news()
 	$db->query($sql);*/
 	
 	$aid  = $_SESSION['admin_id'];
-	$text = '批量删除内容，批量删除内容ID：' . $id;
+	$text = '批量删除新闻，批量删除新闻ID：' . $id;
 	operate_log($aid, 'news', 4, $text);
 	
 	$now_page = irequest('now_page');
@@ -290,7 +311,7 @@ function del_sel_news()
 }
 
 /*------------------------------------------------------ */
-//-- 删除内容图片
+//-- 删除新闻图片
 /*------------------------------------------------------ */	
 function del_one_img()
 {
@@ -310,23 +331,32 @@ function del_one_img()
 }
 
 /*------------------------------------------------------ */
-//-- 内容分类
+//-- 新闻分类
 /*------------------------------------------------------ */
 function get_news_category()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	
-	$sql = "SELECT catid, catname FROM news_category WHERE pid = 0 ORDER BY listorder";
+	$sql = "SELECT catid, catname FROM news_category WHERE pid = 0 and adminid='{$adminid}' ORDER BY listorder";
 	$res = $db->get_all($sql);
 	$num = count($res);
 	
 	for ($i = 0; $i < $num; $i++)
 	{
 		$catid  = $res[$i]['catid'];
-		$sql = "SELECT catid, catname FROM news_category WHERE pid = {$catid} ORDER BY listorder";
+		$sql = "SELECT catid, catname FROM news_category WHERE pid = {$catid} and adminid='{$adminid}' ORDER BY listorder";
 		$res[$i]['sub'] = $db->get_all($sql);
 	}
 	
+	return $res;
+}
+
+function get_lables()
+{
+	global $db;
+	$sql = "SELECT id,name FROM lable WHERE is_delete=0 ORDER BY listorder DESC";
+	$res = $db->get_all($sql);
 	return $res;
 }
 
@@ -336,8 +366,9 @@ function get_news_category()
 function checkChild()
 {
 	global $db;
+	$adminid  = $_SESSION["admin_id"];
 	$catid  = irequest('catid');
-	$sql = "SELECT catid, catname FROM news_category WHERE pid = {$catid} ORDER BY listorder";
+	$sql = "SELECT catid, catname FROM news_category WHERE pid = {$catid} and adminid='{$adminid}' ORDER BY listorder";
 	$res = $db->get_all($sql);
 	if(is_array($res) && $res){
 		echo json_encode(1);
@@ -345,4 +376,37 @@ function checkChild()
 		echo json_encode(0);
 	}
 	exit;
+}
+
+function get_vote()
+{
+	global $db;
+	$adminid  = $_SESSION["admin_id"];
+	$time = time();
+	$sql = "SELECT id, title FROM vote WHERE adminid='{$adminid}' and end_time > '{$time}' and is_delete = 0  ORDER BY id DESC ";
+	$vote = $db->get_all($sql);
+
+	return $vote;
+}
+
+function speech($id,$content){
+	//从数据库获取富文本string
+	$string = $content;
+    //把一些预定义的 HTML 实体转换为字符
+	$html_string = htmlspecialchars_decode($string);
+    //将空格替换成空
+	$content = str_replace(" ", "", $html_string);
+    //函数剥去字符串中的 HTML、XML 以及 PHP 的标签,获取纯文本内容
+	$contents = strip_tags($content);
+
+	//文字转语音
+	$client = new AipSpeech(BD_APP_ID, BD_API_KEY, BD_SECRET_KEY);
+	$result = $client->synthesis($contents, 'zh', 1, array('vol' => 5,));
+	// 识别正确返回语音二进制 错误则返回json 参照下面错误码
+	if(!is_array($result)){
+		$newFile=$_SERVER['DOCUMENT_ROOT'].'/upload/mp3/'.$id.'_audio.mp3';
+		file_put_contents('audio.mp3', $result);
+		rename('audio.mp3',$newFile); //拷贝到新目录
+	}
+	return '/upload/mp3/'.$id.'_audio.mp3';
 }

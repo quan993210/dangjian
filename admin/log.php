@@ -3,7 +3,7 @@ set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 
 $action = crequest("action");
-$action = $action == '' ? 'list' : $action; 
+$action = $action == '' ? 'list' : $action;
 
 switch ($action) 
 {
@@ -24,11 +24,11 @@ switch ($action)
 function log_list()
 {
 	global $db, $smarty;
-	
+	$adminid = $_SESSION["admin_id"];
 	//搜索条件
 	$search_cat = irequest('search_cat');
 	$keyword 	= crequest('keyword');	
-	$con 		= '';    
+	$con 		= "where o.aid = $adminid";
 	
 	//排序字段
 	$sort_col 	 = crequest('sort_col');	
@@ -65,7 +65,6 @@ function log_list()
 function del_log()
 {
 	global $db;
-	
 	$id = irequest('id');
 	$sql = "DELETE FROM operate_log WHERE id = '{$id}'";
 	$db->query($sql);

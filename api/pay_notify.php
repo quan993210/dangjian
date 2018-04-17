@@ -7,8 +7,6 @@
  * 微信支付回调
  */
 /* 微信支付完成，回调地址url方法 */
-define('APPID','wx6ce6752b26628e64');
-define('WX_KEY','jiangxijinlukejikaifa5803015gong');
 set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
@@ -23,10 +21,23 @@ unset($post_data['sign']);
  *  并校验返回的【订单金额是否与商户侧的订单金额】一致，
  *  防止数据泄漏导致出现“假通知”，造成资金损失。
  */
-$KEY =         WX_KEY;    //微信支付key
-$user_sign = MakeSign($post_data,$KEY);
+
 
 if($post_data['return_code']=='SUCCESS'&&$postSign){
+
+    $sql = "SELECT * FROM  `order` WHERE ordersn='{$post_data['out_trade_no']}'";
+    $orderinfo = $db->get_row($sql);
+
+    $adminid  = $_POST["adminid"];
+    $sql = "SELECT * FROM admin WHERE id = '{$orderinfo['adminid']}'";
+    $res = $db->get_row($sql);
+    define('APPID',$res['appid']);
+    define('MCH_ID',$res['mch_id']);
+    define('WX_KEY',$res['wx_key']);
+    define('APPSECRET',$res['appsecret']);
+
+    $KEY =         WX_KEY;    //微信支付key
+    $user_sign = MakeSign($post_data,$KEY);
 
     if($postSign !=$user_sign){
         $error['errcode'] = '100005';
@@ -36,8 +47,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
         exit();
     }
 
-    $sql = "SELECT * FROM  `order` WHERE ordersn='{$post_data['out_trade_no']}'";
-    $orderinfo = $db->get_row($sql);
+
 //查询订单是否存在
     if (!$orderinfo){
         $error['errcode'] = '100001';
@@ -87,6 +97,7 @@ if($post_data['return_code']=='SUCCESS'&&$postSign){
 }else{
     $error['errcode'] = '100004';
     $error['errmsg'] = $postSign['return_msg'];
+   //$error['adminid'] = $adminid;
     wx_error_log(__FILE__,$error);
     insert_error_log($error);
     exit();

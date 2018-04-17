@@ -10,14 +10,14 @@ set_include_path(dirname(dirname(__FILE__)));
 include_once("inc/init.php");
 if (!session_id()) session_start();
 
-if(isset($_GET['mobile']) && !empty($_GET['mobile'])) {
+if(isset($_GET['mobile']) && !empty($_GET['mobile'])&& !empty($_GET['adminid'])) {
     $mobile = $_GET['mobile'];
 } else {
    // exit('参数不对');
     showapierror('参数错误！');
 }
-
-$sql = "SELECT * FROM member WHERE mobile=$mobile";
+$adminid  = $_GET["adminid"];
+$sql = "SELECT * FROM member WHERE mobile=$mobile and adminid='{$adminid}'";
 $member = $db->get_row($sql);
 if(!$member){
     showapierror('该手机号不存在系统中！');
@@ -45,12 +45,12 @@ $res = explode(',',$res);
 $add_time	= time();
 $add_time_format	= now_time();
 if($res[0]== 0 && $res[1] > 0){//如果发送成功,添加到数据库
-    $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 1, '{$add_time}', '{$add_time_format}')";
+    $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format,adminid) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 1, '{$add_time}', '{$add_time_format}','{$adminid}')";
     $db->query($sql);
-    $sql = "UPDATE member SET code = '{$code}',code_time = '{$add_time}' WHERE mobile = '{$mobile}'";
+    $sql = "UPDATE member SET code = '{$code}',code_time = '{$add_time}' WHERE mobile = '{$mobile}' and adminid='{$adminid}'";
     $db->query($sql);
 } else {
-    $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 0, '{$add_time}', '{$add_time_format}')";
+    $sql = "INSERT INTO log_sms (mobile,code, type, content, status, add_time, add_time_format,adminid) VALUES ('{$mobile}','{$code}', 1,  '{$msg}', 0, '{$add_time}', '{$add_time_format}','{$adminid}')";
     $db->query($sql);
 }
 echo $res ? showapisuccess($res): showapierror('短息发送失败！');

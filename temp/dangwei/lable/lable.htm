@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>{$page_title}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="{$admin_temp_path}/css/general.css" rel="stylesheet" type="text/css" />
+<link href="{$admin_temp_path}/css/main.css" rel="stylesheet" type="text/css" />
+<script src="{$url_path}/js/jquery.js"></script>
+    <script src="{$url_path}/js/Datepicker/Wdatepicker.js" type="text/javascript"></script>
+    <script src="{$url_path}/js/editor/kindeditor.js" charset="utf-8"></script>
+    <script src="{$url_path}/js/editor/lang/zh_CN.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/plupload/plupload.full.min.js"></script>
+</head>
+<body>
+<h1>
+<span class="action-span"><a href="javascript:history.back();">返回</a></span>
+<span class="action-span1"><a href="">{$sys_name} 管理中心</a>  - {$page_title} </span>
+<div style="clear:both"></div>
+</h1>
+<div id="tabbody-div">
+<form name="frm" action="lable.php" method="post">
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
+    <tr>
+      <td class="label">文章标签：</td>
+	  <td><input type="text" name="info[name]" value="{$list.name}"></td>
+    </tr>
+    <tr>
+      <td class="label">排序：</td>
+	  <td><input type="text" name="info[listorder]" value="{if $list.listorder}{$list.listorder}{else}0{/if}"></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <input type="hidden" value="{$list.id}" name="id" />
+      	<input type="hidden" value="{$action}" name="action" />
+      	<input type="hidden" value="{$now_page}" name="now_page" />
+      	<input type="submit" value="添加">
+      </td>
+    </tr>
+</table>
+</form>
+</div>
+
+</body>
+</html>

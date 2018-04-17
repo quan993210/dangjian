@@ -44,13 +44,50 @@
 <div class="form-div">
   <form action="member.php" name="searchForm" onsubmit="">
     <img src="{$admin_temp_path}/images/icon_search.gif" width="26" height="22" border="0" alt="SEARCH" />
-    <select name="search_cat" >
-      <option value="0" {if $search_cat eq 0}selected{/if}>选择查询条件</option>
-     <!-- <option value="1" {if $search_cat eq 1}selected{/if}>昵称</option>-->
-      <option value="2" {if $search_cat eq 2}selected{/if}>姓名</option>
-		<option value="3" {if $search_cat eq 3}selected{/if}>电话</option>
-    </select>
     关键字 <input type="text" name="keyword" id="keyword" value="{$keyword}"/>
+	  <select name="identity">
+		  {foreach item=identity key=key from=$info.identity}
+		  <option value="{$key}" {if $identitys == $key}selected {/if}>{$identity}</option>
+		  {/foreach}
+	  </select>
+	  <select name="position">
+		  {foreach item=position key=key from=$info.position}
+		  <option value="{$key}" {if $positions == $key}selected {/if}>{$position}</option>
+		  {/foreach}
+	  </select>
+	  <select name="grade">
+		  {foreach item=grade key=key from=$info.grade}
+		  <option value="{$key}" {if $grades == $key}selected {/if}>{$grade}</option>
+		  {/foreach}
+	  </select>
+	  <select name="rank_title">
+		  {foreach item=rank_title key=key from=$info.rank_title}
+		  <option value="{$key}" {if $rank_titles == $key}selected {/if}>{$rank_title}</option>
+		  {/foreach}
+	  </select>
+	  <select name="is_party_affairs">
+		  <option value="0" selected >请选择为专职党务干事</option>
+		  <option value="1" {if $is_party_affairs == 1}selected {/if} >是为专职党务干事</option>
+		  <option value="2" {if $is_party_affairs == 2}selected {/if} >不是为专职党务干事</option>
+	  </select>
+
+	  <select name="is_discipline">
+		  <option value="0" selected >请选择违纪</option>
+		  <option value="1" {if $is_discipline == 1}selected {/if} >是违纪</option>
+		  <option value="2" {if $is_discipline == 2}selected {/if} >不是违纪</option>
+	  </select>
+
+	  <select name="is_retire">
+		  <option value="0" selected >请选择退休</option>
+		  <option value="1" {if $is_retire == 1}selected {/if} >是退休</option>
+		  <option value="2" {if $is_retire == 2}selected {/if} >不是退休备</option>
+	  </select>
+
+	  <select name="is_prepare">
+		  <option value="0" selected >请选择发展预备</option>
+		  <option value="1" {if $is_prepare == 1}selected {/if} >是发展预备</option>
+		  <option value="2" {if $is_prepare == 2}selected {/if} >不是发展预备</option>
+	  </select>
     <input type="submit" value="搜索" class="button" />
   </form>
 </div>

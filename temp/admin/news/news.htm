@@ -16,32 +16,12 @@
 	<script type="text/javascript" charset="utf-8" src="{$url_path}/js/ueditor/lang/zh-cn/zh-cn.js"></script>
 {literal}
 <script language="javascript">
-function add_img()
-{
-	var img_count = parseInt($("#img_count").val());
-	var next_img = img_count + 1;
-	var img_div = '<div id="img' + next_img + '"><input type="file" name="image' + next_img + '" value=""> <a href="javascript:void(0);" onclick="del_img(' + next_img + ');">[-]</a></div>';
-	$("#imgs").append(img_div);
-	$("#img_count").val(next_img);
-}
-
-function del_img(num)
-{
-	$("#img" + num).remove();
-}
 
 function select_time()
 {
 	WdatePicker({dateFmt:'yyyy-MM-dd'})
 }
 
-function show_pic(type)
-{
-	if (type == 1)
-		$("#pic_tr").show();
-	else
-		$("#pic_tr").hide();
-}
 </script>
 {/literal}
 </head>
@@ -55,10 +35,10 @@ function show_pic(type)
 <form name="frm" action="news.php" method="post" enctype="multipart/form-data">
 <table width="98%" border="0" align="center" cellpadding="0" cellspacing="1">
     <tr>
-      <td class="label">内容分类：</td>
-	  <td>
-        <select name="catid" id="catid">
-            <option value="0">选择内容分类</option>
+      <td class="label">新闻分类：</td>
+	  <td colspan="6">
+        <select name="info[catid]" id="catid">
+            <option value="0">选择新闻分类</option>
             {section name=loop loop=$news_category}
             <option value="{$news_category[loop].catid}" {if $news.catid eq $news_category[loop].catid}selected{/if}>{$news_category[loop].catname}</option>
             {section name=subloop loop=$news_category[loop].sub}
@@ -69,54 +49,94 @@ function show_pic(type)
       </td>
     </tr>
     <tr>
-      <td class="label">内容标题：</td>
-	  <td><input type="text" name="title" value="{$news.title}" size="48" /></td>
-    </tr>   
-    <tr>
-      <td class="label">封面图片：</td>
-	  <td>
-        <!--<input type="file" name="pic" value="">-->
-      	<img src="{if $news.cover neq ''}{$url_path}{$news.cover}{else}/images/default_news.jpg{/if}" id="upload_pic" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
-        <input type="hidden" value="{$news.cover}" name="pic_path" id="pic_path" />
-        <input type="button" id="pickfiles" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
-		  <div style="color:#ff0000">图片大小为200px*150px</div>
-	  </td>
+      <td class="label">新闻标题：</td>
+	  <td colspan="6"><input type="text" name="info[title]" value="{$news.title}" size="48" /></td>
     </tr>
-    
+	<tr>
+		<td class="label">新闻：</td>
+		<td colspan="6">
+			<textarea id="content" name="info[content]" style="width:700px;height:300px;">{$news.content}</textarea>
+			<script type="text/javascript">
+				//实例化编辑器
+				var ue = UE.getEditor('content');
+			</script>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">展示样式：</td>
+		<td colspan="6">
+			<select name="info[type]" id="type">
+				<option value="0" {if $news.type == 0}selected{/if}>无图展示</option>
+				<option value="1" {if $news.type == 1}selected{/if}>一张大图(710*350)</option>
+				<option value="2" {if $news.type == 2}selected{/if}>一张小图(200*150)</option>
+				<option value="3" {if $news.type == 3}selected{/if}>三张图片(226*117)</option>
+			</select>
+		</td>
+	</tr>
+    <tr id="img" {if $news.type ==""} style="display: none"{/if}>
+      <td class="label">封面图片：</td>
+		<td id="img1" {if $news.image1 ==""} style="display: none"{/if}>
+			<img src="{if $news.image1 neq ''}{$url_path}{$news.image1}{else}/images/default_news.jpg{/if}" id="upload_image1" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
+			<input type="hidden" value="{$news.image1}" name="info[image1]" id="image1" />
+			<input type="button" id="pic_image1" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+		</td>
+		<td id="img2" {if $news.image2 ==""} style="display: none"{/if}>
+			<img src="{if $news.image2 neq ''}{$url_path}{$news.image2}{else}/images/default_news.jpg{/if}" id="upload_image2" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
+			<input type="hidden" value="{$news.image2}" name="info[image2]" id="image2" />
+			<input type="button" id="pic_image2" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+
+		</td>
+		<td id="img3" {if $news.image3 ==""} style="display: none"{/if}>
+			<img src="{if $news.image3 neq ''}{$url_path}{$news.image3}{else}/images/default_news.jpg{/if}" id="upload_image3" style="width:150px;height:100px;border: 1px solid #ccc;padding: 3px;border-radius: 5px;" /><br/>
+			<input type="hidden" value="{$news.image3}" name="info[image3]" id="image3" />
+			<input type="button" id="pic_image3" style="background:#fff;width:76px;height:24px;border:0;cursor:pointer;border:1px solid #CCC;margin:5px 0;margin-bottom:10px;" value="上传图片" />
+		</td>
+    </tr>
+
     <tr>
       <td class="label">发布者：</td>
-	  <td>
-      	<input type="text" id="brief" name="brief" value="{$news.brief}" />
-      </td>
+	  <td colspan="6"><input type="text" id="brief" name="info[brief]" value="{$news.brief}" /></td>
     </tr>
 	<tr>
 		<td class="label">发布时间：</td>
-		<td><input type="text" name="release_time" onclick="return select_time()"  value="{$news.release_time}" /></td>
+		<td colspan="6"><input type="text" name="info[release_time]" onclick="return select_time()"  value="{$news.release_time}" /></td>
 	</tr>
-	<tr>
-      <td class="label">内容：</td>
-	  <td>
-		  <textarea id="content" name="content" style="width:700px;height:300px;">{$news.content}</textarea>
-		  <script type="text/javascript">
-			  //实例化编辑器
-			  var ue = UE.getEditor('content');
-		  </script>
-      </td>
-    </tr>
+
 	<tr>
 		<td class="label">视频链接：</td>
-		<td><input type="text" name="video_url" value="{$news.video_url}" size="45" /></td>
+		<td colspan="6"><input type="text" name="info[video_url]" value="{if $news.video_url}{$news.video_url}{/if}" size="45" /></td>
 	</tr>
 	<tr>
 		<td class="label">语音链接：</td>
-		<td><input type="text" name="audio_url" value="{$news.audio_url}" size="45" /></td>
+		<td colspan="6"><input type="text" name="info[audio_url]" value="{if $news.audio_url}{$news.audio_url}{/if}" size="45" /></td>
+	</tr>
+	<tr>
+		<td class="label">文字转语音：</td>
+		<td colspan="6"><input type="checkbox" {if $news.is_transfor ==1} checked{/if} name="info[is_transfor]" value="1"/>(勾选后，手机可播放语音)</td>
 	</tr>
 	<tr>
       <td class="label">排序：</td>
-	  <td><input type="text" name="listorder" value="{if $news.listorder eq ''}0{else}{$news.listorder}{/if}" size="15" /></td>
+	  <td colspan="6"><input type="text" name="info[listorder]" value="{if $news.listorder eq ''}0{else}{$news.listorder}{/if}" size="15" /></td>
     </tr>
-
-    
+	<tr>
+		<td class="label">添加投票：</td>
+		<td colspan="6">
+			<select name="info[voteid]" id="voteid">
+				<option value="99" {if $news.voteid eq 99 || $news.voteid eq 0}selected{/if}>选择投票</option>
+				{section name=loop loop=$vote}
+				<option value="{$vote[loop].id}" {if $news.voteid eq $vote[loop].id}selected{/if}>{$vote[loop].title}</option>
+				{/section}
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="label">文章标签：</td>
+		<td colspan="6">
+			{section name=loop loop=$lables}
+			<input type="checkbox" name="lables[]"  {if $lables[loop].flg == 1}checked{/if}  value="{$lables[loop].id}"/>{$lables[loop].name}
+			{/section}
+		</td>
+	</tr>
     <tr>
       <td colspan="2" align="center">
       	<input type="hidden" value="{$action}" name="action" />
@@ -141,19 +161,44 @@ $(document).ready(function(){
 				return;
 			}
 		});
+	})
+
+	$('#type').change(function(){
+		var type = $('#type option:selected').val();
+		if(type == 0){
+			$('#img').css('display','none');
+			$('#img1').css('display','none');
+			$('#img2').css('display','none');
+			$('#img3').css('display','none');
+		}else if(type == 1){
+			$('#img').css('display','');
+			$('#img1').css('display','');
+			$('#img2').css('display','none');
+			$('#img3').css('display','none');
+		}else if(type == 2){
+			$('#img').css('display','');
+			$('#img1').css('display','');
+			$('#img2').css('display','none');
+			$('#img3').css('display','none');
+		}else if(type == 3){
+			$('#img').css('display','');
+			$('#img1').css('display','');
+			$('#img2').css('display','');
+			$('#img3').css('display','');
+		}
 
 	})
 })
 
 var uploader = new plupload.Uploader({
 	runtimes : 'html5,flash,silverlight,html4',
-	browse_button : 'pickfiles', // you can pass in id...
-	url : 'news.php?action=upload_batch_photo&dir_type=news&upload_name=pic',
+	browse_button : 'pic_image1', // you can pass in id...
+	url : 'news.php?action=upload_batch_photo&dir_type=image&upload_name=pic',
 	flash_swf_url : '/js/plupload/Moxie.swf',
 	silverlight_xap_url : '/js/plupload/Moxie.xap',
 	file_data_name : 'pic',
 	multi_selection : false,
-	
+
 	filters : {
 		max_file_size : '10mb',
 		mime_types: [
@@ -163,46 +208,108 @@ var uploader = new plupload.Uploader({
 	},
 
 	init: {
-		PostInit: function() {
-			//document.getElementById('filelist').innerHTML = '';
-
-			/*document.getElementById('uploadfiles').onclick = function() {
-				uploader.start();
-				return false;
-			};*/
-		},
-
 		FilesAdded: function(up, files) {
-	
+
 			plupload.each(files, function(file) {
-				//document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
-				
 				var html = '<tr id="' + file.id + '">';
-				html += '<td width="200" align="left">' + file.name + '</td>'; 
+				html += '<td width="200" align="left">' + file.name + '</td>';
 				html += '<td width="100" align="center">' + plupload.formatSize(file.size) + '</td>';
 				html += '<td width="100" align="center" id="' + file.id + '_progress"></td>';
 				html += '</tr>';
-				
-				//$("#uploadlist").append(html);
-				//$("#uploadlist").html(html);
+
 			});
-			
+
 			uploader.start();
 		},
 
 		UploadProgress: function(up, file) {
-			//document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
 			$("#" + file.id + "_progress").html(file.percent + "%");
 		},
-		
+
 		FileUploaded: function(up, file, data) {
-			//alert(data.response.pic_path);
 			var dataObj = eval("(" + data.response + ")");
-			//alert(dataObj.pic_path);
-			//var piclist = $("#piclist").val();
-			//piclist += piclist == "" ? dataObj.pic_path : "|" + dataObj.pic_path;
-			$("#pic_path").val(dataObj.pic_path);
-			$("#upload_pic").attr("src", dataObj.pic_path);
+			$("#image1").val(dataObj.pic_path);
+			$("#upload_image1").attr("src", dataObj.pic_path);
+		},
+
+		Error: function(up, err) {
+			document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
+		}
+	}
+});
+var uploader1 = new plupload.Uploader({
+	runtimes : 'html5,flash,silverlight,html4',
+	browse_button : 'pic_image2', // you can pass in id...
+	url : 'news.php?action=upload_batch_photo&dir_type=image&upload_name=pic',
+	flash_swf_url : '/js/plupload/Moxie.swf',
+	silverlight_xap_url : '/js/plupload/Moxie.xap',
+	file_data_name : 'pic',
+	multi_selection : false,
+
+	filters : {
+		max_file_size : '10mb',
+		mime_types: [
+			{title : "Image files", extensions : "jpg,gif,png"},
+			{title : "Zip files", extensions : "zip"}
+		]
+	},
+
+	init: {
+		FilesAdded: function(up, files) {
+
+			plupload.each(files, function(file) {
+			});
+
+			uploader1.start();
+		},
+
+		UploadProgress: function(up, file) {
+		},
+
+		FileUploaded: function(up, file, data) {
+			var dataObj = eval("(" + data.response + ")");
+			$("#image2").val(dataObj.pic_path);
+			$("#upload_image2").attr("src", dataObj.pic_path);
+		},
+
+		Error: function(up, err) {
+			document.getElementById('console').innerHTML += "\nError #" + err.code + ": " + err.message;
+		}
+	}
+});
+var uploader2 = new plupload.Uploader({
+	runtimes : 'html5,flash,silverlight,html4',
+	browse_button : 'pic_image3', // you can pass in id...
+	url : 'news.php?action=upload_batch_photo&dir_type=image&upload_name=pic',
+	flash_swf_url : '/js/plupload/Moxie.swf',
+	silverlight_xap_url : '/js/plupload/Moxie.xap',
+	file_data_name : 'pic',
+	multi_selection : false,
+
+	filters : {
+		max_file_size : '10mb',
+		mime_types: [
+			{title : "Image files", extensions : "jpg,gif,png"},
+			{title : "Zip files", extensions : "zip"}
+		]
+	},
+
+	init: {
+		FilesAdded: function(up, files) {
+
+			plupload.each(files, function(file) {
+			});
+
+			uploader2.start();
+		},
+
+		UploadProgress: function(up, file) {
+		},
+
+		FileUploaded: function(up, file, data) {
+			var dataObj = eval("(" + data.response + ")");
+			$("#image3").val(dataObj.pic_path);
+			$("#upload_image3").attr("src", dataObj.pic_path);
 		},
 
 		Error: function(up, err) {
@@ -211,11 +318,18 @@ var uploader = new plupload.Uploader({
 	}
 });
 
+
+
+
 uploader.init();
+uploader1.init();
+uploader2.init();
+
+
 
 function print_array(arr){
 	for(var key in arr){
-		if(typeof(arr[key])=='array'||typeof(arr[key])=='object'){//递归调用  
+		if(typeof(arr[key])=='array'||typeof(arr[key])=='object'){//递归调用
 			print_array(arr[key]);
 		}else{
 			document.write(key + ' = ' + arr[key] + '<br>');
