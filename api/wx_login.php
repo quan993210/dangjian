@@ -53,51 +53,54 @@ function get_openid(){
 
 function bind_user(){
     global $db;
-    $adminid  = $_POST["adminid"];
-    if(isset($_POST['code']) && !empty($_POST['code']) && isset($_POST['mobile']) && !empty($_POST['mobile']) && !empty($_POST['adminid'])) {
-        $mobile = addslashes(trim($_POST['mobile']));
-        $sql = "SELECT * FROM member WHERE mobile = '{$mobile}' and adminid='{$adminid}'";
-        $member = $db->get_row($sql);
-        if($member){
-            $code = $_POST['code'];
-            $encryptedData = $_POST['encryptedData'];
-            $iv = $_POST['iv'];
-            $session_key = wxCode($code);
-            $userInfo = decryptData($session_key,$encryptedData,$iv);
-            if ($userInfo && !empty($userInfo) && isset($userInfo['openId']) && !empty($userInfo['openId'])) {
-                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}' and adminid='{$adminid}' and mobile = '{$mobile}'";
-                $member = $db->get_row($sql);
-                if($member['mobile'] == $mobile &&  $member && isset($member['openid']) && !empty($member['openid'])){
-                   /* $nickname    	= $userInfo['nickname'];
-                    $avatar    	= $userInfo['headimgurl'];
-                    $unionid    	= $userInfo['unionid'];
-                    $sql = "UPDATE member SET nickname = '{$nickname}',avatar = '{$avatar}',unionid = '{$unionid}' WHERE openid = '{$member['openid']}'";
-                    $db->query($sql);
-                    $sql = "SELECT * FROM member WHERE mobile=$mobile";
-                    $member = $db->get_row($sql);*/
-                    showapisuccess($member);
-                }else{
-                    $nickname    	= $userInfo['nickName'];
-                    $openid    	= $userInfo['openId'];
-                    $avatar    	= $userInfo['avatarUrl'];
-                    $unionid    	= $userInfo['unionid'];
-                    $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE mobile = '{$mobile}' and adminid='{$adminid}'";
-                    $db->query($sql);
-                    //print_r($sql);
-                    $sql = "SELECT * FROM member WHERE mobile=$mobile and adminid='{$adminid}' and mobile = '{$mobile}'";
-                    $member = $db->get_row($sql);
-                    showapisuccess($member);
-                }
-            }else{
-                showapierror('参数错误！');
-            }
-        }else{
-            showapierror('用户不存在！');
-        }
-
-    } else {
-        showapierror('参数错误！');
-    }
+    $sql = "SELECT * FROM member WHERE userid = 214 ";
+    $member = $db->get_row($sql);
+    showapisuccess($member);
+//    $adminid  = $_POST["adminid"];
+//    if(isset($_POST['code']) && !empty($_POST['code']) && isset($_POST['mobile']) && !empty($_POST['mobile']) && !empty($_POST['adminid'])) {
+//        $mobile = addslashes(trim($_POST['mobile']));
+//        $sql = "SELECT * FROM member WHERE mobile = '{$mobile}' and adminid='{$adminid}'";
+//        $member = $db->get_row($sql);
+//        if($member){
+//            $code = $_POST['code'];
+//            $encryptedData = $_POST['encryptedData'];
+//            $iv = $_POST['iv'];
+//            $session_key = wxCode($code);
+//            $userInfo = decryptData($session_key,$encryptedData,$iv);
+//            if ($userInfo && !empty($userInfo) && isset($userInfo['openId']) && !empty($userInfo['openId'])) {
+//                $sql = "SELECT * FROM member WHERE openid = '{$userInfo['openId']}' and adminid='{$adminid}' and mobile = '{$mobile}'";
+//                $member = $db->get_row($sql);
+//                if($member['mobile'] == $mobile &&  $member && isset($member['openid']) && !empty($member['openid'])){
+//                   /* $nickname    	= $userInfo['nickname'];
+//                    $avatar    	= $userInfo['headimgurl'];
+//                    $unionid    	= $userInfo['unionid'];
+//                    $sql = "UPDATE member SET nickname = '{$nickname}',avatar = '{$avatar}',unionid = '{$unionid}' WHERE openid = '{$member['openid']}'";
+//                    $db->query($sql);
+//                    $sql = "SELECT * FROM member WHERE mobile=$mobile";
+//                    $member = $db->get_row($sql);*/
+//                    showapisuccess($member);
+//                }else{
+//                    $nickname    	= $userInfo['nickName'];
+//                    $openid    	= $userInfo['openId'];
+//                    $avatar    	= $userInfo['avatarUrl'];
+//                    $unionid    	= $userInfo['unionid'];
+//                    $sql = "UPDATE member SET  openid = '{$openid}', nickname = '{$nickname}',unionid = '{$unionid}',avatar = '{$avatar}' WHERE mobile = '{$mobile}' and adminid='{$adminid}'";
+//                    $db->query($sql);
+//                    //print_r($sql);
+//                    $sql = "SELECT * FROM member WHERE mobile=$mobile and adminid='{$adminid}' and mobile = '{$mobile}'";
+//                    $member = $db->get_row($sql);
+//                    showapisuccess($member);
+//                }
+//            }else{
+//                showapierror('参数错误！');
+//            }
+//        }else{
+//            showapierror('用户不存在！');
+//        }
+//
+//    } else {
+//        showapierror('参数错误！');
+//    }
 }
 
 function login_openid(){

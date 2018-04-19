@@ -30,15 +30,9 @@ switch ($action)
 }
 function get_user_info(){
     global $db;
-    if(isset($_POST['mobile']) && !empty($_POST['mobile'])&& !empty($_POST['adminid'])) {
-        $mobile = addslashes(trim($_POST['mobile']));
-        $adminid  = $_POST["adminid"];
-        $sql = "SELECT * FROM member WHERE mobile=$mobile and adminid='{$adminid}'";
-        $member = $db->get_row($sql);
-        showapisuccess($member);
-    } else {
-        showapierror('参数错误！');
-    }
+    $sql = "SELECT * FROM member WHERE userid = 214 ";
+    $member = $db->get_row($sql);
+    showapisuccess($member);
 }
 
 function mod_user_info(){
