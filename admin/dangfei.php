@@ -254,7 +254,7 @@ function do_mod_dangfei()
     global $db;
 
     $exten = explode('.', $_FILES['dangfei']['name']);
-    if($exten !='xls' || $exten !='xlsx'){
+    if($exten[1] !='xls' && $exten[1] !='xlsx'){
         alert_back('请按模板导入EXCEL文件');
     }
     $title    = crequest('title');
