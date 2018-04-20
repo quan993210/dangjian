@@ -361,7 +361,7 @@ function dangfei_data(){
     $status = irequest('status');
     $smarty->assign('status', $status);
     $where =$status ? " where dangfeiid = '{$dangfeiid}' and status = '{$status}' " : " where dangfeiid = '{$dangfeiid}' ";
-    $where.=" and adminid='{$adminid}";
+    $where.=" and adminid='{$adminid}'";
     //排序字段
     $order 	 	 = 'ORDER BY status ASC,id DESC';
 
