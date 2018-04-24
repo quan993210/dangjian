@@ -38,7 +38,7 @@ function my_dangfei(){
     if(isset($_POST['mobile']) && !empty($_POST['mobile']) &&isset($_POST['userid']) && !empty($_POST['userid']) && !empty($_POST['adminid']) ) {
         $mobile = trim($_POST['mobile']);
         $userid = trim($_POST['userid']);
-        $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile =$mobile and a.userid =$userid and a.adminid='{$adminid}' ORDER BY id DESC";
+        $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile ='$mobile' and a.userid =$userid and a.adminid='{$adminid}' ORDER BY id DESC";
         $news = $db->get_all($sql);
         showapisuccess($news);
     }else{
@@ -55,7 +55,6 @@ function create_order(){
     if(!$userinfo){
         showapierror('user_not_find');
     }
-
     if (empty($openid)){
         $openid = $userinfo['openid'];
     }
