@@ -39,6 +39,7 @@ function my_dangfei(){
         $mobile = trim($_POST['mobile']);
         $userid = trim($_POST['userid']);
         $sql = "SELECT a.*,b.title FROM dangfei_data as a LEFT JOIN dangfei as b on a.dangfeiid=b.id WHERE a.mobile =$mobile and a.userid =$userid and a.adminid='{$adminid}' ORDER BY id DESC";
+        print_r($sql);
         $news = $db->get_all($sql);
         showapisuccess($news);
     }else{
