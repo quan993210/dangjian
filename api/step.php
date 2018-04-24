@@ -120,7 +120,7 @@ function add_step(){
 function get_step(){
     global $db;
     if(!empty($_POST['adminid']) ) {
-        $time= date('Y-m-d',time());
+        $time= date("Y-m-d",strtotime("-1 day"));
         $time = strtotime($time);
         $adminid  = $_POST["adminid"];
         $sql 		= "SELECT * FROM step WHERE timestamp = '{$time}' and adminid = $adminid ORDER BY step DESC ";
