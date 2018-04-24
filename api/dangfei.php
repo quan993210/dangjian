@@ -55,7 +55,6 @@ function create_order(){
     if(!$userinfo){
         showapierror('user_not_find');
     }
-
     if (empty($openid)){
         $openid = $userinfo['openid'];
     }
