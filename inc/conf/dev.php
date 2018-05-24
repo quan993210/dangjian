@@ -31,10 +31,10 @@ define('DANG_DIR', 	'dangwei/');
 
 //路径配置
 define('FILE_PATH', '');
-define('URL_PATH', 'http://' . $_SERVER['HTTP_HOST'] . FILE_PATH);
-define('FRONT_TEMP_PATH', 'http://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_PAGE);
-define('ADMIN_TEMP_PATH', 'http://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_ADMIN);
-define('DANG_TEMP_PATH', 'http://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_DANG);
+define('URL_PATH', 'https://' . $_SERVER['HTTP_HOST'] . FILE_PATH);
+define('FRONT_TEMP_PATH', 'https://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_PAGE);
+define('ADMIN_TEMP_PATH', 'https://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_ADMIN);
+define('DANG_TEMP_PATH', 'https://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_DANG);
 
 
 //网站名称

@@ -30,8 +30,8 @@ define('DANG_DIR', 	'dangwei/');
 
 //路径配置
 define('FILE_PATH', '');
-define('URL_PATH', 'http://' . $_SERVER['HTTP_HOST'] . FILE_PATH);
-define('ADMIN_TEMP_PATH', 'http://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_ADMIN);
+define('URL_PATH', 'https://' . $_SERVER['HTTP_HOST'] . FILE_PATH);
+define('ADMIN_TEMP_PATH', 'https://' . $_SERVER['HTTP_HOST'] . FILE_PATH . '/' . TEMP_ADMIN);
 
 //网站名称
 define('WEB_NAME', '南昌锦路科技有限公司');
